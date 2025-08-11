@@ -1,0 +1,13 @@
+.morphext > .animated {
+    display: inline-block;
+    /* width: 250px; */
+}
+
+@media (max-width: 600px) {
+
+    .morphext > .animated {
+        display: inline-block;
+        /* width: 100%; */
+    }
+
+}

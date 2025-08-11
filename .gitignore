@@ -1,0 +1,66 @@
+#############################
+# Laravel / PHP application #
+#############################
+
+# Composer
+vendor/
+composer.phar
+
+# Node
+node_modules/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Laravel storage and cache (runtime artifacts)
+storage/
+bootstrap/cache/*
+!bootstrap/cache/.gitignore
+
+# Logs and debug output
+*.log
+storage/logs/
+storage/debugbar/
+
+# Public runtime artifacts
+public/hot
+public/storage
+
+# User-generated uploads (do not version media)
+public/uploads/
+old-site/public/uploads/
+
+# Database (local sqlite files)
+database/*.sqlite
+
+# PHPUnit
+.phpunit.result.cache
+
+# Coverage reports
+coverage/
+
+# IDE/editor
+.idea/
+.vscode/
+*.code-workspace
+
+# OS-specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Misc caches
+.cache/
+*.cache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Other project copies
+old-site/vendor/
+old-site/node_modules/
+old-site/storage/
+
+
