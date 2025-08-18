@@ -10,6 +10,8 @@ return [
         'Builder' => -10025,
         'WebSiteUser' => -10024,
         'Employee' => -10023,
+        'Buyer' => -10026,    // New user type ID for Buyer
+        'Agent' => -10027,    // New user type ID for Agent
     ],
     'CustomActivityLogs' => [
         'viewProject' => ['description' => 'View Project List', 'value' => 'viewProjectList'],

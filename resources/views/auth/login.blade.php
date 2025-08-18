@@ -5,7 +5,12 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+                <div class="card-header">{{ __('Login') }}
+                    <div class="tab-bar mt-2" style="text-align: center; background: #000; padding: 5px;">
+                        <button class="tab btn btn-sm @if(!session('user_type') || session('user_type') == 'buyer') btn-primary @else btn-secondary @endif" data-type="buyer">Buyer</button>
+                        <button class="tab btn btn-sm @if(session('user_type') == 'agent') btn-primary @else btn-secondary @endif" data-type="agent">Agent</button>
+                    </div>
+                </div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
@@ -65,9 +70,37 @@
                             </div>
                         </div>
                     </form>
+                    <div class="mt-4">
+                        <p class="text-center">Don't have an account? <a href="{{ route('admin.register') }}">Register</a></p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('btn-primary', 'btn-secondary'));
+                this.classList.add('btn-primary');
+                const type = this.getAttribute('data-type');
+                sessionStorage.setItem('user_type', type);
+                window.location.href = "{{ route('admin.login') }}?type=" + type;
+            });
+        });
+
+        // Set initial tab based on URL parameter or session
+        const urlParams = new URLSearchParams(window.location.search);
+        const type = urlParams.get('type') || sessionStorage.getItem('user_type') || 'buyer';
+        const activeTab = document.querySelector(`.tab[data-type="${type}"]`);
+        if (activeTab) {
+            tabs.forEach(t => t.classList.remove('btn-primary', 'btn-secondary'));
+            activeTab.classList.add('btn-primary');
+            sessionStorage.setItem('user_type', type);
+        }
+    });
+</script>
 @endsection

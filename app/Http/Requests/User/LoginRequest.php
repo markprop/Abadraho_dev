@@ -29,4 +29,11 @@ class LoginRequest extends FormRequest
             'ref' => 'required',
         ];
     }
+
+    public function withValidator($validator)
+    {
+        $validator->sometimes('user_type', 'required|in:buyer,agent', function ($input) {
+            return request()->has('user_type');
+        });
+    }
 }

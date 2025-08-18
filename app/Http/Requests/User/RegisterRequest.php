@@ -32,4 +32,11 @@ class RegisterRequest extends FormRequest
             'ref' => 'required|string',
         ];
     }
+
+    public function withValidator($validator)
+    {
+        $validator->sometimes('user_type', 'required|in:buyer,agent', function ($input) {
+            return request()->has('user_type');
+        });
+    }
 }

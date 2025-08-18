@@ -18,11 +18,11 @@ use Illuminate\Database\Eloquent\Builder as dbBuilder;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\Contracts\Activity;
 
-
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, LogsActivity; //LogsActivity
+    use HasFactory, Notifiable, LogsActivity; // LogsActivity
     use CanRedeemVouchers;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -41,7 +41,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'image',
         'record_id',
         'remember_token',
-        'record_id',
         'provider',
         'phone_number',
         'avatar',
@@ -54,7 +53,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected static function booted()
     {
-        // using seperate scope class
+        // using separate scope class
         static::addGlobalScope(new HasIsNonArchiveScope);
 
         // you can do the same thing using anonymous function
@@ -63,8 +62,6 @@ class User extends Authenticatable implements MustVerifyEmail
             $eloquentDbBuilder->where('is_archive', 0);
         });
     }
-
-
 
     /**
      * The attributes that should be hidden for arrays.
@@ -96,27 +93,26 @@ class User extends Authenticatable implements MustVerifyEmail
         'image',
         'record_id',
         'remember_token',
-        'record_id',
         'provider',
         'phone_number',
         'avatar',
         'phone_no_otp',
         'is_phone_no_verified',
     ];
-    // // protected static $logName = 'User';
-    // // protected static $logFillable = true;
-    // // protected static $submitEmptyLogs = false;
+    // protected static $logName = 'User';
+    // protected static $logFillable = true;
+    // protected static $submitEmptyLogs = false;
     protected static $recordEvents = ['created', 'updated', 'deleted'];
 
     // protected static $logOnlyDirty = true;
     /** The following change of attributes will be logged. */
-    //protected static $logAttributes = ['name', 'text'];
+    // protected static $logAttributes = ['name', 'text'];
 
-    /** Alternativly we can define that following attribute changes should be not recoreded */
-    //protected static $ignoreChangedAttributes = ['text'];
+    /** Alternatively we can define that following attribute changes should not be recorded */
+    // protected static $ignoreChangedAttributes = ['text'];
 
     /** Only the `deleted` event will get logged automatically */
-    //protected static $recordEvents = ['deleted'];
+    // protected static $recordEvents = ['deleted'];
 
     public function getDescriptionForEvent(string $eventName): string
     {
@@ -124,8 +120,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     // End Activity Log Work
-
-
 
     public function Builder()
     {
@@ -178,12 +172,29 @@ class User extends Authenticatable implements MustVerifyEmail
         }
     }
 
-    public function User_type()
+    // New methods for Buyer and Agent checks
+    public function isBuyerLoggedIn()
     {
-        return $this->belongsTo('App\Models\User_type', 'user_type_id');
+        if (Auth::user()->user_type_id == Config::get("constants.UserTypeIds.Buyer")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
+    public function isAgentLoggedIn()
+    {
+        if (Auth::user()->user_type_id == Config::get("constants.UserTypeIds.Agent")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
+    public function User_type()
+    {
+        return $this->belongsTo(User_type::class, 'user_type_id');
+    }
 
     protected $casts = [
         'email_verified_at' => 'datetime',

@@ -264,58 +264,390 @@
         </div>
     </div>
 
-    <!-- Interest Form Modal -->
-    <div class="modal fade" id="interestModal" tabindex="-1" role="dialog" aria-labelledby="interestModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document" style="max-width: 600px;">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="interestModalLabel">Let's find your ideal Property</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="/submit-interest" method="POST" id="interest-form" class="mt-4">
-                            @csrf
-                            <div class="form-group">
-                                <label>What is your primary goal for this property?</label>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" id="goal-rental" name="goal" value="rental" class="custom-control-input" required>
-                                            <label class="custom-control-label" for="goal-rental">
-                                                <img src="/assets/images/rental-icon.jpg" alt="Rental" class="img-fluid mb-2" style="max-width: 50px;">
-                                                Seeking long-term rental income
-                                            </label>
+<!-- Interest Form Modal
+<div class="modal fade" id="interestModal" tabindex="-1" role="dialog" aria-labelledby="interestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document" style="max-width: 800px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="interestModalLabel">Let's find your ideal property</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body d-flex">
+                <div class="sidebar p-3" style="width: 200px; background: #f8f9fa;">
+                    <img src="assets/images/about/banner.jpg" alt="Adnan" class="rounded-circle mb-2" style="width: 50px; height: 50px;">
+                    <p>Adnan<br><small>Sales Director</small></p>
+                </div>
+                <div class="main-content p-4 flex-grow-1">
+                    <form action="/submit-interest" method="POST" id="interest-form" class="mt-4">
+                        @csrf
+                        <div class="form-group">
+                            <label>What is your primary goal for this property?</label>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <img src="/assets/images/background/03-min.jpg" alt="Rental" class="card-img-top" style="height: 150px; object-fit: cover;">
+                                        <div class="card-body text-center">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" id="goal-rental" name="goal" value="rental" class="custom-control-input" required>
+                                                <label class="custom-control-label" for="goal-rental">Seeking long-term rental income</label>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" id="goal-capital" name="goal" value="capital" class="custom-control-input" required>
-                                            <label class="custom-control-label" for="goal-capital">
-                                                <img src="/assets/images/capital-icon.jpg" alt="Capital" class="img-fluid mb-2" style="max-width: 50px;">
-                                                Capital appreciation and resale potential
-                                            </label>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <img src="/assets/images/background/03-min.jpg" alt="Capital" class="card-img-top" style="height: 150px; object-fit: cover;">
+                                        <div class="card-body text-center">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" id="goal-capital" name="goal" value="capital" class="custom-control-input" required>
+                                                <label class="custom-control-label" for="goal-capital">Capital appreciation and resale potential</label>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" id="goal-vacation" name="goal" value="vacation" class="custom-control-input" required>
-                                            <label class="custom-control-label" for="goal-vacation">
-                                                <img src="/assets/images/vacation-icon.jpg" alt="Vacation" class="img-fluid mb-2" style="max-width: 50px;">
-                                                Personal use as a vacation home or residence
-                                            </label>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <img src="/assets/images/background/03-min.jpg" alt="Vacation" class="card-img-top" style="height: 150px; object-fit: cover;">
+                                        <div class="card-body text-center">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" id="goal-vacation" name="goal" value="vacation" class="custom-control-input" required>
+                                                <label class="custom-control-label" for="goal-vacation">Personal use as a vacation home or residence</label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-log btn-block btn-thm2">Next</button>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Next <i class="fas fa-arrow-right"></i></button>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
+</div> -->
 
+
+<!-- Interest Form Modal -->
+<div class="modal fade" id="interestModal" tabindex="-1" role="dialog" aria-labelledby="interestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document" style="max-width: 800px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="interestModalLabel">Let's find your ideal property</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body d-flex">
+                <div class="sidebar p-3" style="width: 200px; background: #f8f9fa;">
+                    <img src="assets/images/about/banner.jpg" alt="Adnan" class="rounded-circle mb-2" style="width: 50px; height: 50px;">
+                    <p>Adnan<br><small>Sales Director</small></p>
+                </div>
+                <div class="main-content p-4 flex-grow-1">
+                    <form action="/submit-interest" method="POST" id="interest-form" class="mt-4">
+                        @csrf
+                        <input type="hidden" id="step" name="step" value="1">
+                        <div id="step-1" class="step">
+                            <div class="form-group">
+                                <label>What is your primary goal for this property?</label>
+                                <div class="row" style="max-height: 300px; overflow-y: auto;">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="rental">
+                                            <img src="uploads/blogs/cover_1626529108.png" alt="Rental" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" id="goal-rental" name="goal" value="rental" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="goal-rental">Seeking long-term rental income</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="capital">
+                                            <img src="uploads/blogs/cover_1684745403.webp" alt="Capital" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" id="goal-capital" name="goal" value="capital" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="goal-capital">Capital appreciation and resale potential</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="vacation">
+                                            <img src="assets/images/testamonials.jpg" alt="Vacation" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" id="goal-vacation" name="goal" value="vacation" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="goal-vacation">Personal use as a vacation home or residence</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="progress mb-3">
+                                <div class="progress-bar" id="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-block" id="next-step-1">Next <i class="fas fa-arrow-right"></i></button>
+                        </div>
+                        <div id="step-2" class="step" style="display: none;">
+                            <div class="form-group">
+                                <label>Choose your preferred property type</label>
+                                <div class="row" style="max-height: 300px; overflow-y: auto;">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="apartment">
+                                            <img src="assets/images/test/shameer-residency-featured-img.jpg" alt="Apartment" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" id="type-apartment" name="property_type" value="apartment" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="type-apartment">Apartment</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="townhouse">
+                                            <img src="assets/images/test/shameer-residency-3dviews9.jpg" alt="Townhouse" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" id="type-townhouse" name="property_type" value="townhouse" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="type-townhouse">Townhouse</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="villa">
+                                            <img src="assets/images/test/shameer-residency-3dviews8.jpg" alt="Villa" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" id="type-villa" name="property_type" value="villa" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="type-villa">Villa</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="mansion">
+                                            <img src="assets/images/background/mainbg.jpg" alt="Mansion" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" id="type-mansion" name="property_type" value="mansion" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="type-mansion">Mansion</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-muted mt-2">Apartment, villa or a townhouse, it's a matter of taste. Select one option you are interested in.</p>
+                            </div>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-success" id="progress-bar" role="progressbar" style="width: 19%;" aria-valuenow="19" aria-valuemin="0" aria-valuemax="100">19%</div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary" id="prev-step-2">Back</button>
+                                <button type="button" class="btn btn-primary" id="next-step-2">Next <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        <div id="step-3" class="step" style="display: none;">
+                            <div class="form-group">
+                                <label>Choose the number of bedrooms you are looking for</label>
+                                <div class="row" style="max-height: 300px; overflow-y: auto;">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="1">
+                                            <img src="assets/images/bedrooms/bed-1.jpg" alt="1 Bedroom" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" id="bed-1" name="bedrooms" value="1" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="bed-1">1 Bedroom</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="2-4">
+                                            <img src="assets/images/bedrooms/bedroom2-4.jpeg" alt="2-4 Bedrooms" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" id="bed-2-4" name="bedrooms" value="2-4" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="bed-2-4">2-4 Bedrooms</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="5+">
+                                            <img src="assets/images/bedrooms/bedroom-5.jpeg" alt="5+ Bedrooms" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" id="bed-5+" name="bedrooms" value="5+" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="bed-5+">5+ Bedrooms</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-muted mt-2">Select the number of bedrooms that suits your needs.</p>
+                            </div>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-success" id="progress-bar" role="progressbar" style="width: 38%;" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">38%</div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary" id="prev-step-3">Back</button>
+                                <button type="button" class="btn btn-primary" id="next-step-3">Next <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        <div id="step-4" class="step" style="display: none;">
+                            <div class="form-group">
+                                <label>Select your budget range (in millions)</label>
+                                <div class="row" style="max-height: 300px; overflow-y: auto;">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="1.5-5M">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" id="budget-1.5-5" name="budget[]" value="1.5-5M" class="custom-control-input">
+                                                    <label class="custom-control-label" for="budget-1.5-5">1.5-5M</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="2-4M">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" id="budget-2-4" name="budget[]" value="2-4M" class="custom-control-input">
+                                                    <label class="custom-control-label" for="budget-2-4">2-4M</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="4-6M">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" id="budget-4-6" name="budget[]" value="4-6M" class="custom-control-input">
+                                                    <label class="custom-control-label" for="budget-4-6">4-6M</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="8+M">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" id="budget-8+" name="budget[]" value="8+M" class="custom-control-input">
+                                                    <label class="custom-control-label" for="budget-8+">8+M</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-muted mt-2">Select all budget ranges you are comfortable with (multiple selections allowed).</p>
+                            </div>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-success" id="progress-bar" role="progressbar" style="width: 57%;" aria-valuenow="57" aria-valuemin="0" aria-valuemax="100">57%</div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary" id="prev-step-4">Back</button>
+                                <button type="button" class="btn btn-primary" id="next-step-4">Next <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        <div id="step-5" class="step" style="display: none;">
+                            <div class="form-group">
+                                <label>Choose the lifestyle that best suits you</label>
+                                <div class="row" style="max-height: 300px; overflow-y: auto;">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="urban">
+                                            <img src="assets/images/lifestyle/Urban.jpeg" alt="Urban" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" id="lifestyle-urban" name="lifestyle[]" value="urban" class="custom-control-input">
+                                                    <label class="custom-control-label" for="lifestyle-urban">Urban</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="suburban">
+                                            <img src="assets/images/lifestyle/Green_community_gardens.jpeg" alt="Suburban" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" id="lifestyle-suburban" name="lifestyle[]" value="suburban" class="custom-control-input">
+                                                    <label class="custom-control-label" for="lifestyle-suburban">Suburban</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="rural">
+                                            <img src="assets/images/lifestyle/Luxurious.jpeg" alt="Rural" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" id="lifestyle-rural" name="lifestyle[]" value="rural" class="custom-control-input">
+                                                    <label class="custom-control-label" for="lifestyle-rural">Rural</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card selectable" data-value="coastal">
+                                            <img src="assets/images/lifestyle/island.jpeg" alt="Coastal" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" id="lifestyle-coastal" name="lifestyle[]" value="coastal" class="custom-control-input">
+                                                    <label class="custom-control-label" for="lifestyle-coastal">Coastal</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-muted mt-2">Select all lifestyles that suit you (multiple selections allowed).</p>
+                            </div>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-success" id="progress-bar" role="progressbar" style="width: 76%;" aria-valuenow="76" aria-valuemin="0" aria-valuemax="100">76%</div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary" id="prev-step-5">Back</button>
+                                <button type="button" class="btn btn-primary" id="next-step-5">Next <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        <div id="step-6" class="step" style="display: none;">
+                            <div class="form-group">
+                                <label>Review Your Preferences</label>
+                                <div class="row" style="max-height: 300px; overflow-y: auto;">
+                                    <div class="col-md-12 mb-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <p><strong>Goal:</strong> <span id="review-goal"></span></p>
+                                                <p><strong>Property Type:</strong> <span id="review-property-type"></span></p>
+                                                <p><strong>Bedrooms:</strong> <span id="review-bedrooms"></span></p>
+                                                <p><strong>Budget:</strong> <span id="review-budget"></span></p>
+                                                <p><strong>Lifestyle:</strong> <span id="review-lifestyle"></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-muted mt-2">Please review your selections. Make changes if needed by going back.</p>
+                            </div>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-success" id="progress-bar" role="progressbar" style="width: 95%;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100">95%</div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary" id="prev-step-6">Back</button>
+                                <button type="submit" class="btn btn-primary" id="submit-final">Finish <i class="fas fa-check"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -932,36 +1264,168 @@
     });
 });
 
+// // Interest Form Modal Logic
+// $(document).ready(function() {
+//     let auth = <?php echo json_encode(Auth::user()); ?>;
+//     let hasFilledForm = '{{ session()->get('has_filled_form') }}' === 'true';
+
+//     if (!auth && !hasFilledForm) {
+//         setTimeout(() => {
+//             $('#interestModal').modal('show');
+//         }, 5000);
+//     }
+
+//     $('#interest-form').on('submit', function(e) {
+//         e.preventDefault();
+//         $.ajax({
+//             url: '/submit-interest',
+//             type: 'POST',
+//             data: $(this).serialize(),
+//             success: function(response) {
+//                 if (response.success) {
+//                     $('#interestModal').modal('hide');
+//                     window.location.href = '/login';
+//                 }
+//             },
+//             error: function(xhr) {
+//                 console.log(xhr.responseText);
+//                 alert('Error submitting form. Please try again.');
+//             }
+//         });
+//     });
+// });
+
 // Interest Form Modal Logic
 $(document).ready(function() {
-            let auth = <?php echo json_encode(Auth::user()); ?>;
-            let hasFilledForm = '{{ session()->get('has_filled_form') }}' === 'true';
+    let auth = <?php echo json_encode(Auth::user()); ?>;
+    let hasFilledForm = '{{ session()->get('has_filled_form') }}' === 'true';
 
-            if (!auth && !hasFilledForm) {
-                setTimeout(() => {
-                    $('#interestModal').modal('show');
-                }, 5000);
-            }
+    // if (!auth && !hasFilledForm) {
+    //     setTimeout(() => {
+    //         $('#interestModal').modal('show');
+    //     }, 5000);
+    // }
 
-            $('#interest-form').on('submit', function(e) {
-                e.preventDefault();
-                $.ajax({
-                    url: '/submit-interest',
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        if (response.success) {
-                            $('#interestModal').modal('hide');
-                            window.location.href = '/login';
-                        }
-                    },
-                    error: function(xhr) {
-                        console.log(xhr.responseText);
-                        alert('Error submitting form. Please try again.');
+    $('.selectable').on('click', function() {
+        const value = $(this).data('value');
+        const input = $(this).find('input');
+        if (input.attr('type') === 'radio') {
+            input.prop('checked', true).trigger('change');
+        } else if (input.attr('type') === 'checkbox') {
+            input.prop('checked', !input.prop('checked')).trigger('change');
+        }
+    });
+
+    $('#next-step-1').on('click', function() {
+        if ($('input[name="goal"]:checked').length > 0) {
+            $('#step-1').hide();
+            $('#step-2').show();
+            $('#progress-bar').css('width', '19%').text('19%');
+            $('#step').val('2');
+        }
+    });
+
+    $('#next-step-2').on('click', function() {
+        if ($('input[name="property_type"]:checked').length > 0) {
+            $('#step-2').hide();
+            $('#step-3').show();
+            $('#progress-bar').css('width', '38%').text('38%');
+            $('#step').val('3');
+        }
+    });
+
+    $('#next-step-3').on('click', function() {
+        if ($('input[name="bedrooms"]:checked').length > 0) {
+            $('#step-3').hide();
+            $('#step-4').show();
+            $('#progress-bar').css('width', '57%').text('57%');
+            $('#step').val('4');
+        }
+    });
+
+    $('#next-step-4').on('click', function() {
+        if ($('input[name="budget[]"]:checked').length > 0) {
+            $('#step-4').hide();
+            $('#step-5').show();
+            $('#progress-bar').css('width', '76%').text('76%');
+            $('#step').val('5');
+        }
+    });
+
+    $('#next-step-5').on('click', function() {
+        if ($('input[name="lifestyle[]"]:checked').length > 0) {
+            $('#step-5').hide();
+            $('#step-6').show();
+            $('#progress-bar').css('width', '95%').text('95%');
+            $('#step').val('6');
+        }
+    });
+
+    $('#prev-step-2').on('click', function() {
+        $('#step-2').hide();
+        $('#step-1').show();
+        $('#progress-bar').css('width', '0%').text('0%');
+        $('#step').val('1');
+    });
+
+    $('#prev-step-3').on('click', function() {
+        $('#step-3').hide();
+        $('#step-2').show();
+        $('#progress-bar').css('width', '19%').text('19%');
+        $('#step').val('2');
+    });
+
+    $('#prev-step-4').on('click', function() {
+        $('#step-4').hide();
+        $('#step-3').show();
+        $('#progress-bar').css('width', '38%').text('38%');
+        $('#step').val('3');
+    });
+
+    $('#prev-step-5').on('click', function() {
+        $('#step-5').hide();
+        $('#step-4').show();
+        $('#progress-bar').css('width', '57%').text('57%');
+        $('#step').val('4');
+    });
+
+    $('#prev-step-6').on('click', function() {
+        $('#step-6').hide();
+        $('#step-5').show();
+        $('#progress-bar').css('width', '76%').text('76%');
+        $('#step').val('5');
+    });
+
+    // Populate review fields
+    $('#next-step-5').on('click', function() {
+        $('#review-goal').text($('input[name="goal"]:checked').next().text().trim());
+        $('#review-property-type').text($('input[name="property_type"]:checked').next().text().trim());
+        $('#review-bedrooms').text($('input[name="bedrooms"]:checked').next().text().trim());
+        $('#review-budget').text($('input[name="budget[]"]:checked').map(function() { return $(this).next().text().trim(); }).get().join(', '));
+        $('#review-lifestyle').text($('input[name="lifestyle[]"]:checked').map(function() { return $(this).next().text().trim(); }).get().join(', '));
+    });
+
+    $('#interest-form').on('submit', function(e) {
+        e.preventDefault();
+        if ($('#step').val() === '6') {
+            $.ajax({
+                url: '/submit-interest',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        $('#interestModal').modal('hide');
+                        window.location.href = '/login';
                     }
-                });
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                    alert('Error submitting form. Please try again.');
+                }
             });
-        });
+        }
+    });
+});
         
     </script>
 

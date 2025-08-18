@@ -14,7 +14,6 @@
                             <li class="breadcrumb-item"><a href="/">Home</a></li>
                             <li class="breadcrumb-item active text-thm" aria-current="page">Login</li>
                         </ol>
-
                     </div>
                 </div>
             </div>
@@ -51,6 +50,12 @@
                             @csrf
                             <div class="heading">
                                 <h3 class="text-center">Login To Your Account</h3>
+                                <!-- Buyer and Agent Selection -->
+                                <div class="btn-group d-flex justify-content-center mt-3" role="group">
+                                    <button type="button" class="btn btn-log btn-block btn-thm2 {{ !request()->old('user_type') || request()->old('user_type') === 'buyer' || session('user_type') === 'buyer' ? 'active' : '' }}" data-value="buyer">Buyer</button>
+                                    <button type="button" class="btn btn-log btn-block btn-thm2 {{ request()->old('user_type') === 'agent' || session('user_type') === 'agent' ? 'active' : '' }}" data-value="agent">Agent</button>
+                                </div>
+                                <input type="hidden" name="user_type" id="login-user-type" value="{{ request()->old('user_type') ?: session('user_type') ?: 'buyer' }}">
                             </div>
                             <div class="form-group">
                                 <input type="email" class="form-control"
@@ -78,32 +83,29 @@
                             <div class="utf-social-login-separator-item"><span>Or Login in With</span></div>
                             <div class="row">
                                 <div class="col-lg">
-                                    <!-- <a href="{{ route('facebook.login') }}"
-                                       class="btnFacebookLogin btn btn-block color-white bgc-fb mb0 login-social"><i
-                                            class="fa fa-facebook"></i> Facebook</a> -->
-
                                     <a href="{{ route('facebook-auth') }}"
                                        class="btnFacebookLogin btn btn-block color-white bgc-fb mb0 login-social"><i
                                             class="fa fa-facebook"></i> Facebook</a>
                                 </div>
-
                                 <div class="col-lg">
-                                    <!-- <a href="/google-login?ref={!! request()->get('ref') ?: (request()->server('HTTP_REFERER') ?: config('app.url')) !!}"
-                                       class="btnGoogleLogin btn btn2 btn-block color-white bgc-gogle mb0 login-social"><i
-                                            class="fa fa-google"></i> Google</a> -->
                                     <a href="{{ route('google-auth') }}" class="btnGoogleLogin btn btn2 btn-block color-white bgc-gogle mb0 login-social"><i class="fa fa-google"></i> Google</a>
                                 </div>
                             </div>
                         </form>
                     </div>
-
                 </div>
 
                 <div class="col-sm-12 col-lg-6">
                     <div class="sign_up_form inner_page">
                         <div class="heading">
                             <h3 class="text-center">Register Your Account</h3>
-                        </div>
+                            <!-- Buyer and Agent Selection -->
+                            <div class="btn-group d-flex justify-content-center mt-3" role="group">
+                                    <button type="button" class="btn btn-log btn-block btn-thm2 {{ !request()->old('user_type') || request()->old('user_type') === 'buyer' || session('user_type') === 'buyer' ? 'active' : '' }}" data-value="buyer">Buyer</button>
+                                    <button type="button" class="btn btn-log btn-block btn-thm2 {{ request()->old('user_type') === 'agent' || session('user_type') === 'agent' ? 'active' : '' }}" data-value="agent">Agent</button>
+                                </div>
+                                <input type="hidden" name="user_type" id="login-user-type" value="{{ request()->old('user_type') ?: session('user_type') ?: 'buyer' }}">
+                            </div>
                         <div class="details">
                             <form action="/register-web-user" method="POST" id="registration-form">
                                 @csrf
@@ -114,7 +116,6 @@
                                     <input type="text" class="form-control" id="exampleInputName" name="last_name" placeholder="Last Name" value="{!! old('last_name') !!}" required>
                                 </div>
                                 <div class="form-group">
-                                    {{-- phoneInputMask --}}
                                     <input type="text" class="form-control" id="phone_number" name="phone_number" value="{!! old('phone_number') !!}" required>
                                 </div>
                                 <div class="form-group">
@@ -146,12 +147,76 @@
         .intl-tel-input {
             width: 100%;
         }
+
+        .btn-group .btn {
+            margin: 0 5px;
+            background-color: #f8f9fa;
+            border-color:rgb(255, 30, 0);
+            color:rgb(255, 0, 0);
+            transition: all 0.3s ease;
+        }
+
+        .btn-group .btn.active {
+            background-color:rgb(255, 0, 0);
+            color: white;
+            border-color:rgb(0, 0, 0);
+        }
+
+        .btn-group .btn:hover {
+            background-color:rgb(175, 7, 7);
+            color: white;
+            border-color:rgb(255, 0, 0);
+        }
+
+        .btn-thm2 {
+            background-color:rgb(255, 0, 0);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+
+        .btn-thm2:hover {
+            background-color:rgb(179, 54, 0);
+            color: white;
+        }
     </style>
 @endsection
 
 @section('js')
     <script>
         $(document).ready(function () {
+            // Handle Buyer/Agent button clicks for login form
+            $('#login-form .btn-group .btn').on('click', function () {
+                $('#login-form .btn-group .btn').removeClass('active');
+                $(this).addClass('active');
+                $('#login-user-type').val($(this).data('value'));
+                $('#login-form').formValidation('revalidateField', 'user_type');
+            });
+
+            // Handle Buyer/Agent button clicks for registration form
+            $('#registration-form .btn-group .btn').on('click', function () {
+                $('#registration-form .btn-group .btn').removeClass('active');
+                $(this).addClass('active');
+                $('#register-user-type').val($(this).data('value'));
+                $('#registration-form').formValidation('revalidateField', 'user_type');
+            });
+
+            // Initialize active state and hidden input based on old or session data
+            $('#login-form .btn-group .btn').each(function () {
+                if ($(this).data('value') === '{{ request()->old('user_type') ?: session('user_type') ?: 'buyer' }}') {
+                    $(this).addClass('active');
+                    $('#login-user-type').val($(this).data('value'));
+                }
+            });
+
+            $('#registration-form .btn-group .btn').each(function () {
+                if ($(this).data('value') === '{{ request()->old('user_type') ?: session('user_type') ?: 'buyer' }}') {
+                    $(this).addClass('active');
+                    $('#register-user-type').val($(this).data('value'));
+                }
+            });
+
             $('#registration-form')
                 .find('[name="phone_number"]')
                 .intlTelInput({
@@ -201,10 +266,8 @@
                                 callback: {
                                     message: 'The Phone Number is not valid',
                                     callback: function (value, validator, $field) {
-
                                         var mobilenum = $field.intlTelInput("getNumber", intlTelInputUtils.numberFormat.E164);
                                         $field.val(mobilenum);
-
                                         return value === '' || $field.intlTelInput('isValidNumber');
                                     }
                                 }
@@ -221,12 +284,27 @@
                             validators: {
                                 notEmpty: {
                                     message: 'Password Confirmation is Required'
+                                },
+                                identical: {
+                                    field: 'password',
+                                    message: 'The password and its confirmation do not match'
+                                }
+                            }
+                        },
+                        user_type: {
+                            validators: {
+                                notEmpty: {
+                                    message: 'User type is required'
+                                },
+                                choice: {
+                                    min: 1,
+                                    max: 1,
+                                    message: 'Please select a user type'
                                 }
                             }
                         }
                     }
                 })
-                // Revalidate the number when changing the country
                 .on('click', '.country-list', function () {
                     $('#registration-form').formValidation('revalidateField', 'phone_number');
                 });
@@ -254,6 +332,18 @@
                             validators: {
                                 notEmpty: {
                                     message: 'Password is Required'
+                                }
+                            }
+                        },
+                        user_type: {
+                            validators: {
+                                notEmpty: {
+                                    message: 'User type is required'
+                                },
+                                choice: {
+                                    min: 1,
+                                    max: 1,
+                                    message: 'Please select a user type'
                                 }
                             }
                         }
