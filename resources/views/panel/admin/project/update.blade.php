@@ -42,14 +42,12 @@
                 <div class="form-group fv-plugins-icon-container">
                   <label>Project Name *</label>
                   <input type="text" class="form-control form-control-lg" name="name" value="{{ $project->name }}">
-                  <span class="form-text text-muted">Please enter your Project
-                    Name.</span>
+                  <span class="form-text text-muted">Please enter your Project Name.</span>
                   @error('name')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
                   @enderror
                 </div>
               </div>
-
               <div class='col-md-4'>
                 <div class="form-group fv-plugins-icon-container">
                   <label>Project Discount Price *</label>
@@ -61,7 +59,6 @@
                 </div>
               </div>
             </div>
-
             <div class="form-group fv-plugins-icon-container">
               <label>Location Address *</label>
               <input type="text" class="form-control form-control-lg" name="address" value="{{ $project->address }}">
@@ -70,7 +67,6 @@
               <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
               @enderror
             </div>
-
             <div class="form-group fv-plugins-icon-container">
               <label>Areas *</label>
               @if (count($project->areas))
@@ -94,7 +90,6 @@
                 </optgroup>
               </select>
               @endif
-
               <span class="form-text text-muted">Please enter your Area for the project.</span>
               @error('areas')
               <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
@@ -115,8 +110,7 @@
                 <div class="form-group fv-plugins-icon-container">
                   <label>Longitude *</label>
                   <input type="number" min="0" step="any" class="form-control form-control-lg" name="longitude" value="{{ $project->longitude }}">
-                  <span class="form-text text-muted">Please specify the
-                    longitude.</span>
+                  <span class="form-text text-muted">Please specify the longitude.</span>
                   @error('longitude')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
                   @enderror
@@ -133,8 +127,7 @@
                     <option value="{{ $type->id }}" {{ $project->project_type_id == $type->id ? 'selected' : '' }}>{{ $type->title }}</option>
                     @endforeach
                   </select>
-                  <span class="form-text text-muted">Please specify the
-                    project Type.</span>
+                  <span class="form-text text-muted">Please specify the project Type.</span>
                   <div class="fv-plugins-message-container"></div>
                 </div>
               </div>
@@ -146,21 +139,8 @@
                     @foreach ($progressStatus as $prog)
                     <option value="{{ $prog->id }}" {{ $project->progress_status_id == $prog->id ? 'selected' : '' }}>{{ $prog->progress_status_name }}</option>
                     @endforeach
-
-
-
-                    <!-- <option value="Pre-Launch" {{ $project->progress == 'Pre-Launch' ? 'selected' : '' }}>
-                      Pre Launch
-                    </option>
-                    <option value="Under Construction" {{ $project->progress == 'Under Construction' ? 'selected' : '' }}>
-                      Under Construction
-                    </option>
-                    <option value="Ready for Possession" {{ $project->progress == 'Ready for Possession' ? 'selected' : '' }}>
-                      Ready For Possession
-                    </option> -->
                   </select>
-                  <span class="form-text text-muted">Please specify the status
-                    of the project.</span>
+                  <span class="form-text text-muted">Please specify the status of the project.</span>
                   @error('progress')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
                   @enderror
@@ -177,27 +157,33 @@
                 </div>
               </div>
             </div>
-
             <div class="row">
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
                   <label>Project Document ( .pdf Format )</label>
                   <input type="file" class="form-control form-control-lg" name="project_doc" id="project_doc">
                   @error('project_doc')
-                  <span class="form-text text-muted">Please upload the project document in .pdf format.
-                    {{ $errors->first('project_doc') }}</span>
+                  <span class="form-text text-muted">Please upload the project document in .pdf format. {{ $errors->first('project_doc') }}</span>
                   @enderror
-                  @error('project_doc')
-                  <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
+                  @if ($project->project_doc)
+                  <a href="{{ $project->project_doc }}" target="_blank">View Current Document</a>
+                  @endif
                 </div>
               </div>
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
-                  <label>Project Video ( Video Format )</label>
-                  <input type="text" class="form-control form-control-lg" name="project_video" id="project_video">
-
-                  <div class="fv-plugins-message-container"></div>
+                  <label>Project Video (MP4 Format)</label>
+                  <input type="file" class="form-control form-control-lg" name="project_video" id="project_video" accept="video/mp4">
+                  <span class="form-text text-muted">Please upload the project video in MP4 format.</span>
+                  @error('project_video')
+                  <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
+                  @enderror
+                  @if ($project->project_video)
+                  <video width="25%" controls>
+                    <source src="{{ $project->project_video }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                  </video>
+                  @endif
                 </div>
               </div>
             </div>
@@ -205,15 +191,13 @@
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
                   <label>Project Cover Img</label>
-                  <input type="file" class="form-control form-control-lg" name="project_cover_img" id="project_doc">
+                  <input type="file" class="form-control form-control-lg" name="project_cover_img" id="project_cover_img">
                   @if ($project->project_cover_img)
                   <img src="{{ $project->project_cover_img }}" width="25%" />
                   @endif
                   @error('project_cover_img')
-                  <span class="form-text text-muted">Please upload the project Cover Image.
-                    {{ $errors->first('project_cover_img') }}</span>
+                  <span class="form-text text-muted">Please upload the project Cover Image. {{ $errors->first('project_cover_img') }}</span>
                   @enderror
-                  <div class="fv-plugins-message-container"></div>
                 </div>
               </div>
               <div class="col-xl-6">
@@ -226,25 +210,12 @@
                   @endforeach
                   @endif
                   @error('project_imgs')
-                  <span class="form-text text-muted">Please upload the project Images.
-                    {{ $errors->first('project_imgs') }}</span>
+                  <span class="form-text text-muted">Please upload the project Images. {{ $errors->first('project_imgs') }}</span>
                   @enderror
-                  <div class="fv-plugins-message-container"></div>
                 </div>
               </div>
             </div>
             <div class="form-group row">
-              <!-- <div class="col-xl-6">
-                <div class="form-group fv-plugins-icon-container">
-                  <label>Installment Length *</label>
-                  <input type="number" min="0" class="form-control form-control-lg" name="installment_length" value="{{ $project->installment_length }}">
-                  <span class="form-text text-muted">Please enter the Installment Length for this project.</span>
-                  @error('installment_length')
-                  <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
-                </div>
-              </div> -->
-
               @if(Auth::user()->user_type_id != Config::get("constants.UserTypeIds.Builder"))
               <div class="col-xl-12">
                 <div class="form-group fv-plugins-icon-container">
@@ -260,18 +231,16 @@
                   </select>
                 </div>
               </div>
-
               @endif
             </div>
-
             <div class="form-group row">
               <div class="col-xl-12">
                 <label class="col-form-label col-lg-12 bolder">Project Details</label>
                 <textarea name="details" id="kt-ckeditor-1">{{ $project->details }}</textarea>
+                @error('details')
+                <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
+                @enderror
               </div>
-              @error('details')
-              <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-              @enderror
             </div>
             <div class="row">
               <div class="col-xl-6">
@@ -293,7 +262,6 @@
                 </div>
               </div>
             </div>
-
             <div class="row">
               <div class="col-xl-4">
                 <div class="form-group fv-plugins-icon-container">
@@ -306,7 +274,7 @@
               </div>
               <div class="col-xl-4">
                 <div class="form-group fv-plugins-icon-container">
-                  <label class="col-form-label col-lg-12">bullet 2 *</label>
+                  <label class="col-form-label col-lg-12">Bullet 2 *</label>
                   <input type="text" class="form-control form-control-lg" name="bullet_2" value="{{ $project->project_info->bullet_2 }}">
                   @error('bullet_2')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
@@ -315,7 +283,7 @@
               </div>
               <div class="col-xl-4">
                 <div class="form-group fv-plugins-icon-container">
-                  <label class="col-form-label col-lg-12">bullet 3 *</label>
+                  <label class="col-form-label col-lg-12">Bullet 3 *</label>
                   <input type="text" class="form-control form-control-lg" name="bullet_3" value="{{ $project->project_info->bullet_3 }}">
                   @error('bullet_3')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
@@ -333,40 +301,32 @@
               </div>
               <div class="col-xl-4">
                 <div class="form-group fv-plugins-icon-container">
-                  <label class="col-form-label col-lg-12">bullet 5</label>
+                  <label class="col-form-label col-lg-12">Bullet 5</label>
                   <input type="text" class="form-control form-control-lg" name="bullet_5" value="{{ $project->project_info->bullet_5 }}">
                 </div>
               </div>
               <div class="col-xl-4">
                 <div class="form-group fv-plugins-icon-container">
-                  <label class="col-form-label col-lg-12">bullet 6</label>
+                  <label class="col-form-label col-lg-12">Bullet 6</label>
                   <input type="text" class="form-control form-control-lg" name="bullet_6" value="{{ $project->project_info->bullet_6 }}">
                 </div>
               </div>
             </div>
-
             <div class="form-group row">
               <div class="col-xl-12">
                 <div class="form-group fv-plugins-icon-container">
                   <label>Status</label>
                   <select name="status" class="form-control form-control-lg" required>
                     <option disabled selected hidden value="">Status...</option>
-                    <option value="1" {{ $project->status == 1 ? 'selected' : '' }}>Live
-                    </option>
-                    <option value="2" {{ $project->status == 2 ? 'selected' : '' }}>
-                      Pending
-                    </option>
-                    <option value="3" {{ $project->status == 3 ? 'selected' : '' }}>
-                      Declined
-                    </option>
+                    <option value="1" {{ $project->status == 1 ? 'selected' : '' }}>Live</option>
+                    <option value="2" {{ $project->status == 2 ? 'selected' : '' }}>Pending</option>
+                    <option value="3" {{ $project->status == 3 ? 'selected' : '' }}>Declined</option>
                   </select>
-                  <span class="form-text text-muted">Please specify the status
-                    of the project.</span>
+                  <span class="form-text text-muted">Please specify the status of the project.</span>
                   <div class="fv-plugins-message-container"></div>
                 </div>
               </div>
             </div>
-
             <div class="row">
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
@@ -438,7 +398,6 @@
           </div>
           <div class="card-footer">
             <div class="row">
-
               <div class="col-6 col-lg-6 text-left">
                 <a href="/admin/project" class="btn btn-secondary">Cancel</a>
               </div>
@@ -466,7 +425,6 @@
 
 @section('footer')
 <!--begin::Page Scripts(used by this page)-->
-<!-- <script src="assets/js/pages/custom/projects/add-project.js"></script> -->
 <script src="assets/js/pages/crud/forms/widgets/select2.js"></script>
 <!--end::Page Scripts-->
 <!--begin::Page Vendors(used by this page)-->

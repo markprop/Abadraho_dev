@@ -143,6 +143,15 @@ Route::get('admin/create_user', 'Admin\UserManagementController@create_user');
 Route::post('admin/add-new-user', 'Admin\UserManagementController@AddNewUser')->name("user.add");
 Route::post('admin/manage_users/delete', 'Admin\UserManagementController@destroy')->name("user.delete");
 
+// Broker Management (under User Management)
+Route::get('admin/brokers', 'Admin\BrokerManagementController@index');
+Route::get('admin/brokers/create', 'Admin\BrokerManagementController@create');
+Route::post('admin/brokers', 'Admin\BrokerManagementController@store');
+Route::get('admin/brokers/{broker}', 'Admin\BrokerManagementController@show');
+Route::get('admin/brokers/{broker}/edit', 'Admin\BrokerManagementController@edit');
+Route::put('admin/brokers/{broker}', 'Admin\BrokerManagementController@update');
+Route::post('admin/brokers/delete', 'Admin\BrokerManagementController@destroy')->name('admin.brokers.delete');
+
 
 // Admin Zoho Forms
 Route::get('admin/listing', 'Admin\InquiryController@index')->name('admin.zoho.index');

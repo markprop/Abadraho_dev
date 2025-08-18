@@ -38,10 +38,10 @@ class Progress extends Model
         });
     }
 
-    public function progress()
-    {
-        return $this->belongsTo(Progress::class, 'progress_id');
-    }
+    // public function progress()
+    // {
+    //     return $this->belongsTo(Progress::class, 'progress_id');
+    // }
 
     public function project()
     {

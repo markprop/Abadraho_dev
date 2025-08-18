@@ -136,11 +136,13 @@
 
                         <div class="col-md-5">
                             <ul class="social-new">
-                                <li><a href="tel:{{ $builderDetail->phone_number }}" class=""><button type="button" class="btn btn-danger btn-social"><i class="fa fa-phone" aria-hidden="true"></i> Call</button></a></li>
-
-                                <li><a target="_blank" href="https://api.whatsapp.com/send?phone={{ $builderDetail->phone_number }}" class=""><button type="button" class="btn btn-success btn-social"><i class="fa fa-whatsapp" aria-hidden="true"></i> WhatsApp</button></a></li>
-
-                                <li><a href="mailto:{{ $builderDetail->contact_person_email }}" class=""><button type="button" class="btn btn-secondary btn-social"><i class="fa fa-envelope" aria-hidden="true"></i> Email</button></a></li>
+                            @if ($builderDetail)
+        <li><a href="tel:{{ $builderDetail->phone_number }}" class=""><button type="button" class="btn btn-danger btn-social"><i class="fa fa-phone" aria-hidden="true"></i> Call</button></a></li>
+        <li><a target="_blank" href="https://api.whatsapp.com/send?phone={{ $builderDetail->phone_number }}" class=""><button type="button" class="btn btn-success btn-social"><i class="fa fa-whatsapp" aria-hidden="true"></i> WhatsApp</button></a></li>
+        <li><a href="mailto:{{ $builderDetail->contact_person_email }}" class=""><button type="button" class="btn btn-secondary btn-social"><i class="fa fa-envelope" aria-hidden="true"></i> Email</button></a></li>
+    @else
+        <li><p>No contact information available</p></li>
+    @endif
                             </ul>
 
                             <br>
@@ -1331,7 +1333,7 @@
 
                         </div>
 
-                        @if ($project->project_video)
+                        <!-- @if ($project->project_video)
 
                             <div class="col-lg-12">
 
@@ -1385,7 +1387,47 @@
 
                             </div>
 
-                        @endif
+                        @endif -->
+
+<!-- Update the video section -->
+@if (!empty($project->project_video) && $project->project_video)
+    <div class="col-lg-12">
+        <div id="tab-video" class="shop_single_tab_content style2 mt30">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">Property Video</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent2">
+                <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                    <div class="property_video">
+                        <div class="thumb">
+                            @if (Str::contains($project->project_video, 'youtube.com') || Str::contains($project->project_video, 'youtu.be'))
+                                <img class="pro_img img-fluid w100" src="{{ asset($project->project_cover_img) }}" alt="{{ $project->name }}">
+                                <div class="overlay_icon">
+                                    <a class="video_popup_btn popup-img red popup-youtube" href="{{ $project->project_video }}" onclick="addOpenVideoActivityLog()"><span class="flaticon-play"></span></a>
+                                </div>
+                            @else
+                                @php
+                                    $videoPath = str_replace('public/', '', $project->project_video); // Remove 'public/' if present
+                                    $fullVideoPath = $videoPath ? 'storage/' . $videoPath : '';
+                                @endphp
+                                <video width="100%" height="400" controls>
+                                    <source src="{{ asset($fullVideoPath) }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@else
+    <div class="col-lg-12">
+        <p>No video available for this project.</p>
+    </div>
+@endif
 
 
 
@@ -2249,7 +2291,7 @@
 
                                             @foreach ($project->owners as $owner)
 
-                                                {{ $owner['contact_person_phone_number'] }}
+                                                {{ $owner['contact_person_phone_number'] }} 
 
                                             @endforeach
 
@@ -4325,6 +4367,42 @@
 
         }
 
+    </script>
+
+
+<!-- Magnific Popup CSS and JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('.popup-youtube').magnificPopup({
+                type: 'iframe',
+                iframe: {
+                    patterns: {
+                        youtube: {
+                            index: 'youtube.com/',
+                            id: 'v=',
+                            src: '//www.youtube.com/embed/%id%?autoplay=1'
+                        },
+                        youtu_be: {
+                            index: 'youtu.be/',
+                            id: '/',
+                            src: '//www.youtube.com/embed/%id%?autoplay=1'
+                        }
+                    }
+                }
+            });
+        });
+
+        function addOpenVideoActivityLog() {
+            let params = ConstActivtyLogParams;
+            params.conversion_id = ConfigConstants.ActivityLogsConversionIds.playVideo;
+            params.description = "Played video of " + CurrentProject.name;
+            CallLaravelAction("/create/custom-activity-log", params, function(response) {
+                console.log("Insert video play log");
+            });
+        }
     </script>
 
 @endsection

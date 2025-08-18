@@ -499,6 +499,14 @@ $fileModified = date('hms');
                       </a>
                     </li>
                     <li class="menu-item" aria-haspopup="true">
+                      <a href="/admin/brokers" class="menu-link">
+                        <i class="menu-bullet menu-bullet-dot">
+                          <span></span>
+                        </i>
+                        <span class="menu-text">Broker Listing</span>
+                      </a>
+                    </li>
+                    <li class="menu-item" aria-haspopup="true">
                       <a href="/admin/search-history" class="menu-link">
                         <i class="menu-bullet menu-bullet-dot">
                           <span></span>
