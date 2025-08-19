@@ -12,10 +12,20 @@ use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use App\Models\ProjectOwners;
+use App\Models\Broker;
 
+/**
+ * Class DashboardController
+ * Handles the admin dashboard functionality, including data retrieval and logout operations.
+ */
 class DashboardController extends Controller
 {
-    public function __construct() {
+    /**
+     * Constructor to apply middleware for user type management.
+     * The 'auth' middleware is currently commented out with exceptions for specific actions.
+     */
+    public function __construct()
+    {
         $this->middleware('manage_user_types');
         // $this->middleware('auth', ['except' => [
         //     'fooAction',
@@ -23,58 +33,112 @@ class DashboardController extends Controller
         // ]]);
     }
 
-    public function index() {
+    /**
+     * Display the admin dashboard with relevant statistics based on user type.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function index()
+    {
         $projects = Project::orderBy("name", "ASC");
         $allProjects = Project::orderBy("name", "ASC");
+
+        // Check if the authenticated user is a builder
         if (Auth::user()->user_type_id == Config::get("constants.UserTypeIds.Builder")) {
-            $Builder = Builder::where("user_id", Auth::user()->id)->first();
-            $BuilderProjectIds = ProjectOwners::where("builder_id", $Builder->id)->pluck("project_id");
-            // dd($BuilderProjectIds->toArray());
+            // Retrieve the builder details for the authenticated user
+            $builder = Builder::where("user_id", Auth::user()->id)->first();
+            $builderProjectIds = ProjectOwners::where("builder_id", $builder->id)->pluck("project_id");
 
-            $projects = $projects->whereIn("id", $BuilderProjectIds);
-            $allProjects = $allProjects->whereIn("id", $BuilderProjectIds);
-            $DashboardData["totalProjects"] = $projects->get()->count();
-            $DashboardData['admin'] = false;
+            // Filter projects based on builder's project IDs
+            $projects = $projects->whereIn("id", $builderProjectIds);
+            $allProjects = $allProjects->whereIn("id", $builderProjectIds);
 
-            $DashboardData["totalPendingProjects"] = $projects->where('status', 2)->get()->count();
-            $DashboardData["totalActiveProjects"] = $allProjects->where('status', 1)->get()->count();
-            $DashboardData["totalWebSiteUser"] = User::where("user_type_id", Config::get("constants.UserTypeIds.WebSiteUser"))->get()->count();
-            $DashboardData["totalFavorites"] = Wishlist::where("user_id", Auth::user()->id)->get()->count();
-            // $DashboardData["totalfavorites"] = Wishlist::where("user_id")->get(); 
-            // dd($projects->get()->count());
+            // Prepare dashboard data for builder
+            $dashboardData["totalProjects"] = $projects->get()->count();
+            $dashboardData['admin'] = false;
+            $dashboardData["totalBuilders"] = 0;
+            $dashboardData["totalBrokers"] = Broker::count(); // Total brokers count
+            $dashboardData["totalPendingProjects"] = $projects->where('status', 2)->get()->count();
+            $dashboardData["totalActiveProjects"] = $allProjects->where('status', 1)->get()->count();
+            $dashboardData["totalWebSiteUser"] = User::where("user_type_id", Config::get("constants.UserTypeIds.WebSiteUser"))->get()->count();
+            $dashboardData["totalFavorites"] = Wishlist::where("user_id", Auth::user()->id)->get()->count();
         } else {
-            $DashboardData["totalProjects"] = Project::get()->count();
-            $DashboardData['admin'] = true;
-            $DashboardData["totalPendingProjects"] = Project::where('status', 2)->get()->count();
-            $DashboardData["totalActiveProjects"] = Project::where('status', 1)->get()->count();
-            $DashboardData["totalBuilders"] = Builder::get()->count();
-            $DashboardData["totalWebSiteUser"] = User::where("user_type_id", Config::get("constants.UserTypeIds.WebSiteUser"))->get()->count();
-            $DashboardData["totalFavorites"] = Wishlist::where("user_id", Auth::user()->id)->get()->count();
-            // dd($DashboardData["totalWebSiteUser"]);
+            // Prepare dashboard data for admin
+            $dashboardData["totalProjects"] = Project::get()->count();
+            $dashboardData['admin'] = true;
+            $dashboardData["totalPendingProjects"] = Project::where('status', 2)->get()->count();
+            $dashboardData["totalActiveProjects"] = Project::where('status', 1)->get()->count();
+            $dashboardData["totalBuilders"] = Builder::get()->count();
+            $dashboardData["totalBrokers"] = Broker::count(); // Total brokers count
+            $dashboardData["totalWebSiteUser"] = User::where("user_type_id", Config::get("constants.UserTypeIds.WebSiteUser"))->get()->count();
+            $dashboardData["totalFavorites"] = Wishlist::where("user_id", Auth::user()->id)->get()->count();
         }
-        return view('panel.admin.dashboard', $DashboardData);
+
+        // Return the dashboard view with the prepared data
+        return view('panel.admin.dashboard', $dashboardData);
     }
 
-    public function logout(Request $request) {
+    /**
+     * Handle user logout and session invalidation.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
+    public function logout(Request $request)
+    {
         $this->guard()->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         if ($response = $this->loggedOut($request)) {
             return $response;
         }
+
         return $request->wantsJson()
             ? new JsonResponse([], 204)
             : redirect('/');
     }
 
-    // No of customers-websiteuser
-    public function Customers() {
-        $user = User::where("user_type_id", -10024)->get();
-        return view('Customer', compact('user'));
+    /**
+     * Retrieve and display the list of customers (website users).
+     *
+     * @return \Illuminate\View\View
+     */
+    public function Customers()
+    {
+        $users = User::where("user_type_id", Config::get("constants.UserTypeIds.WebSiteUser"))->get();
+        return view('customers', compact('users')); // Updated view name to 'customers' for consistency
     }
 
-    public function Favorites() {
-        $fav = Wishlist::where("user_id", Auth::user()->id)->get();
-        return view('favorites', compact('fav'));
+    /**
+     * Retrieve and display the list of favorites for the authenticated user.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function Favorites()
+    {
+        $favorites = Wishlist::where("user_id", Auth::user()->id)->get();
+        return view('favorites', compact('favorites'));
+    }
+
+    /**
+     * Get the guard to be used during authentication.
+     *
+     * @return \Illuminate\Contracts\Auth\Guard
+     */
+    protected function guard()
+    {
+        return Auth::guard();
+    }
+
+    /**
+     * The user has logged out of the application.
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    protected function loggedOut(Request $request)
+    {
+        // Override this method if additional logout logic is needed
     }
 }
