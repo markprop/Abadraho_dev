@@ -1,0 +1,69 @@
+.video-showcase-section {
+    padding: 70px 0;
+    background-color: #f9f9f9;
+}
+
+.video-showcase-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Space between cards */
+    justify-content: center;
+}
+
+.video-showcase-item {
+    flex: 0 0 calc(25% - 15px); /* 4 cards per row with gap adjustment */
+    max-width: calc(25% - 15px);
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    /* width: 80%; */
+    /* height: 400px; Matches the image height */
+}
+
+.video-card {
+    position: relative;
+    width: 100%;
+    height: 100% auto;
+    overflow: hidden;
+}
+
+.video-container {
+    position: relative;
+    width: 80%;
+    height: 100%;
+}
+
+.video-container video {
+    width: 80%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+}
+
+.video-container video::-webkit-media-controls {
+    display: flex !important;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.video-container video:hover::-webkit-media-controls {
+    opacity: 1;
+}
+
+.video-container video:focus::-webkit-media-controls {
+    opacity: 1;
+}
+
+/* Remove download-button and related styles as they are no longer needed */
+.download-button {
+    display: none;
+}
+
+/* Ensure no leftover styles from previous overlays or titles */
+.play-overlay,
+.video-title {
+    display: none;
+}
