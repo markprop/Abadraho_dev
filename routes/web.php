@@ -7,6 +7,7 @@ use App\Helpers\AppHelper;
 use App\Http\Controllers\FaceBookController;
 use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\InterestController;
+use App\Http\Controllers\Admin\VideoController;
 
 Route::get('/areas', function () {
     return DB::select("select * from areas");
@@ -151,7 +152,6 @@ Route::get('admin/brokers/{broker}', 'Admin\BrokerManagementController@show');
 Route::get('admin/brokers/{broker}/edit', 'Admin\BrokerManagementController@edit');
 Route::put('admin/brokers/{broker}', 'Admin\BrokerManagementController@update');
 Route::post('admin/brokers/delete', 'Admin\BrokerManagementController@destroy')->name('admin.brokers.delete');
-
 
 // Admin Zoho Forms
 Route::get('admin/listing', 'Admin\InquiryController@index')->name('admin.zoho.index');
@@ -333,5 +333,3 @@ Route::get('/getunits', 'UnitCotnroller@get_unit_by_project_id');
 
 Route::post('/resend-phone-no-otp', 'Auth\RegisterController@ResendPhoneNoOtp');
 Route::post('/verify-phone-no-otp', 'Auth\RegisterController@VerifyPhoneNoOtp');
-
-

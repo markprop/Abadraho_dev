@@ -21,7 +21,7 @@ class HomeController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Show the application dashboard with recent videos.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
@@ -32,25 +32,21 @@ class HomeController extends Controller
 
     public function import_projects()
     {
-        // dd('da');
         return view('panel.admin.project.import-csv');
     }
 
     public function import_areas()
     {
-        // dd('da');
         return view('csv_imports.import-areas-csv');
     }
 
     public function import_types()
     {
-        // dd('da');
         return view('import-types-csv');
     }
 
     public function import_units()
     {
-        // dd('da');
         return view('csv_imports.import-units-csv');
     }
 
@@ -79,23 +75,13 @@ class HomeController extends Controller
 
     public function importCsvTypes(Request $request)
     {
-
-        // Begin For Documents
         $projects_name = time() . '.' . $request->projects->extension();
         $request->projects->move(public_path('uploads/project_imports'), $projects_name);
-        // End For Documents
         $file = public_path('uploads/project_imports/' . $projects_name);
 
         $projectsArray = $this->csvToArray($file);
-        // dd($projectsArray);
         for ($i = 0; $i < count($projectsArray); $i++) {
-            // Defining Slug
-            // $projectsArray[$i]['slug'] = Str::slug($projectsArray[$i]['name']);
-
-            $project = ProjectType::firstOrCreate($projectsArray[$i]);
-
-            // Adding Pivot Owners
-            // $project->owners()->attach(Auth::user()->id);
+            ProjectType::firstOrCreate($projectsArray[$i]);
         }
 
         dd(ProjectType::all());
@@ -103,46 +89,27 @@ class HomeController extends Controller
 
     public function importCsv(Request $request)
     {
-
-        // Begin For Documents
         $projects_name = time() . '.' . $request->projects->extension();
         $request->projects->move(public_path('uploads/project_imports'), $projects_name);
-        // End For Documents
         $file = public_path('uploads/project_imports/' . $projects_name);
 
         $projectsArray = $this->csvToArray($file);
-        // dd($projectsArray);
         for ($i = 0; $i < count($projectsArray); $i++) {
-            // Defining Slug
-            // $projectsArray[$i]['slug'] = Str::slug($projectsArray[$i]['name']);
-
-            $project = Area::firstOrCreate($projectsArray[$i]);
-
-            // Adding Pivot Owners
-            // $project->owners()->attach(Auth::user()->id);
+            Area::firstOrCreate($projectsArray[$i]);
         }
 
         dd(Area::all());
     }
+
     public function importCsvProjects(Request $request)
     {
-
-        // Begin For Documents
         $projects_name = time() . '.' . $request->projects->extension();
         $request->projects->move(public_path('uploads/project_imports'), $projects_name);
-        // End For Documents
         $file = public_path('uploads/project_imports/' . $projects_name);
 
         $projectsArray = $this->csvToArray($file);
-        // dd($projectsArray);
         for ($i = 0; $i < count($projectsArray); $i++) {
-            // Defining Slug
-            // $projectsArray[$i]['slug'] = Str::slug($projectsArray[$i]['name']);
-            // $projectsArray[$i]['project_doc'] = null;
-            $project = Project::firstOrCreate($projectsArray[$i]);
-            // die();
-            // Adding Pivot Owners
-            // $project->owners()->attach(Auth::user()->id);
+            Project::firstOrCreate($projectsArray[$i]);
         }
         dump($project);
         die();
@@ -151,23 +118,13 @@ class HomeController extends Controller
 
     public function importCsvUnits(Request $request)
     {
-
-        // Begin For Documents
         $projects_name = time() . '.' . $request->projects->extension();
         $request->projects->move(public_path('uploads/project_imports'), $projects_name);
-        // End For Documents
         $file = public_path('uploads/project_imports/' . $projects_name);
 
         $projectsArray = $this->csvToArray($file);
-        // dd($projectsArray);
         for ($i = 0; $i < count($projectsArray); $i++) {
-            // Defining Slug
-            // $projectsArray[$i]['slug'] = Str::slug($projectsArray[$i]['name']);
-
-            $project = Unit::firstOrCreate($projectsArray[$i]);
-
-            // Adding Pivot Owners
-            // $project->owners()->attach(Auth::user()->id);
+            Unit::firstOrCreate($projectsArray[$i]);
         }
 
         dd(Unit::all());
