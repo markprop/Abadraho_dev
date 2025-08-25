@@ -9,12 +9,10 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="shortcode_widget_multiselect">
-                                        <!--  <h5 class="search_heading">Area</h5> -->
+                                        <!-- <label class="search_heading">Area</label> -->
                                         <div class="ui_kit_multi_select_box">
-                                            <select class="select2-area form-control" name="area[]"
-                                                multiple="multiple">
-                                                <option disabled value="">Select Areas</option>
-
+                                            <select class="selectpicker" name="area[]" multiple="multiple" data-live-search="true" data-actions-box="true" data-live-search-placeholder="Please Select" title="Select Area">
+                                                <!-- <option disabled value="">Please Select</option> -->
                                                 @foreach ($areas as $area)
                                                     <?php
                                                     $selected = '';
@@ -34,15 +32,14 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="shortcode_widget_multiselect">
-                                        <!-- <h5 class="search_heading">Project Type</h5> -->
+                                        <!-- <label class="search_heading">Project Type</label> -->
                                         <div class="ui_kit_multi_select_box">
-                                            <select class="select2-project-type" name="type_id[]" multiple="multiple">
-                                                <option disabled value="">Select Project Type</option>
+                                            <select class="selectpicker" name="type_id[]" multiple="multiple" data-live-search="true" data-actions-box="true" data-live-search-placeholder="Please Select" title="Project Type">
+                                                <!-- <option disabled value="">Please Select</option> -->
                                                 @foreach ($projectTypes as $projectType)
                                                     <?php
                                                     $selected = '';
                                                     if (isset($projecttypeId) && $projecttypeId == $projectType->id) {
-                                                        // if (isset($projecttypeId)) {
                                                         $selected = 'selected';
                                                     }
                                                     ?>
@@ -57,68 +54,50 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <!-- <h5 class="search_heading">Max Down Payment</h5> -->
-                                    <input type="text" min="0" class="form-control"
-                                        placeholder="Max Down Payment" name="maxDP"
-                                        @if (request()->get('maxDP')) value="{!! request()->get('maxDP') !!}" @endif>
+                                    <!-- <label class="search_heading">Max Down Payment</label> -->
+                                    <input type="text" min="0" class="form-control" placeholder="Max Down Payment" name="maxDP" @if (request()->get('maxDP')) value="{!! request()->get('maxDP') !!}" @endif>
                                     <input type="text" min="0" id="downPayment" style="display:none">
                                 </div>
                             </div>
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
-                                    <!-- <h5 class="search_heading">Max Monthly Installment</h5> -->
-                                    <input type="text" min="0" class="form-control"
-                                        placeholder="Max Monthly Installment" name="maxMI"
-                                        @if (request()->get('maxMI')) value="{!! request()->get('maxMI') !!}" @endif>
+                                    <!-- <label class="search_heading">Max Monthly Installment</label> -->
+                                    <input type="text" min="0" class="form-control" placeholder="Max Monthly Installment" name="maxMI" @if (request()->get('maxMI')) value="{!! request()->get('maxMI') !!}" @endif>
                                 </div>
                             </div>
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
-                                    <!-- <h5 class="search_heading">Min Down
-                                        Payment</h5> -->
-                                    <input type="text" min="0" class="form-control"
-                                        placeholder="Min Down Payment" name="minDP"
-                                        @if (request()->get('minDP')) value="{!! request()->get('minDP') !!}" @endif>
+                                    <!-- <label class="search_heading">Min Down Payment</label> -->
+                                    <input type="text" min="0" class="form-control" placeholder="Min Down Payment" name="minDP" @if (request()->get('minDP')) value="{!! request()->get('minDP') !!}" @endif>
                                 </div>
                             </div>
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
-                                    <!-- <h5 class="search_heading">Min Monthly
-                                        Installment</h5> -->
-                                    <input type="text" min="0" class="form-control"
-                                        placeholder="Min Monthly Installment" name="minMI"
-                                        @if (request()->get('minMI')) value="{!! request()->get('minMI') !!}" @endif>
+                                    <!-- <label class="search_heading">Min Monthly Installment</label> -->
+                                    <input type="text" min="0" class="form-control" placeholder="Min Monthly Installment" name="minMI" @if (request()->get('minMI')) value="{!! request()->get('minMI') !!}" @endif>
                                 </div>
                             </div>
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
-                                    <!-- <h5 class="search_heading">Min Price</h5> -->
-                                    <input type="text" min="0" class="form-control" placeholder="Min Price"
-                                        name="minPrice"
-                                        @if (request()->get('minPrice')) value="{!! request()->get('minPrice') !!}" @endif>
+                                    <!-- <label class="search_heading">Min Price</label> -->
+                                    <input type="text" min="0" class="form-control" placeholder="Min Price" name="minPrice" @if (request()->get('minPrice')) value="{!! request()->get('minPrice') !!}" @endif>
                                 </div>
                             </div>
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
-                                    <!-- <h5 class="search_heading">Max Price</h5> -->
-                                    <div id="minPriceError" class="hide">value should be greater
-                                        than Min Price
-                                    </div>
-                                    <input type="text" min="0" class="form-control" placeholder="Max Price"
-                                        name="maxPrice"
-                                        @if (request()->get('maxPrice')) value="{!! request()->get('maxPrice') !!}" @endif>
+                                    <!-- <label class="search_heading">Max Price</label> -->
+                                    <div id="minPriceError" class="hide">value should be greater than Min Price</div>
+                                    <input type="text" min="0" class="form-control" placeholder="Max Price" name="maxPrice" @if (request()->get('maxPrice')) value="{!! request()->get('maxPrice') !!}" @endif>
                                     <input type="text" min="0" id="maxBudget" style="display:none">
                                 </div>
                             </div>
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
-                                    <!-- <h5 class="search_heading">Progress</h5> -->
-                                    <select class="select2-progress" placeholder="Progress" name="progress[]"
-                                        multiple="multiple">
-                                        <option disabled value="">Progress</option>
+                                    <!-- <label class="search_heading">Progress</label> -->
+                                    <select class="selectpicker" name="progress[]" multiple="multiple" data-live-search="true" data-actions-box="true" data-live-search-placeholder="Please Select" title="Select Project Progress">
+                                        <!-- <option disabled value="">Please Select</option> -->
                                         @foreach ($progress as $progress)
-                                            <option value="{{ $progress->progress_status_name }}"
-                                                @if (request()->get('progress') && in_array($progress->progress_status_name, request()->get('progress'))) selected @endif>
+                                            <option value="{{ $progress->progress_status_name }}" @if (request()->get('progress') && in_array($progress->progress_status_name, request()->get('progress'))) selected @endif>
                                                 {{ $progress->progress_status_name }}
                                             </option>
                                         @endforeach
@@ -127,12 +106,11 @@
                             </div>
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
-                                    <!-- <h5 class="search_heading">Builder</h5> -->
-                                    <select class="select2-builder" placeholder="Builder" name="builder[]"
-                                        multiple="multiple">
+                                    <!-- <label class="search_heading">Builder</label> -->
+                                    <select class="selectpicker" name="builder[]" multiple="multiple" data-live-search="true" data-actions-box="true" data-live-search-placeholder="Please Select" title="Select Builder">
+                                        <!-- <option disabled value="">Please Select</option> -->
                                         @foreach ($builders as $blder)
-                                            <option value="{{ $blder->id }}"
-                                                @if (request()->get('builder') && in_array($blder->id, request()->get('builder'))) selected @endif>
+                                            <option value="{{ $blder->id }}" @if (request()->get('builder') && in_array($blder->id, request()->get('builder'))) selected @endif>
                                                 {{ $blder->full_name }}
                                             </option>
                                         @endforeach
@@ -141,13 +119,11 @@
                             </div>
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
-                                    <!-- <h5 class="search_heading">Tags</h5> -->
-                                    <select class="select2-tags" placeholder="Tags" name="tag_id[]"
-                                        multiple="multiple">
-                                        <option disabled value="">Select Project Tags</option>
+                                    <!-- <label class="search_heading">Tags</label> -->
+                                    <select class="selectpicker" name="tag_id[]" multiple="multiple" data-live-search="true" data-actions-box="true" data-live-search-placeholder="Please Select" title="Select Tags">
+                                        <!-- <option disabled value="">Please Select</option> -->
                                         @foreach ($tags as $tag)
-                                            <option value="{{ $tag->id }}"
-                                                @if (request()->get('tag_id') && in_array($tag->id, request()->get('tag_id'))) selected @endif>
+                                            <option value="{{ $tag->id }}" @if (request()->get('tag_id') && in_array($tag->id, request()->get('tag_id'))) selected @endif>
                                                 {{ $tag->name }}
                                             </option>
                                         @endforeach
@@ -160,8 +136,7 @@
                                         <div class="navbered">
                                             <div class="mega-dropdown advance_filter_btn">
                                                 <span id="show_advancefields" class="dropbtn">
-                                                    <span id="more-less-txt">More</span> <i
-                                                        class="flaticon-more pl10 flr-520"></i>
+                                                    <span id="more-less-txt">More</span> <i class="flaticon-more pl10 flr-520"></i>
                                                 </span>
                                             </div>
                                         </div>
@@ -182,3 +157,21 @@
         </div>
     </div>
 </div>
+
+@section('footer')
+<!--begin::Page Scripts-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.selectpicker').selectpicker();
+
+        // Toggle advanced fields when "More" button is clicked
+        $('#show_advancefields').on('click', function() {
+            $('.toggle-advanced-fields').toggleClass('hide');
+            var text = $('#more-less-txt').text();
+            $('#more-less-txt').text(text === 'More' ? 'Less' : 'More');
+        });
+    });
+</script>
+<!--end::Page Scripts-->
+@endsection

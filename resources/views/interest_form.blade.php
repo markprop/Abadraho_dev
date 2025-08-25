@@ -1,4 +1,4 @@
-<!-- @extends('layouts.master')
+@extends('layouts.master')
 @section('meta_keywords', 'property interest, real estate, Dubai')
 @section('meta_description', 'Understand your property interest in Dubai')
 @section('meta_title', 'Property Interest Form')
@@ -103,4 +103,4 @@
             });
         });
     </script>
-@endsection -->
+@endsection

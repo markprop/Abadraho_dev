@@ -27,7 +27,8 @@
     <!-- Responsive stylesheet -->
     <link rel="stylesheet" href="/assets/css/responsive.css?v={!! time() !!}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.6/css/intlTelInput.css"/>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    
     <link rel="stylesheet" href="/assets/css/common.css?v={!! time() !!}">
     <!-- Title -->
     <title>@yield('title', 'Abad Raho')</title>
@@ -880,10 +881,17 @@
     <!-- Phone no masking -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
     <!-- <script src="assets/js/pages/crud/forms/widgets/select2.js"></script> -->
+   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
 
     <!-- select2-input-js -->
     {{--    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>--}}
 
+    <script>
+    $(document).ready(function() {
+        $('.selectpicker').selectpicker();
+    });
+    </script>
 <!-- Vue.js -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.26/vue.cjs.js" integrity="sha512-2e2aXOh4/FgkCAUyurkjk0Uw4m1gPcExFwb1Ai4Ajjg97se/FEWfrLG1na4mq8cgOzouc8qLIqsh0EGksPGdqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.26/vue.cjs.min.js" integrity="sha512-2ftG6Hks6q07Ca+h8f4WCFWQAZca6bm1klWMAFGev51hiusd6FFaRT+kFWcj1G2KjFgZrns1CuwR8eA4OA0zLw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -1300,11 +1308,11 @@ $(document).ready(function() {
     let auth = <?php echo json_encode(Auth::user()); ?>;
     let hasFilledForm = '{{ session()->get('has_filled_form') }}' === 'true';
 
-    // if (!auth && !hasFilledForm) {
-    //     setTimeout(() => {
-    //         $('#interestModal').modal('show');
-    //     }, 5000);
-    // }
+    if (!auth && !hasFilledForm) {
+        setTimeout(() => {
+            $('#interestModal').modal('show');
+        }, 5000);
+    }
 
     $('.selectable').on('click', function() {
         const value = $(this).data('value');
