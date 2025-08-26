@@ -275,7 +275,7 @@ Route::post('/projects/generate-voucher', 'FrontEnd\ProjectController@generate_v
 
 Route::get('/projects/listings', 'FrontEnd\ProjectListingController@index')->name("project.listing");
 
-Route::get('/projects', 'FrontEnd\ProjectListingController@index')->name("project.listing");
+Route::get('/projects', 'FrontEnd\ProjectListingController@index')->name("project.all");
 Route::get('/projects/{slug}', 'FrontEnd\ProjectListingController@index')->name("slug.listing");
 
 // /{areas}&{location}

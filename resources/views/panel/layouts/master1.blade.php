@@ -1205,6 +1205,7 @@ $fileModified = date('hms');
 
   <!--end::Global Config-->
   <script src="assets/js/jquery-3.3.1.js"></script>
+
   <script>
     var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";
   </script>
@@ -1295,6 +1296,8 @@ $fileModified = date('hms');
   <!-- helper.js created by shahbaz raza -->
   <script src="{{asset('js/helper.js') }}"></script>
   <script src="//unpkg.com/autonumeric"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <!-- app.js Scripts -->
   <!-- <script src="{{ asset('js/app.js') }}" defer></script> -->

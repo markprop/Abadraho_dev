@@ -1,10 +1,65 @@
 @extends('panel.layouts.master1')
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-<style>
+<!--begin::Page Custom Styles(used by this page)-->
+<link href="assets/css/pages/wizard/wizard-1.css" rel="stylesheet" type="text/css" />
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <style>
   .icon-select select {
-    font-family: fontAwesome
+    font-family: 'FontAwesome', sans-serif;
   }
-
+  .select2-container .select2-selection--single {
+    height: calc(2.25rem + 2px); /* Match form-control-lg height */
+    padding: 0.3rem 1.6rem 0rem;
+    border: 1px solid #ced4da; /* Match input border */
+    border-radius: 0.25rem; /* Match input border radius */
+    background-color: #fff; /* Match input background */
+    display: flex;
+    align-items: center;
+    font-weight: 400; /* Match placeholder font weight */
+  }
+  .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: normal;
+    color: #495057; /* Match input text color */
+    font-weight: 500; /* Match selected text font weight */
+    display: flex;
+    align-items: center;
+  }
+  .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #6c757d; /* Match muted placeholder color */
+    font-weight: 400; /* Match placeholder font weight */
+  }
+  .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: calc(2.25rem + 2px);
+    top: 0;
+    right: 0.5rem;
+  }
+  .select2-results__option {
+    padding: 0.5rem 1rem;
+    font-weight: 600; /* Bolder text in dropdown options */
+    display: flex;
+    align-items: center;
+    color: #495057; /* Match option text color */
+  }
+  .select2-results__option i {
+    margin-right: 10px;
+    font-size: 1.2rem; /* Slightly larger icons for visibility */
+    color: #495057; /* Match icon color with text */
+  }
+  .select2-container--default .select2-search--dropdown .select2-search__field {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    font-size: 1rem; /* Match input font size */
+    color: #495057; /* Match input text color */
+  }
+  .select2-container--default .select2-results__option--highlighted {
+    background-color: #007bff;
+    color: #fff;
+  }
+  .select2-container--default .select2-results__option--highlighted i {
+    color:rgb(6, 6, 6);
+  }
 </style>
 @section('content')
 
@@ -54,21 +109,24 @@
                   @enderror
                 </div>
                 <div class="form-group fv-plugins-icon-container icon-select">
-                  <label>Icon</label>
-                  <select name="icon" id="" class="form-control form-control-lg">
-                    <option value="">Please Select</option>
-                    @foreach ($icon_arr as $icon)
-                      <option value="{{ $icon['class'] }}">
-                        &#x{{ str_replace('\\', '', $icon['unicode']) }}; {{ $icon['name'] }}
-                      </option>
-                    @endforeach
-                  </select>
-                  <span class="form-text text-muted">Please enter the room type's
-                    icon.</span>
-                  @error('icon')
-                    <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
-                </div>
+  <label>Icon</label>
+  <select name="icon" id="icon-select" class="form-control form-control-lg">
+    <option value="">Please Select</option>
+    @foreach ($icon_arr as $icon)
+      <option 
+        value="{{ $icon['class'] }}" 
+        data-icon="{{ $icon['class'] }}" 
+        data-unicode="{{ str_replace('\\', '', $icon['unicode']) }}"
+      >
+        {{ $icon['name'] }}
+      </option>
+    @endforeach
+  </select>
+  <span class="form-text text-muted">Please select the room type's icon.</span>
+  @error('icon')
+    <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
+  @enderror
+</div>
                 
                 <!-- Check and test icon library -->
                 <!-- <div class="">
@@ -137,4 +195,31 @@
   <!--begin::Page Scripts(used by this page)-->
   <script src="assets/js/pages/custom/projects/add-project.js"></script>
   <script src="assets/js/pages/crud/forms/widgets/select2.js"></script>
+  <!-- Select2 JS (ensure this is the correct path or use CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#icon-select').select2({
+        placeholder: "Please Select",
+        allowClear: true,
+        minimumResultsForSearch: 0, // Always show search box
+        templateResult: formatIcon,
+        templateSelection: formatIcon
+      });
+
+      // Function to format the dropdown options and selected option
+      function formatIcon(icon) {
+        if (!icon.id) {
+          return $('<span style="color: #6c757d; font-weight: 400;">' + icon.text + '</span>'); // Match placeholder style
+        }
+        var unicode = $(icon.element).data('unicode');
+        var iconClass = $(icon.element).data('icon');
+        var $icon = $(
+          '<span style="font-weight: 600;"><i class="fa ' + iconClass + '"></i> ' + icon.text + '</span>'
+        );
+        return $icon;
+      }
+    });
+  </script>
+  <!--end::Page Scripts-->
 @endsection

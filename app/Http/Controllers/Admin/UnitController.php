@@ -212,8 +212,8 @@ class UnitController extends Controller
         }
         // If Image Deleted
         elseif ($request->payment_plan_img_remove == 1) {
-            $image_path = '/uploads/project_images/project_' . $unit->project_id . '/unit_' . $unit->id  . '/' . $unit->payment_plan_img;
-            File::delete(public_path() . $image_path);
+            $image_path = 'uploads/project_images/project_' . $unit->project_id . '/unit_' . $unit->id . '/' . $unit->payment_plan_img;
+            Storage::disk('public')->delete($image_path); // Changed to use Storage facade with public disk
             $unit->payment_plan_img = NULL;
         }
 
@@ -234,8 +234,8 @@ class UnitController extends Controller
         }
         // If Image Deleted
         elseif ($request->floor_plan_img_remove == 1) {
-            $image_path = '/uploads/project_images/project_' . $unit->project_id . '/unit_' . $unit->id  . '/' . $unit->floor_plan_img;
-            File::delete(public_path() . $image_path);
+            $image_path = 'uploads/project_images/project_' . $unit->project_id . '/unit_' . $unit->id . '/' . $unit->floor_plan_img;
+            Storage::disk('public')->delete($image_path); // Changed to use Storage facade with public disk
             $unit->floor_plan_img = NULL;
         }
         // End For Documents
