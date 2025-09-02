@@ -109,49 +109,44 @@ class AppHelper
         return $random_number;
     }
 
-    public static function isArchiveRecord(dbBuilder $model)
+    public static function isArchiveRecord(\Illuminate\Database\Eloquent\Builder $model)
     {
-        $ErrorMsg = "";
-        $data = [];
-
-        DB::beginTransaction();
+        $data = ['status' => false, 'message' => ''];
         try {
-            // return $request->all();
-            // return response()->json($data, 200);
-            $currentyDBRecord = $model->first()->toArray();
-            // dd($dbRecord["id"]);
-            if ($ErrorMsg == "") {
-                if (Auth::check()) {
-                    $archiveRecord = $model->update([
-                        "is_archive" => 1,
-                        "is_archive_by" => Auth::user()->id,
-                        "is_archive_at" => Carbon::now()->toDateTimeString(),
-                    ]);
-                    $data["status"] = true;
-                    $data["message"] = "deleted successfully.";
-                    $data["data"] = $currentyDBRecord;
-                    // dd($archiveRecord);
-                } else {
-                    $ErrorMsg = "Session Expired: please logged in first.";
-                }
+            $record = $model->first();
+            if (!$record) {
+                $data['message'] = 'Record not found.';
+                return $data;
             }
+
+            if (!Auth::check()) {
+                $data['message'] = 'Session Expired: Please log in first.';
+                Log::warning('Session expired in isArchiveRecord for model: ' . get_class($model->getModel()));
+                return $data;
+            }
+
+            $model->update([
+                'is_archive' => 1,
+                'is_archive_by' => Auth::id(),
+                'is_archive_at' => Carbon::now()->toDateTimeString(),
+            ]);
+
+            $data['status'] = true;
+            $data['message'] = 'Record archived successfully.';
+            $data['data'] = $record->toArray();
         } catch (\Throwable $e) {
             DB::rollback();
-            $ErrorMsg = "Error Occurred while runing AppHelper::isArchiveRecord method. Exception Msg : " . $e->getMessage();
-            $data["status"] = false;
-            $data["message"] = $ErrorMsg;
+            $data['message'] = 'Error archiving record: ' . $e->getMessage();
+            Log::error('isArchiveRecord failed: ' . $e->getMessage(), [
+                'model' => get_class($model->getModel()),
+                'user_id' => Auth::id() ?? 'null',
+            ]);
         }
-        if ($ErrorMsg == "") {
+
+        if ($data['status']) {
             DB::commit();
-            // dd("eeeeeeeeeee");
-            return $data;
-        } else {
-            $data["status"] = false;
-            $data["message"] = $ErrorMsg;
-            // $data["Obj"] = $request->all();
-            // dd($ErrorMsg);
-            return $data;
         }
+        return $data;
     }
 
     public static function insertActivityLog(Request $request)

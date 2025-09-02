@@ -44,7 +44,7 @@
             </div>
             <div class="form-group">
               <label>Broker Since (number of years)</label>
-              <input type="number" class="form-control form-control-lg" name="broker_since_years" min="0" max="200">
+              <input type="number" class="form-control form-control-lg" name="broker_since_years" min="20">
             </div>
             <div class="form-group">
               <label>Deals in</label>

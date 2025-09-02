@@ -1,8 +1,8 @@
 @extends('layouts.master')
-@section('title', $project->name)
-@section('meta_keywords', $project->meta_tags)
-@section('meta_description', $project->meta_description)
-@section('meta_title', $project->meta_title)
+@section('title', $project->meta_title ?? $project->name)
+@section('meta_keywords', $project->meta_keywords ?? '')
+@section('meta_description', $project->meta_description ?? '')
+@section('meta_title', $project->meta_title ?? $project->name)
 
 <style>
     .hide {
@@ -24,10 +24,20 @@
         width: 90px !important;
         display: -webkit-inline-box;
     }
+    .badge-tag {
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    .bullet-list li {
+        margin-bottom: 10px;
+    }
 </style>
 
 @section('content')
-    <?php $imgs_exploded = explode('|', $project->project_imgs); ?>
+<?php 
+    $imgs_exploded = explode('|', $project->project_imgs); 
+    $docs_exploded = !empty($project->project_docs) ? explode('|', $project->project_docs) : [];
+?>
 
     <!-- Listing Single Property -->
 
@@ -64,7 +74,7 @@
 
         <div class="container">
 
-            <div class="row">
+            <!-- <div class="row">
 
                 <div class="image-grid">
 
@@ -76,7 +86,18 @@
 
                 </div>
 
+            </div> -->
+            <div class="row">
+                <div class="image-grid">
+                    @if (!empty($imgs_exploded) && isset($imgs_exploded[0]))
+                        <img class="img-fluid w100 image-grid-col-2 image-grid-row-2" src="{{ asset($imgs_exploded[0]) }}" alt="1.jpg">
+                    @endif
+                    @foreach ($imgs_exploded as $img)
+                        <img src="{{ asset($img) }}" alt="1.jpg">
+                    @endforeach
+                </div>
             </div>
+
 
 
 
@@ -135,14 +156,19 @@
                         </div>
 
                         <div class="col-md-5">
+                            <!-- <ul class="social-new">
+                                @if ($builderDetail)
+                                    <li><a href="tel:{{ $builderDetail->phone_number }}" class=""><button type="button" class="btn btn-danger btn-social"><i class="fa fa-phone" aria-hidden="true"></i> Call</button></a></li>
+                                    <li><a target="_blank" href="https://api.whatsapp.com/send?phone={{ $builderDetail->phone_number }}" class=""><button type="button" class="btn btn-success btn-social"><i class="fa fa-whatsapp" aria-hidden="true"></i> WhatsApp</button></a></li>
+                                    <li><a href="mailto:{{ $builderDetail->contact_person_email }}" class=""><button type="button" class="btn btn-secondary btn-social"><i class="fa fa-envelope" aria-hidden="true"></i> Email</button></a></li>
+                                @else
+                                    <li><p>No contact information available</p></li>
+                                @endif
+                            </ul> -->
                             <ul class="social-new">
-                            @if ($builderDetail)
-        <li><a href="tel:{{ $builderDetail->phone_number }}" class=""><button type="button" class="btn btn-danger btn-social"><i class="fa fa-phone" aria-hidden="true"></i> Call</button></a></li>
-        <li><a target="_blank" href="https://api.whatsapp.com/send?phone={{ $builderDetail->phone_number }}" class=""><button type="button" class="btn btn-success btn-social"><i class="fa fa-whatsapp" aria-hidden="true"></i> WhatsApp</button></a></li>
-        <li><a href="mailto:{{ $builderDetail->contact_person_email }}" class=""><button type="button" class="btn btn-secondary btn-social"><i class="fa fa-envelope" aria-hidden="true"></i> Email</button></a></li>
-    @else
-        <li><p>No contact information available</p></li>
-    @endif
+                                <li><a href="tel:+923167031554" class=""><button type="button" class="btn btn-danger btn-social"><i class="fa fa-phone" aria-hidden="true"></i> Call</button></a></li>
+                                <li><a target="_blank" href="https://api.whatsapp.com/send?phone=923167031554" class=""><button type="button" class="btn btn-success btn-social"><i class="fa fa-whatsapp" aria-hidden="true"></i> WhatsApp</button></a></li>
+                                <li><a href="mailto:info@markproperties.pk" class=""><button type="button" class="btn btn-secondary btn-social"><i class="fa fa-envelope" aria-hidden="true"></i> Email</button></a></li>
                             </ul>
 
                             <br>
@@ -293,7 +319,7 @@
 
                     <div class="sticky-nav-tabs">
 
-                        <ul class="sticky-nav-tabs-container" id="top-menu">
+                        <!-- <ul class="sticky-nav-tabs-container" id="top-menu">
 
                             <li class="list-inline-item nav-item active"><a class="sticky-nav-tab"
 
@@ -339,6 +365,21 @@
 
 
 
+                        </ul> -->
+
+                        <ul class="sticky-nav-tabs-container" id="top-menu">
+                            <li class="list-inline-item nav-item active"><a class="sticky-nav-tab" href="#tab-detail">Details</a></li>
+                            <li class="list-inline-item nav-item"><a class="sticky-nav-tab" href="#tab-units">Unit Types</a></li>
+                            <li class="list-inline-item nav-item"><a class="sticky-nav-tab" href="#tab-features">Project Features</a></li>
+                            <li class="list-inline-item nav-item"><a class="sticky-nav-tab" href="#tab-location">Locations</a></li>
+                            @if (!empty($project->project_video))
+                                <li class="list-inline-item nav-item"><a class="sticky-nav-tab" href="#tab-video">Video</a></li>
+                            @endif
+                            @if ($project->main_heading || $project->sub_heading || $project->bullet_1 || $project->bullet_2 || $project->bullet_3 || $project->bullet_4 || $project->bullet_5 || $project->bullet_6 || $project->tags->count() > 0)
+                                <li class="list-inline-item nav-item"><a class="sticky-nav-tab" href="#tab-highlights">Highlights</a></li>
+                            @endif
+                            <li class="list-inline-item nav-item"><a class="sticky-nav-tab" href="#tab-seo">SEO Details</a></li>
+                            <li class="list-inline-item nav-item"><a class="sticky-nav-tab" href="#tab-calculator">Customized Payment Schedule</a></li>
                         </ul>
 
                     </div>
@@ -405,7 +446,7 @@
 
                                     </div>
 
-                                    <div class="col-md-6 col-lg-6 col-xl-6">
+                                    <!-- <div class="col-md-6 col-lg-6 col-xl-6">
 
                                         <ul class="list-inline-item" style="float: left;">
 
@@ -517,6 +558,59 @@
 
                                         </ul> --}}
 
+                                    </div> -->
+
+                                    <div class="col-md-6 col-lg-6 col-xl-6">
+                                        <ul class="list-inline-item">
+                                            <li>
+                                                <p>
+                                                    <span class="pod-details">Property ID: </span>
+                                                    <span class="text-uppercase">{{ $project->property_id }}</span>
+                                                </p>
+                                            </li>
+                                            @if ($project->rooms)
+                                                <li>
+                                                    <p>
+                                                        <span class="pod-details">Rooms: </span>
+                                                        <span>{{ $project->rooms }}</span>
+                                                    </p>
+                                                </li>
+                                            @endif
+                                            <li>
+                                                <p>
+                                                    <span class="pod-details">Location: </span>
+                                                    <span>{{ $project->address }}</span>
+                                                </p>
+                                            </li>
+                                            <li>
+                                                <p>
+                                                    <span class="pod-details">Areas: </span>
+                                                    <span>
+                                                        @foreach ($project->areas as $area)
+                                                            {{ $area->name }}{{ !$loop->last ? ', ' : '' }}
+                                                        @endforeach
+                                                    </span>
+                                                </p>
+                                            </li>
+                                            <li>
+                                                <p>
+                                                    <span class="pod-details">Added Time: </span>
+                                                    <span>{{ $project->added_time }}</span>
+                                                </p>
+                                            </li>
+                                            <li>
+                                                <p>
+                                                    <span class="pod-details">Discount Price: </span>
+                                                    <span>{{ \App\Http\Controllers\FrontEnd\ProjectController::convertCurrency((int) $project->discount_price) }}</span>
+                                                </p>
+                                            </li>
+                                            <li>
+                                                <p>
+                                                    <span class="pod-details">Marketed By: </span>
+                                                    <span>{{ $project->marketed_by ?? 'N/A' }}</span>
+                                                </p>
+                                            </li>
+                                        </ul>
                                     </div>
 
                                     <div class="col-md-6 col-lg-6 col-xl-6">
@@ -1263,44 +1357,38 @@
 
 
 
-                        @if ($project->project_doc)
-
+                        @if (!empty($project->project_doc))
                             <div class="col-lg-12">
-
                                 <div class="property_attachment_area mt20">
-
                                     <div class="utf-boxed-list-headline-item">
-
                                         <h3>Project Attachments</h3>
-
                                     </div>
-
                                     <div class="iba_container style2">
-
-                                        <div class="icon_box_area style2">
-
-                                            {{-- <div class="score"><span class="flaticon-pdf text-thm fz30"></span></div> --}}
-
-                                            <div class="details">
-
-                                                <a href="/uploads/project_documents/project_{{ $project->id }}/{{ $project->project_doc }}"
-
-                                                    download onclick="addDownloadPdfActivityLog()">
-
-                                                    <h5><span class="flaticon-download text-thm pr10"></span> Download PDF</h5>
-
+                                        @php $docs_exploded = explode('|', $project->project_doc); @endphp
+                                        @foreach ($docs_exploded as $index => $doc)
+                                            @php
+                                                $filename = basename($doc); // Extract filename (e.g., 1756712331_Suresh_Kumar_Android_Developer.pdf)
+                                            @endphp
+                                            <div class="icon_box_area style2">
+                                                <div class="details">
+                                                <a href="{{ route('download.pdf', ['projectId' => $project->id, 'filename' => $filename]) }}" download="{{ $filename }}">
+                                                    <h5><span class="flaticon-download text-thm pr10"></span> Download PDF {{ $index + 1 }}</h5>
                                                 </a>
-
+                                                </div>
                                             </div>
-
-                                        </div>
-
+                                        @endforeach
                                     </div>
-
                                 </div>
-
                             </div>
-
+                        @else
+                            <div class="col-lg-12">
+                                <div class="property_attachment_area mt20">
+                                    <div class="utf-boxed-list-headline-item">
+                                        <h3>Project Attachments</h3>
+                                    </div>
+                                    <p>No documents available for this project.</p>
+                                </div>
+                            </div>
                         @endif
 
                         <div class="col-lg-12">
@@ -1389,46 +1477,125 @@
 
                         @endif -->
 
-<!-- Update the video section -->
-@if (!empty($project->project_video) && $project->project_video)
-    <div class="col-lg-12">
-        <div id="tab-video" class="shop_single_tab_content style2 mt30">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">Property Video</a>
-                </li>
-            </ul>
-            <div class="tab-content" id="myTabContent2">
-                <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
-                    <div class="property_video">
-                        <div class="thumb">
-                            @if (Str::contains($project->project_video, 'youtube.com') || Str::contains($project->project_video, 'youtu.be'))
-                                <img class="pro_img img-fluid w100" src="{{ asset($project->project_cover_img) }}" alt="{{ $project->name }}">
-                                <div class="overlay_icon">
-                                    <a class="video_popup_btn popup-img red popup-youtube" href="{{ $project->project_video }}" onclick="addOpenVideoActivityLog()"><span class="flaticon-play"></span></a>
+                        <!-- Video Section -->
+                        @if (!empty($project->project_video))
+                            <div class="col-lg-12">
+                                <div id="tab-video" class="shop_single_tab_content style2 mt30">
+                                    <div class="utf-boxed-list-headline-item">
+                                        <h3>Property Video</h3>
+                                    </div>
+                                    <div class="property_video">
+                                        <div class="thumb">
+                                            <?php
+                                                $video_id = '';
+                                                $url = $project->project_video;
+                                                if (preg_match('/youtube\.com\/watch\?v=([^\&\?\/]+)/', $url, $id)) {
+                                                    $video_id = $id[1];
+                                                } elseif (preg_match('/youtu\.be\/([^\&\?\/]+)/', $url, $id)) {
+                                                    $video_id = $id[1];
+                                                } elseif (preg_match('/youtube\.com\/embed\/([^\&\?\/]+)/', $url, $id)) {
+                                                    $video_id = $id[1];
+                                                }
+                                            ?>
+                                            @if ($video_id)
+                                                <iframe width="100%" height="400" src="https://www.youtube.com/embed/{{ $video_id }}?autoplay=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                            @else
+                                                <p>Invalid YouTube URL provided. Please update with a valid link like https://www.youtube.com/watch?v=example.</p>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
-                            @else
-                                @php
-                                    $videoPath = str_replace('public/', '', $project->project_video); // Remove 'public/' if present
-                                    $fullVideoPath = $videoPath ? 'storage/' . $videoPath : '';
-                                @endphp
-                                <video width="100%" height="400" controls>
-                                    <source src="{{ asset($fullVideoPath) }}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-@else
-    <div class="col-lg-12">
-        <p>No video available for this project.</p>
-    </div>
-@endif
+                            </div>
+                        @else
+                            <div class="col-lg-12">
+                                <div id="tab-video" class="shop_single_tab_content style2 mt30">
+                                    <div class="utf-boxed-list-headline-item">
+                                        <h3>Property Video</h3>
+                                    </div>
+                                    <p>No video available for this project.</p>
+                                </div>
+                            </div>
+                        @endif
 
+
+                        <!-- Project Highlights Section -->
+                        @if ($project->main_heading || $project->sub_heading || $project->bullet_1 || $project->bullet_2 || $project->bullet_3 || $project->bullet_4 || $project->bullet_5 || $project->bullet_6 || $project->tags->count() > 0)
+                            <div class="col-lg-12">
+                                <div id="tab-highlights" class="shop_single_tab_content style2 mt30">
+                                    <div class="utf-boxed-list-headline-item">
+                                        <h3>Project Highlights</h3>
+                                    </div>
+                                    <div class="row">
+                                        @if ($project->main_heading)
+                                            <div class="col-lg-12">
+                                                <h4 class="mb15">{{ $project->main_heading }}</h4>
+                                            </div>
+                                        @endif
+                                        @if ($project->sub_heading)
+                                            <div class="col-lg-12">
+                                                <h5 class="mb15">{{ $project->sub_heading }}</h5>
+                                            </div>
+                                        @endif
+                                        @if ($project->bullet_1 || $project->bullet_2 || $project->bullet_3 || $project->bullet_4 || $project->bullet_5 || $project->bullet_6)
+                                            <div class="col-lg-12">
+                                                <ul class="bullet-list list-unstyled">
+                                                    @if ($project->bullet_1)
+                                                        <li><span class="flaticon-tick"></span> {{ $project->bullet_1 }}</li>
+                                                    @endif
+                                                    @if ($project->bullet_2)
+                                                        <li><span class="flaticon-tick"></span> {{ $project->bullet_2 }}</li>
+                                                    @endif
+                                                    @if ($project->bullet_3)
+                                                        <li><span class="flaticon-tick"></span> {{ $project->bullet_3 }}</li>
+                                                    @endif
+                                                    @if ($project->bullet_4)
+                                                        <li><span class="flaticon-tick"></span> {{ $project->bullet_4 }}</li>
+                                                    @endif
+                                                    @if ($project->bullet_5)
+                                                        <li><span class="flaticon-tick"></span> {{ $project->bullet_5 }}</li>
+                                                    @endif
+                                                    @if ($project->bullet_6)
+                                                        <li><span class="flaticon-tick"></span> {{ $project->bullet_6 }}</li>
+                                                    @endif
+                                                </ul>
+                                            </div>
+                                        @endif
+                                        @if ($project->tags->count() > 0)
+                                            <div class="col-lg-12 mt20">
+                                                <h5>Tags</h5>
+                                                @foreach ($project->tags as $tag)
+                                                    <span class="badge badge-primary badge-tag">{{ $tag->name }}</span>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+
+                        <div class="col-lg-12">
+                            <div id="tab-seo" class="shop_single_tab_content style2 mt30">
+                                <div class="utf-boxed-list-headline-item">
+                                    <h3>SEO Details</h3>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <ul class="list-inline-item">
+                                            <li>
+                                                <p><span class="pod-details">Meta Title:</span> {{ $project->meta_title ?? 'N/A' }}</p>
+                                            </li>
+                                            <li>
+                                                <p><span class="pod-details">Meta Description:</span> {{ $project->meta_description ?? 'N/A' }}</p>
+                                            </li>
+                                            <li>
+                                                <p><span class="pod-details">Meta Keywords:</span> {{ $project->meta_keywords ?? 'N/A' }}</p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
 
                         <div class="col-lg-12 mt30">

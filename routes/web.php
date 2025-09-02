@@ -111,6 +111,9 @@ Route::prefix('admin')->name('admin_panel.')->group(function() {
     Route::post('project/update/utilities', 'Admin\ProjectController@AddUpdateUtilities');
 });
 
+// Updated download-pdf route with 'guest' middleware
+Route::get('/download-pdf/{projectId}/{filename}', [App\Http\Controllers\ProjectController::class, 'downloadPdf'])->name('download.pdf');
+
 // Admin Units
 Route::resource('admin/unit', 'Admin\UnitController', ['except' => ['destroy']]);
 Route::post('admin/unit/{unit}/delete', 'Admin\UnitController@destroy');

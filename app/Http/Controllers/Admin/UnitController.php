@@ -559,55 +559,90 @@ class UnitController extends Controller
 
     public function isArchiveUnitRoom(Request $request)
     {
-        // return $request->all();
-
         $ErrorMsg = "";
         $data = [];
         DB::beginTransaction();
         try {
+            // Validate that unit_room_ids is provided (can be a string or array)
             $validator = Validator::make($request->all(), [
-                'unit_room_id' => ['required'],
+                'unit_room_ids' => 'required', // Accept string or array
             ]);
-
+    
             if ($validator->fails()) {
                 $data["status"] = false;
-                $data["message"] = "Some thing went wrong: Validation Error.";
+                $data["message"] = "Something went wrong: Validation Error.";
                 $data["error"] = $validator->errors();
                 return response()->json($data, 200);
             }
-
-            // return $request->all();
-            // return response()->json($data, 200);
-
+    
+            // Handle the input (could be a comma-separated string or array)
+            $roomIds = $request->input('unit_room_ids');
+            if (is_string($roomIds)) {
+                $roomIds = explode(',', $roomIds); // Convert comma-separated string to array
+            }
+    
+            // Ensure $roomIds is an array
+            if (!is_array($roomIds)) {
+                $roomIds = [$roomIds]; // Wrap single value in array if not already
+            }
+    
+            // Validate each ID exists in the room_type_unit table
+            $validator->after(function ($validator) use ($roomIds) {
+                foreach ($roomIds as $id) {
+                    if (!UnitRoom::withoutGlobalScope(HasIsNonArchiveScope::class)->where('id', intval($id))->exists()) {
+                        $validator->errors()->add('unit_room_ids', "Unit room ID {$id} does not exist or is already archived.");
+                    }
+                }
+            });
+    
+            if ($validator->fails()) {
+                $data["status"] = false;
+                $data["message"] = "Something went wrong: Validation Error.";
+                $data["error"] = $validator->errors();
+                return response()->json($data, 200);
+            }
+    
             if ($ErrorMsg == "") {
-
-                $UnitRoom = UnitRoom::where("id", $request->unit_room_id);
-                $deleteUnitRoom = AppHelper::isArchiveRecord($UnitRoom);
-                if ($deleteUnitRoom["status"]) {
-                    $data["status"] = $deleteUnitRoom["status"];
-                    $data["message"] = "Unit room deleted successfully.";
-                    // dd($request->UnitRoom_id);
-                    // dd("select * from UnitRooms where id = " . $request->UnitRoom_id);
-                    $updatedRecord = DB::select("select * from room_type_unit where id = " . $request->unit_room_id);
-                    // dd($updatedRecord);
-                    $data["data"] = (count($updatedRecord) > 0) ? $updatedRecord[0] : [];
+                $successCount = 0;
+                $failedIds = [];
+    
+                foreach ($roomIds as $id) {
+                    $unitRoomQuery = UnitRoom::withoutGlobalScope(HasIsNonArchiveScope::class)->where('id', intval($id));
+                    $result = AppHelper::isArchiveRecord($unitRoomQuery);
+    
+                    if ($result["status"]) {
+                        $successCount++;
+                    } else {
+                        $failedIds[] = $id;
+                        $ErrorMsg = $result["message"] ?: "Failed to archive Unit room ID {$id}.";
+                    }
+                }
+    
+                if ($successCount > 0) {
+                    $data["status"] = true;
+                    $data["message"] = $successCount === count($roomIds)
+                        ? "Unit room(s) deleted successfully."
+                        : "Partially deleted: {$successCount} of " . count($roomIds) . " unit room(s) deleted. Failed IDs: " . implode(', ', $failedIds);
+                    $updatedRecords = DB::select("SELECT * FROM room_type_unit WHERE id IN (" . implode(',', array_map('intval', $roomIds)) . ")");
+                    $data["data"] = !empty($updatedRecords) ? $updatedRecords : [];
                 } else {
-                    $ErrorMsg = $deleteUnitRoom["message"];
+                    $data["status"] = false;
+                    $data["message"] = "No unit rooms were deleted. " . ($ErrorMsg ?: "Unknown error.");
                 }
             }
         } catch (\Throwable $e) {
             DB::rollback();
-            $ErrorMsg = "Error Occurred while deleting UnitRoom. Exception Msg : " . $e->getMessage();
+            $ErrorMsg = "Error Occurred while deleting UnitRoom(s). Exception Msg : " . $e->getMessage();
             $data["status"] = false;
             $data["message"] = $ErrorMsg;
         }
-        if ($ErrorMsg == "") {
+        if ($ErrorMsg == "" && $data["status"]) {
             DB::commit();
             return response()->json($data, 200);
         } else {
+            DB::rollback();
             $data["status"] = false;
-            $data["message"] = $ErrorMsg;
-            // $data["Obj"] = $request->all();
+            $data["message"] = $ErrorMsg ?: $data["message"];
             return response()->json($data, 200);
         }
     }

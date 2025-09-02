@@ -224,4 +224,17 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(PaymentSchedule::class);
     }
+
+    /**
+     * Set the phone number attribute with normalization (optional).
+     *
+     * @param string $value
+     * @return void
+     */
+    public function setPhoneNumberAttribute($value)
+    {
+        // Normalize phone number to E.164 format if needed (e.g., +923001234567)
+        // This is a placeholder; implement actual normalization logic if required
+        $this->attributes['phone_number'] = $value;
+    }
 }

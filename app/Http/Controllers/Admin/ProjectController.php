@@ -240,32 +240,57 @@ class ProjectController extends Controller
             $project->status = $request->status;
         }
 
-        // Handle project document
-        if ($request->hasFile('project_doc')) {
-            $project_doc_path = $request->file('project_doc')->store('uploads/project_documents/project_' . $project->id, 'public');
-            $project->project_doc = $project_doc_path;
+       // Handle project documents (multiple PDFs)
+        if ($request->hasFile('project_docs')) {
+            $projectDocDirectory = public_path('uploads/project_documents/project_' . $project->id);
+            if (!file_exists($projectDocDirectory)) {
+                mkdir($projectDocDirectory, 0775, true);
+            }
+
+            $uploadedDocPaths = [];
+            foreach ($request->file('project_docs') as $file) {
+                if ($file->isValid() && $file->getClientOriginalExtension() === 'pdf') {
+                    $projectDocName = time() . '_' . str_replace(' ', '_', $file->getClientOriginalName());
+                    $file->move($projectDocDirectory, $projectDocName);
+                    $uploadedDocPaths[] = 'project_' . $project->id . '/' . $projectDocName;
+                }
+            }
+
+            if (!empty($uploadedDocPaths)) {
+                $project->project_doc = implode('|', $uploadedDocPaths);
+                $project->save(); // Save the project to update the field
+            }
         }
 
         // Handle project images
-        if ($request->hasFile('project_imgs')) {
+        if($request->hasFile('project_imgs')) {
             $imageName = [];
+            $projectImageDirectory = public_path('uploads/project_images/project_' . $project->id);
+            if (!file_exists($projectImageDirectory)) {
+                mkdir($projectImageDirectory, 0775, true); // Create directory if it doesn't exist
+            }
             foreach ($request->file('project_imgs') as $image) {
-                $imagePath = $image->store('uploads/project_images/project_' . $project->id, 'public');
-                $imageName[] = $imagePath;
+                $imageNameOriginal = time() . '_' . $image->getClientOriginalName();
+                $image->move($projectImageDirectory, $imageNameOriginal);
+                $imageName[] = 'uploads/project_images/project_' . $project->id . '/' . $imageNameOriginal;
             }
             $project->project_imgs = implode('|', $imageName);
         }
 
         // Handle project cover image
         if ($request->hasFile('project_cover_img')) {
-            $project_cover_img_path = $request->file('project_cover_img')->store('uploads/project_images/project_' . $project->id, 'public');
-            $project->project_cover_img = $project_cover_img_path;
+            $projectCoverImageDirectory = public_path('uploads/project_images/project_' . $project->id);
+            if (!file_exists($projectCoverImageDirectory)) {
+                mkdir($projectCoverImageDirectory, 0775, true); // Create directory if it doesn't exist
+            }
+            $projectCoverImageName = time() . '_' . $request->file('project_cover_img')->getClientOriginalName();
+            $request->file('project_cover_img')->move($projectCoverImageDirectory, $projectCoverImageName);
+            $project->project_cover_img = 'uploads/project_images/project_' . $project->id . '/' . $projectCoverImageName;
         }
 
-        // Handle project video
-        if ($request->hasFile('project_video')) {
-            $project_video_path = $request->file('project_video')->store('uploads/project_videos/project_' . $project->id, 'public');
-            $project->project_video = $project_video_path;
+         // Handle project video (YouTube URL)
+         if ($request->filled('project_video')) {
+            $project->project_video = $request->project_video; // Store the raw URL
         }
 
         $project->save();
@@ -382,12 +407,35 @@ class ProjectController extends Controller
         }
 
         // Handle project document
-        if ($request->hasFile('project_doc')) {
-            if ($project->project_doc && Storage::disk('public')->exists($project->project_doc)) {
-                Storage::disk('public')->delete($project->project_doc);
+        if ($request->hasFile('project_docs') || $project->project_doc) {
+            $projectDocDirectory = public_path('uploads/project_documents/project_' . $project->id);
+            if (!file_exists($projectDocDirectory)) {
+                mkdir($projectDocDirectory, 0775, true);
             }
-            $project_doc_path = $request->file('project_doc')->store('uploads/project_documents/project_' . $project->id, 'public');
-            $project->project_doc = $project_doc_path;
+
+            $uploadedDocPaths = [];
+            $existingDocs = $project->project_doc ? explode('|', $project->project_doc) : [];
+
+            // Handle new uploads
+            if ($request->hasFile('project_docs')) {
+                foreach ($request->file('project_docs') as $file) {
+                    if ($file->isValid() && $file->getClientOriginalExtension() === 'pdf') {
+                        $projectDocName = time() . '_' . $file->getClientOriginalName();
+                        $file->move($projectDocDirectory, $projectDocName);
+                        $uploadedDocPaths[] = 'project_' . $project->id . '/' . $projectDocName;
+                    }
+                }
+            }
+
+            // Combine existing and new documents (if no new upload, keep existing)
+            $finalDocPaths = !empty($uploadedDocPaths) ? array_unique(array_merge($existingDocs, $uploadedDocPaths)) : $existingDocs;
+
+            if (!empty($finalDocPaths)) {
+                $project->project_doc = implode('|', $finalDocPaths);
+                $project->save();
+            } elseif (empty($request->file('project_docs')) && !$project->project_doc) {
+                $project->project_doc = null; // Only set to null if no existing and no new files
+            }
         }
 
         // Handle project images
@@ -416,13 +464,25 @@ class ProjectController extends Controller
             $project->project_cover_img = $project_cover_img_path;
         }
 
-        // Handle project video
-        if ($request->hasFile('project_video')) {
-            if ($project->project_video && Storage::disk('public')->exists($project->project_video)) {
-                Storage::disk('public')->delete($project->project_video);
+       
+        // Handle project video (YouTube URL or file upload)
+        if ($request->filled('project_video')) {
+            // Check if it's a file upload
+            if ($request->hasFile('project_video')) {
+                // Remove old video file if it exists
+                if ($project->project_video && Storage::disk('public')->exists($project->project_video)) {
+                    Storage::disk('public')->delete($project->project_video);
+                }
+                // Store new video file
+                $project_video_path = $request->file('project_video')->store('uploads/project_videos/project_' . $project->id, 'public');
+                $project->project_video = $project_video_path;
+            } else {
+                // Treat as URL (e.g., YouTube link)
+                $project->project_video = $request->project_video;
             }
-            $project_video_path = $request->file('project_video')->store('uploads/project_videos/project_' . $project->id, 'public');
-            $project->project_video = $project_video_path;
+        } elseif (!$request->hasFile('project_video') && !$request->filled('project_video')) {
+            // If no file or URL is provided, retain the existing value
+            // Do nothing, keeping the current $project->project_video
         }
 
         $project->save();
@@ -454,47 +514,40 @@ class ProjectController extends Controller
 
     public function destroy(Request $request)
     {
-        $ErrorMsg = "";
-        $data = [];
-        DB::beginTransaction();
+        \Log::info('Destroy: Before deletion', ['user_id' => Auth::id() ?? 'null', 'email' => Auth::user()->email ?? 'null']);
+        $data = ['status' => false, 'message' => ''];
         try {
             $validator = Validator::make($request->all(), [
-                'project_id' => ['required'],
+                'project_id' => ['required', 'exists:projects,id'],
             ]);
-
+    
             if ($validator->fails()) {
-                $data["status"] = false;
-                $data["message"] = "Some thing went wrong: Validation Error.";
-                $data["error"] = $validator->errors();
-                return response()->json($data, 200);
+                $data['message'] = 'Validation Error: ' . $validator->errors()->first();
+                return response()->json($data, 422);
             }
-
-            if ($ErrorMsg == "") {
-                $project = Project::where("id", $request->project_id);
-                $deleteProject = AppHelper::isArchiveRecord($project);
-                if ($deleteProject["status"]) {
-                    $data["status"] = $deleteProject["status"];
-                    $data["message"] = "Project deleted successfully.";
-                    $updatedRecord = DB::select("select * from projects where id = " . $request->project_id);
-                    $data["data"] = (count($updatedRecord) > 0) ? $updatedRecord : [];
-                } else {
-                    $ErrorMsg = $deleteProject["message"];
-                }
+    
+            $project = Project::where('id', $request->project_id);
+            $deleteProject = AppHelper::isArchiveRecord($project);
+            if ($deleteProject['status']) {
+                $data['status'] = true;
+                $data['message'] = 'Project archived successfully.';
+                // Use withoutGlobalScopes to fetch archived project
+                $updatedRecord = Project::withoutGlobalScopes()->where('id', $request->project_id)->first();
+                $data['data'] = $updatedRecord ? $updatedRecord->toArray() : [];
+            } else {
+                $data['message'] = $deleteProject['message'];
+                return response()->json($data, 422);
             }
         } catch (\Throwable $e) {
             DB::rollback();
-            $ErrorMsg = "Error Occurred while deleting project. Exception Msg : " . $e->getMessage();
-            $data["status"] = false;
-            $data["message"] = $ErrorMsg;
+            $data['message'] = 'Error deleting project: ' . $e->getMessage();
+            \Log::error('Destroy failed: ' . $e->getMessage(), ['project_id' => $request->project_id]);
+            return response()->json($data, 500);
         }
-        if ($ErrorMsg == "") {
-            DB::commit();
-            return response()->json($data, 200);
-        } else {
-            $data["status"] = false;
-            $data["message"] = $ErrorMsg;
-            return response()->json($data, 200);
-        }
+    
+        DB::commit();
+        \Log::info('Destroy: After deletion', ['user_id' => Auth::id() ?? 'null', 'email' => Auth::user()->email ?? 'null']);
+        return response()->json($data, 200);
     }
 
     public function import_projects()

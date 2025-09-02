@@ -35,10 +35,6 @@
         <span>{{ Session::get('successMsg') }}</span>
         <!-- This alert box could indicate a dangerous or potentially negative action. -->
       </div>
-      <!-- <div class="alert alert-success">
-        {{ Session::get('successMsg') }}
-      </div> -->
-
       @elseif(Session::has('errorMsg'))
       <div class="alert alert-danger alert-dismissible fade in show">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -46,11 +42,6 @@
         <span>{{ Session::get('errorMsg') }}</span>
         <!-- This alert box could indicate a dangerous or potentially negative action. -->
       </div>
-
-      <!-- <div class="alert alert-danger">
-        {{ Session::get('errorMsg') }}
-      </div> -->
-
       @endif
       @if($errors->any())
       <div class="alert alert-danger alert-dismissible fade in show">
@@ -69,9 +60,6 @@
           <h2 class="card-title text-uppercase">Add Project</h2>
         </div>
         <!--begin::Form-->
-
-        <!-- enctype="multipart/form-data" remove by Shahbaz raza -->
-
         <form class="form mt-5" id="frmAddProject" method="POST" action="/admin/project" enctype="multipart/form-data">
           @csrf
           <div class="col-xl-12">
@@ -190,31 +178,31 @@
             </div>
             <div class="row">
               <div class="col-xl-6">
-                <div class="form-group fv-plugins-icon-container">
-                  <label>Project Document ( .pdf Format )</label>
-                  <input type="file" class="form-control form-control-lg" name="project_doc" id="project_doc">
-                  @error('project_doc')
-                  <span class="form-text text-muted">Please upload the project document in .pdf
-                    format. {{ $errors->first('project_doc') }}</span>
-                  @enderror
-                  <div class="fv-plugins-message-container"></div>
+              <div class="form-group fv-plugins-icon-container">
+                      <label>Project Documents (Multiple .pdf Files)</label>
+                      <input type="file" class="form-control form-control-lg" name="project_docs[]" id="project_docs" accept=".pdf" multiple>
+                      @error('project_docs')
+                      <span class="form-text text-muted">Please upload project documents in .pdf format. {{ $errors->first('project_docs') }}</span>
+                      @enderror
+                      <div class="fv-plugins-message-container"></div>
+                  </div>
                 </div>
-              </div>
-              <div class="col-xl-6">
+                <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
-                  <label>Project Video ( Video Format )</label>
-                  <input type="text" class="form-control form-control-lg" name="project_video" id="project_video">
-                  @error('project_video')
-                  <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
+                    <label>YouTube Video Link</label>
+                    <input type="url" class="form-control form-control-lg" name="project_video" id="project_video" placeholder="Paste YouTube URL (e.g., https://www.youtube.com/watch?v=example)" value="{{ old('project_video', optional($project)->project_video ?? '') }}">
+                    <span class="form-text text-muted">Please paste the YouTube video URL (e.g., https://www.youtube.com/watch?v=example).</span>
+                    @error('project_video')
+                    <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
-              </div>
+            </div>
             </div>
             <div class="row">
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
                   <label>Project Cover Image</label>
-                  <input type="file" class="form-control form-control-lg" name="project_cover_img" id="project_doc">
+                  <input type="file" class="form-control form-control-lg" name="project_cover_img" id="project_cover_img">
                   @error('project_cover_img')
                   <span class="form-text text-muted">Please upload the project Cover Image.
                     {{ $errors->first('project_cover_img') }}</span>
@@ -235,17 +223,6 @@
               </div>
             </div>
             <div class="row">
-              <!-- <div class="col-xl-6">
-                <div class="form-group fv-plugins-icon-container">
-                  <label>Installment Length *</label>
-                  <input type="number" min="0" class="form-control form-control-lg" value="{{ old('installment_length') }}" name="installment_length">
-                  <span class="form-text text-muted">Please enter the Installment Length for this
-                    project.</span>
-                  @error('installment_length')
-                  <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
-                </div>
-              </div> -->
               @if(Auth::user()->user_type_id != Config::get("constants.UserTypeIds.Builder"))
               <div class="col-xl-12">
                 <div class="form-group fv-plugins-icon-container">
@@ -261,16 +238,13 @@
                   </select>
                 </div>
               </div>
-
               @endif
             </div>
             <div class="row">
-
               <div class="col-xl-12">
                 <div class="form-group fv-plugins-icon-container">
                   <label class="col-form-label col-lg-12 bolder">Project Details</label>
-                  <!-- <textarea name="details" id="kt-ckeditor-1">{{ old('details') ?? "" }}</textarea> -->
-                  <textarea name="details" id="kt-ckeditor-1">Enter Project Description</textarea>
+                  <textarea name="details" id="kt-ckeditor-1">{{ old('details') ?? "" }}</textarea>
                 </div>
               </div>
             </div>
@@ -400,7 +374,7 @@
                   <textarea class="form-control" name="meta_description" id="kt_autosize_1" rows="3" style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 76px;" required>{{ old('meta_description') }}</textarea>
                   @error('meta_description')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
+                  @endif
                 </div>
               </div>
             </div>
@@ -411,7 +385,7 @@
                   <textarea class="form-control" name="meta_tags" id="kt_autosize_1" rows="3" style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 76px;" required>{{ old('meta_tags') }}</textarea>
                   @error('meta_tags')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
+                  @endif
                 </div>
               </div>
             </div>
@@ -432,7 +406,6 @@
           </div>
           <div class="card-footer">
             <div class="row">
-
               <div class="col-6 col-lg-6 text-left">
                 <a href="/admin/project" class="btn btn-secondary">Cancel</a>
               </div>
@@ -460,8 +433,6 @@
 
 @section('footer')
 <!--begin::Page Scripts(used by this page)-->
-<!-- <script src="assets/js/pages/crud/forms/editors/summernote.js"></script> -->
-<!-- <script src="assets/js/pages/custom/projects/add-project.js"></script> -->
 <script src="assets/js/pages/crud/forms/widgets/select2.js"></script>
 <!--end::Page Scripts-->
 <!--begin::Page Vendors(used by this page)-->
@@ -469,6 +440,5 @@
 <script src="assets/js/pages/crud/forms/editors/ckeditor-classic.js"></script>
 <!--end::Page Vendors-->
 <!--begin::Page Scripts(used by this page)-->
-<!--end::Page Scripts-->
 <script src="assets/js/pages/crud/forms/widgets/bootstrap-datetimepicker.js"></script>
 @endsection

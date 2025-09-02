@@ -39,10 +39,27 @@
                             <div class="col-sm-12">
                                 <div class="search_option_two areaSelect">
                                     <div class="candidate_revew_select">
-                                        <select class="select2-area form-control" name="area[]" multiple>
+                                        <select id="areaSelectDiv" data-all="false"
+                                                class="selectpicker w100 show-tick"
+                                                data-actions-box="true"
+                                                data-done-button="true"
+                                                name="area[]"
+                                                multiple
+                                                data-live-search="true"
+                                                data-live-search-placeholder="Search Areas"
+                                                title="Please Select Area">
+                                            <option value="" disabled>Please Select Area</option>
                                             @foreach ($areas as $area)
                                                 <option value="{{ $area->id }}"
-                                                        data-tokens="{{ $area->name }}">{{ $area->name }}</option>
+                                                        data-tokens="{{ $area->name }}"
+                                                        @if ($searchData['area'] && $searchData['calcSearch'])
+                                                            @foreach ($searchData['area'] as $searcharea)
+                                                                @if ($area->id == $searcharea) selected @endif
+                                                            @endforeach
+                                                        @endif
+                                                >
+                                                    {{ $area->name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -150,15 +167,29 @@
                                         <div class="col-sm-12">
                                             <div class="search_option_two areaSelect">
                                                 <div class="candidate_revew_select">
-                                                    <div class="form-group">
-                                                        <select class="select2-area form-control" name="area[]"
-                                                                multiple>
-                                                            @foreach ($areas as $area)
-                                                                <option value="{{ $area->id }}"
-                                                                        data-tokens="{{ $area->name }}">{{ $area->name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
+                                                    <select id="areaSelectDiv" data-all="false"
+                                                            class="selectpicker w100 show-tick"
+                                                            data-actions-box="true"
+                                                            data-done-button="true"
+                                                            name="area[]"
+                                                            multiple
+                                                            data-live-search="true"
+                                                            data-live-search-placeholder="Search Areas"
+                                                            title="Please Select Area">
+                                                        <option value="" disabled>Please Select Area</option>
+                                                        @foreach ($areas as $area)
+                                                            <option value="{{ $area->id }}"
+                                                                    data-tokens="{{ $area->name }}"
+                                                                    @if ($searchData['area'] && $searchData['calcSearch'])
+                                                                        @foreach ($searchData['area'] as $searcharea)
+                                                                            @if ($area->id == $searcharea) selected @endif
+                                                                        @endforeach
+                                                                    @endif
+                                                            >
+                                                                {{ $area->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>

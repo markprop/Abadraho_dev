@@ -79,12 +79,12 @@
                   <span class="opacity-70">{{ $project->progress }}</span>
                 </div>
                 <div class="d-flex flex-column flex-root">
-                  <span class="font-weight-bolder mb-2">PDF Document</span>
-                  @if ($project->project_doc)
-                  <span class="opacity-70"><a class="c-yellow" href="/uploads/project_documents/project_{{ $project->id }}/{{ $project->project_doc }}" target="_blank">{{ $project->slug }}.pdf</a></span>
-                  @else
-                  <span class="opacity-70">No Document Found</span>
-                  @endif
+                    <span class="font-weight-bolder mb-2">PDF Document</span>
+                    @if ($project->project_doc)
+                        <span class="opacity-70"><a class="c-yellow" href="{{ asset($project->project_doc) }}" target="_blank">{{ $project->slug }}.pdf</a></span>
+                    @else
+                        <span class="opacity-70">No Document Found</span>
+                    @endif
                 </div>
                 <div class="d-flex flex-column flex-root">
                   <span class="font-weight-bolder mb-2">Installment Length</span>
@@ -205,31 +205,36 @@
                               </tr>
                             </thead>
                             <tbody id="table_data">
-                              <?php
-                              $mergedRooms = [];
-                              $totalCoveredArea = 0;
+                            <?php
+                            $mergedRooms = [];
+                            $totalCoveredArea = 0;
 
-                              // Group similar rooms based on Name and Dimensions
-                              foreach ($unit->UnitRooms as $room) {
-                                $dimension = ($room->width_feet ?? 0) . '.' . ($room->width_inches ?? 0) . 'x' . ($room->length_feet ?? 0) . '.' . ($room->length_inches ?? 0);
-                                $key = $room->RoomType->name . '|' . $dimension;
-                                if (!isset($mergedRooms[$key])) {
-                                  $mergedRooms[$key] = [
-                                    'name' => $room->RoomType->name ?? '-',
-                                    'dimension' => $dimension,
-                                    'covered_area' => 0,
-                                    'extras' => 0,
-                                    'room_ids' => [$room->id]
-                                  ];
-                                } else {
-                                  $mergedRooms[$key]['room_ids'][] = $room->id;
-                                }
-                                $mergedRooms[$key]['extras'] += $room->extras ?? 0;
-                                $mergedRooms[$key]['covered_area'] += ($room->covered_area ?? 0);
-                                $totalCoveredArea += $room->covered_area ?? 0;
+                            // Group similar rooms based on Name and Dimensions
+                            foreach ($unit->UnitRooms as $room) {
+                              $dimension = ($room->width_feet ?? 0) . '.' . ($room->width_inches ?? 0) . 'x' . ($room->length_feet ?? 0) . '.' . ($room->length_inches ?? 0);
+                              $key = $room->RoomType->name . '|' . $dimension;
+                              if (!isset($mergedRooms[$key])) {
+                                $mergedRooms[$key] = [
+                                  'name' => $room->RoomType->name ?? '-',
+                                  'dimension' => $dimension,
+                                  'covered_area' => 0,
+                                  'extras' => 0,
+                                  'room_ids' => [$room->id],
+                                  'room_type_id' => $room->room_type_id, // Added for correct room type selection in edit
+                                  'width_feet' => floor($room->width_feet ?? 0), // Added for edit values
+                                  'width_inches' => floor($room->width_inches ?? 0), // Added for edit values
+                                  'length_feet' => floor($room->length_feet ?? 0), // Added for edit values
+                                  'length_inches' => floor($room->length_inches ?? 0), // Added for edit values
+                                ];
+                              } else {
+                                $mergedRooms[$key]['room_ids'][] = $room->id;
                               }
-                              $sno = 1;
-                              ?>
+                              $mergedRooms[$key]['extras'] += $room->extras ?? 0;
+                              $mergedRooms[$key]['covered_area'] += ($room->covered_area ?? 0);
+                              $totalCoveredArea += $room->covered_area ?? 0;
+                            }
+                            $sno = 1;
+                            ?>
 
                               @foreach ($mergedRooms as $mergedRoom)
                               <tr class="font-weight-boldest font-size-lg">
@@ -264,7 +269,7 @@
                                       <div class="modal-body">
                                         <input type="number" class="d-none" name="unit_id" value="{{ $unit->id }}">
                                         <input type="number" class="d-none" name="table_id" value="{{ $mergedRoom['room_ids'][0] }}">
-                                        <input type="number" class="d-none" name="project_id" value="{{ $room->project_id }}">
+                                        <input type="number" class="d-none" name="project_id" value="{{ $unit->project_id }}"> <!-- Changed to $unit->project_id since $room is removed -->
                                         <div class="row">
                                           <div class="col-xl-12 mb-10">
                                             <div class="form-check">
@@ -282,7 +287,7 @@
                                               <select name="room_type_id" class="form-control form-control-lg room_type_id2" required onchange="changeRoomType(this, 'updateLblRoomType', 'room_type_id2', 'update_room_{{ $mergedRoom['room_ids'][0] }}')">
                                                 <option disabled hidden value="" selected>Select Room Type...</option>
                                                 @foreach ($roomTypes as $roomType)
-                                                <option value="{{ $roomType->id }}" {{ $room->room_type_id == $roomType->id ? 'selected' : '' }}>
+                                                <option value="{{ $roomType->id }}" {{ $mergedRoom['room_type_id'] == $roomType->id ? 'selected' : '' }}>
                                                   {{ $roomType->name }}
                                                 </option>
                                                 @endforeach
@@ -298,7 +303,7 @@
                                           <div class="col-lg-3 updateSimpleSize3" id="updateSimpleSize3">
                                             <div class="form-group fv-plugins-icon-container">
                                               <label class="">Size in SqFt</label>
-                                              <input type="number" step="any" class="form-control form-control-lg covered_area" id="update_unit_room_covered_area" name="covered_area" disabled value="{{ $room->covered_area }}" required>
+                                              <input type="number" step="any" class="form-control form-control-lg covered_area" id="update_unit_room_covered_area" name="covered_area" disabled value="{{ $mergedRoom['covered_area'] }}" required>
                                               <div class="fv-plugins-message-container"></div>
                                             </div>
                                           </div>
@@ -311,14 +316,14 @@
                                               <div class="col-xl-6">
                                                 <div class="form-group fv-plugins-icon-container">
                                                   <label class="">Feet</label>
-                                                  <input type="number" step="any" class="form-control form-control-lg width_feet" id="update_unit_room1_width_feet" oninput="UpdateCalcSquareFeet3('update_room_{{ $mergedRoom['room_ids'][0] }}')" name="width_feet" value="{{ floor($room->width_feet) }}" required numtxt data-maxlength="6">
+                                                  <input type="number" step="any" class="form-control form-control-lg width_feet" id="update_unit_room1_width_feet" oninput="UpdateCalcSquareFeet3('update_room_{{ $mergedRoom['room_ids'][0] }}')" name="width_feet" value="{{ $mergedRoom['width_feet'] }}" required numtxt data-maxlength="6">
                                                   <div class="fv-plugins-message-container"></div>
                                                 </div>
                                               </div>
                                               <div class="col-xl-6">
                                                 <div class="form-group fv-plugins-icon-container">
                                                   <label class="">Inches</label>
-                                                  <input type="number" step="any" min="0" max="11" class="form-control form-control-lg width_inches" id="update_unit_room1_width_inches" oninput="UpdateCalcSquareFeet3('update_room_{{ $mergedRoom['room_ids'][0] }}')" name="width_inches" value="{{ floor($room->width_inches) }}" numtxt data-maxlength="6">
+                                                  <input type="number" step="any" min="0" max="11" class="form-control form-control-lg width_inches" id="update_unit_room1_width_inches" oninput="UpdateCalcSquareFeet3('update_room_{{ $mergedRoom['room_ids'][0] }}')" name="width_inches" value="{{ $mergedRoom['width_inches'] }}" numtxt data-maxlength="6">
                                                   <div class="fv-plugins-message-container"></div>
                                                 </div>
                                               </div>
@@ -331,14 +336,14 @@
                                               <div class="col-xl-6">
                                                 <div class="form-group fv-plugins-icon-container">
                                                   <label class="">Feet</label>
-                                                  <input type="number" step="any" class="form-control form-control-lg length_feet" id="update_unit_room1_length_feet" oninput="UpdateCalcSquareFeet3('update_room_{{ $mergedRoom['room_ids'][0] }}')" name="length_feet" value="{{ floor($room->length_feet) }}" required numtxt data-maxlength="6">
+                                                  <input type="number" step="any" class="form-control form-control-lg length_feet" id="update_unit_room1_length_feet" oninput="UpdateCalcSquareFeet3('update_room_{{ $mergedRoom['room_ids'][0] }}')" name="length_feet" value="{{ $mergedRoom['length_feet'] }}" required numtxt data-maxlength="6">
                                                   <div class="fv-plugins-message-container"></div>
                                                 </div>
                                               </div>
                                               <div class="col-xl-6">
                                                 <div class="form-group fv-plugins-icon-container">
                                                   <label class="">Inches</label>
-                                                  <input type="number" step="any" min="0" max="11" class="form-control form-control-lg length_inches" id="update_unit_room1_length_inches" oninput="UpdateCalcSquareFeet3('update_room_{{ $mergedRoom['room_ids'][0] }}')" name="length_inches" value="{{ floor($room->length_inches) }}" numtxt data-maxlength="6">
+                                                  <input type="number" step="any" min="0" max="11" class="form-control form-control-lg length_inches" id="update_unit_room1_length_inches" oninput="UpdateCalcSquareFeet3('update_room_{{ $mergedRoom['room_ids'][0] }}')" name="length_inches" value="{{ $mergedRoom['length_inches'] }}" numtxt data-maxlength="6">
                                                   <div class="fv-plugins-message-container"></div>
                                                 </div>
                                               </div>
@@ -358,6 +363,7 @@
                                   </div>
                                 </div>
                               </div>
+
                               @endforeach
                               <tr class="font-weight-boldest font-size-lg" style="font-size:17px;">
                                 <td colspan="3" align="right">
@@ -984,6 +990,54 @@
       });
     }
   }
+  function deleteUnitRoomGroup(roomIds) {
+  console.log("deleteUnitRoomGroup -> unit room ids -> ", roomIds);
+  if (roomIds) {
+    ShowSweetAlertConfirm({
+      title: "Are you sure ?",
+      text: "You want to delete these unit rooms!",
+      icon: "warning",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: `Yes`,
+      denyButtonText: `No`,
+    }, function(result) {
+      if (result.isConfirmed) {
+        let requestRoute = "/admin/unit_room/delete/trash"; // Reuse single delete route, but send as array or handle in backend; alternatively, create a new group delete route
+        let requestParams = { unit_room_ids: roomIds }; // Change to unit_room_ids (plural) and handle as comma-separated or array in backend
+        ShowLoader();
+        CallLaravelAction(requestRoute, requestParams, function(response) {
+          if (response.status) {
+            let SweetAlertParams = {
+              icon: "success",
+              title: response.message,
+              showConfirmButton: true,
+              timer: 10000,
+            };
+            ShowSweetAlert(SweetAlertParams);
+            location.reload();
+            HideLoader();
+          } else {
+            var ErrorMsg = response.message;
+            if (typeof response.error !== "undefined") {
+              if (typeof response.error.unit_room_ids !== "undefined") {
+                ErrorMsg = response.error.unit_room_ids;
+              }
+            }
+            let SweetAlertParams = {
+              icon: "error",
+              title: ErrorMsg,
+              showConfirmButton: true,
+              timer: 20000,
+            };
+            ShowSweetAlert(SweetAlertParams);
+            HideLoader();
+          }
+        });
+      }
+    });
+  }
+}
 </script>
 
 @endsection

@@ -1308,11 +1308,11 @@ $(document).ready(function() {
     let auth = <?php echo json_encode(Auth::user()); ?>;
     let hasFilledForm = '{{ session()->get('has_filled_form') }}' === 'true';
 
-    if (!auth && !hasFilledForm) {
-        setTimeout(() => {
-            $('#interestModal').modal('show');
-        }, 5000);
-    }
+    // if (!auth && !hasFilledForm) {
+    //     setTimeout(() => {
+    //         $('#interestModal').modal('show');
+    //     }, 5000);
+    // }
 
     $('.selectable').on('click', function() {
         const value = $(this).data('value');

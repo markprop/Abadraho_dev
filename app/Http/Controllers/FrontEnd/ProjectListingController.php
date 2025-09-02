@@ -31,11 +31,11 @@ class ProjectListingController extends Controller
         $slugsId = 0;
         
         $projects = Project::with('progress', 'units', 'owners', 'location', 'areas', 'tags', 'project_unit_rooms', 'type')
-        ->where('projects.status',1);
-
+            ->where('projects.status', 1);
+    
         if(isset($_GET['area'])) {
             $area = Area::where('name', $_GET['area'])->first();
-
+    
             if($area) {
                 $areaId = $area->id;
                 $projects = $projects->where('area','=',$area->id);
@@ -49,7 +49,7 @@ class ProjectListingController extends Controller
                 $projects = $projects->where('area','=',$slugs->id);
             }
         }
-
+    
         if(isset($_GET['property_type'])) {
             $project_type = ProjectType::where('title', $_GET['property_type'])->first();
             
@@ -58,7 +58,7 @@ class ProjectListingController extends Controller
                 $projects = $projects->where('project_type_id','=',$project_type->id);
             }
         }
-
+    
         $projects = $projects->paginate(10);
         
         $areas = Area::all();
@@ -69,14 +69,16 @@ class ProjectListingController extends Controller
         $recent_view_data = RecentViews::with('project')
             ->whereDate('created_at', Carbon::today())
             ->where('user_id', Auth::id())->get();
-
+        // Add allProjects for the dropdown
+        $allProjects = Project::where('status', 1)->orderBy('name')->get();
+    
         $searchData = UserSearchHistory::where('search_type', 'calculator')->where(function ($q) use($request) {
             return $q->where("cookie", $request->cookie("XSRF-TOKEN"))->orWhere("user_id", auth()->id());
         })
             ->orderBy('id', 'desc')
             ->first();
-
-        return view('projects.index', compact('builders', 'projects', 'progress', 'areas', 'areaId', 'projecttypeId', 'projectTypes', 'recent_view_data', 'tags', 'searchData'));
+    
+        return view('projects.index', compact('builders', 'projects', 'progress', 'areas', 'areaId', 'projecttypeId', 'projectTypes', 'recent_view_data', 'tags', 'searchData', 'allProjects'));
     }
 
     private function search(ListingRequest $request)
@@ -84,17 +86,17 @@ class ProjectListingController extends Controller
         $perPageRecord = 10;
         $user_id = 0;
         $searchData = $request->validated();
-
+    
         if (Auth::check()) {
             $user_id = Auth::id();
             UserSearchHistory::where("cookie", $request->cookie("XSRF-TOKEN"))
                 ->where("user_id", 0)
                 ->update(["user_id" => $user_id]);
         }
-
+    
         // Save User Search History
         $this->saveSearchHistory($request->cookie("XSRF-TOKEN"), $searchData['maxBudget'], $user_id, $searchData['isCalculator'] ? true : false);
-
+    
         $searchData['minDP'] = str_replace(",", "", $searchData['minDP']);
         $searchData['maxDP'] = str_replace(",", "", $searchData['maxDP']);
         $searchData['minMI'] = str_replace(",", "", $searchData['minMI']);
@@ -103,7 +105,7 @@ class ProjectListingController extends Controller
         $searchData['maxPrice'] = str_replace(",", "", $searchData['maxPrice']);
         $searchData['calcSearch'] = $searchData['calcSearch'] ?: false;
         $page = $searchData['page'] ?: 1;
-
+    
         // Filter Start
         $projects = $this->ProjectModel
             ->with('units')
@@ -111,36 +113,40 @@ class ProjectListingController extends Controller
             ->with('location')
             ->with('areas')
             ->with('tags');
-        // ->with('project_unit_rooms');
-
+    
         $projects = $projects->where("status", 1);
-
+    
+        // Filter by project name
+        if ($searchData['project_name']) {
+            $projects = $projects->whereIn('id', $searchData['project_name']);
+        }
+    
         // Filter by builder name
         if ($searchData['builder']) {
             $projects = $projects->whereHas('owners', function ($query) use ($searchData) {
                 $query->whereIn('builder_id', $searchData['builder']);
             });
         }
-
+    
         // Filter By Areas
         if ($searchData['area']) {
             $projects = $projects->whereHas('areas', function ($query) use ($searchData) {
                 $query->whereIn('area_id', $searchData['area']);
             });
         }
-
+    
         // Filter by Progress
         if ($searchData['progress']) {
             $projects = $projects->whereIn('progress', $searchData['progress']);
         }
-
+    
         // Filter by Project Type
         if ($searchData['type_id']) {
             $projects = $projects->whereHas('units', function ($query) use ($searchData) {
                 $query->whereIn('unit_type_id', $searchData['type_id']);
             });
         }
-
+    
         // Filter by Down Payment
         if ($searchData['minDP'] || $searchData['maxDP']) {
             $minDP = $searchData['minDP'] ?: 0;
@@ -149,17 +155,17 @@ class ProjectListingController extends Controller
                 $query->whereBetween('down_payment', [$minDP, $maxDP]);
             });
         }
-
+    
         // Filter by Monthly Installment
         if ($searchData['minMI'] || $searchData['maxMI']) {
             $minMI = $searchData['minMI'] ?: 0;
             $maxMI = $searchData['maxMI'] ?: Unit::max('monthly_installment');
-
+    
             $projects = $projects->whereHas('units', function ($query) use ($minMI, $maxMI) {
                 $query->whereBetween('monthly_installment', [$minMI, $maxMI]);
             });
         }
-
+    
         // Filter by Price
         if ($searchData['minPrice'] || $searchData['maxPrice']) {
             $minPrice = $searchData['minPrice'] ?: 0;
@@ -168,7 +174,7 @@ class ProjectListingController extends Controller
                 $query->whereBetween('total_unit_amount', [$minPrice, $maxPrice]);
             });
         }
-
+    
         // Filter by Budget
         if ($searchData['minPrice'] || $searchData['maxBudget']) {
             $minPrice = $searchData['minPrice'] ?: 0;
@@ -177,15 +183,14 @@ class ProjectListingController extends Controller
                 $query->whereBetween('total_unit_amount', [$minPrice, $maxBudget]);
             });
         }
-
+    
         // Filter by tags
         if ($searchData['tag_id']) {
             $projects = $projects->whereHas('tags', function ($query) use ($searchData) {
                 $query->whereIn('tag_id', $searchData['tag_id']);
             });
         }
-
-
+    
         if (!empty($request->reseller_id) && $request->reseller_id == "Latest") {
             $projects = $this->ProjectModel->orderBy('created_at', 'desc')->where("status", 1);
         } elseif (!empty($request->reseller_id) && $request->reseller_id == "popularity") {
@@ -201,9 +206,9 @@ class ProjectListingController extends Controller
         } elseif (!empty($request->reseller_id) && $request->reseller_id == "Sort_by_area") {
             $projects = $this->ProjectModel->orderBy('area', 'asc')->where("status", 1);
         }
-
+    
         $projects = $projects->paginate($perPageRecord);
-
+    
         return view('projects.search', compact('page', 'projects', 'searchData'));
     }
 

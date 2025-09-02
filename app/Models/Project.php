@@ -41,11 +41,12 @@ class Project extends Model
         'is_archive_by',
         'is_archive_at',
         'views',
+        'created_by', // Added to allow mass assignment of the logged-in user's name
     ];
 
     protected static function booted()
     {
-        // using seperate scope class
+        // using separate scope class
         static::addGlobalScope(new HasIsNonArchiveScope);
 
         // you can do the same thing using anonymous function
@@ -121,16 +122,11 @@ class Project extends Model
     public function ProjectArea()
     {
         return $this->belongsToMany(Area::class, 'project_area');
-        // return $this->hasMany(ProjectArea::class);
     }
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'project_tag');
     }
-    // public function ProjectTag()
-    // {
-    //     return $this->hasMany(ProjectTag::class);
-    // }
     public function project_rooms()
     {
         return $this->hasMany(UnitRoom::class, "project_id");
@@ -140,7 +136,6 @@ class Project extends Model
         return $this->belongsToMany(RoomType::class, 'room_type_unit')
             ->withPivot('id', 'width', 'length', 'extras', 'covered_area')
             ->withTimestamps()->orderBy('id');
-        // return $this->hasMany(RoomType::class);
     }
     public function ProjectUtils()
     {

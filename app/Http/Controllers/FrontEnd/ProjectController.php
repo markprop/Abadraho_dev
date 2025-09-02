@@ -94,39 +94,22 @@ class ProjectController extends BaseController
     public function index()
     {
         $areas = Area::all();
-
         $progress = Progress::all();
-
         $projectTypes = ProjectType::all();
-
         $tags = Tag::all();
-
         $builders = Builder::select('id', 'full_name')->get();
-
         $featured_properties = $this->ProjectModel->orderBy('id', 'desc')->where('status', 1)->take(5)->get();
-
-
-
+        $allProjects = Project::withoutGlobalScope('delete')->orderBy('name')->get(); // Define $allProjects here
         $projectDetails = [];
-
-
-
+    
         foreach ($featured_properties as $Pkey => $project) {
-
             foreach ($project->project_unit_rooms->unique('id') as $Rkey => $roomType) {
-
                 foreach ($project->units as $Ukey => $unit) {
-
                     $projectDetails[$Pkey][$Rkey][$Ukey] = count($unit->room->where('id', $roomType->id));
-
                 }
-
             }
-
         }
-
-        return view('home', compact('progress', 'builders', 'areas', 'projectTypes', 'featured_properties', 'tags', 'projectDetails'));
-
+        return view('home', compact('progress', 'builders', 'areas', 'projectTypes', 'featured_properties', 'tags', 'projectDetails', 'allProjects'));
     }
 
     public function detail(Request $request, $slug)
@@ -500,693 +483,281 @@ class ProjectController extends BaseController
 
 
     public function filter(Request $request)
-
     {
-
-        // $request->session()->put('key', 'value');
-
-        // dd($request->session()->pull('key'));
-
-
-
-
-
-        // dd($request->cookie("XSRF-TOKEN"));
-
         $perPageRecord = 10;
-
         if (!Auth::guest()) {
-
             $user_id = Auth::id();
-
             UserSearchHistory::where("cookie", $request->cookie("XSRF-TOKEN"))->where("user_id", 0)->update(["user_id" => $user_id]);
-
         } else {
-
             $user_id = 0;
-
         }
-
-
-
+    
         $area = $request->area;
-
         $progress = $request->progress ? $request->progress : [];
-
         $type_id = $request->type_id;
-
         $builder = $request->builder;
-
         $blderIDs = $request->builder ? $request->builder : [];
-
-        $minDP = preg_match("/^[0-9,]+$/", $request->minDP) ? str_replace(",", "", $request->minDP) :  $request->minDP;
-
-        $maxDP = preg_match("/^[0-9,]+$/", $request->maxDP) ? str_replace(",", "", $request->maxDP) :  $request->maxDP;
-
-        // dd($maxDP);
-
-        $minMI = preg_match("/^[0-9,]+$/", $request->minMI) ? str_replace(",", "", $request->minMI) :  $request->minMI;
-
-        $maxMI = preg_match("/^[0-9,]+$/", $request->maxMI) ? str_replace(",", "", $request->maxMI) :  $request->maxMI;
-
-        $minPrice = preg_match("/^[0-9,]+$/", $request->minPrice) ? str_replace(",", "", $request->minPrice) :  $request->minPrice;
-
-        $maxPrice = preg_match("/^[0-9,]+$/", $request->maxPrice) ? str_replace(",", "", $request->maxPrice) :  $request->maxPrice;
-
+        $minDP = preg_match("/^[0-9,]+$/", $request->minDP) ? str_replace(",", "", $request->minDP) : $request->minDP;
+        $maxDP = preg_match("/^[0-9,]+$/", $request->maxDP) ? str_replace(",", "", $request->maxDP) : $request->maxDP;
+        $minMI = preg_match("/^[0-9,]+$/", $request->minMI) ? str_replace(",", "", $request->minMI) : $request->minMI;
+        $maxMI = preg_match("/^[0-9,]+$/", $request->maxMI) ? str_replace(",", "", $request->maxMI) : $request->maxMI;
+        $minPrice = preg_match("/^[0-9,]+$/", $request->minPrice) ? str_replace(",", "", $request->minPrice) : $request->minPrice;
+        $maxPrice = preg_match("/^[0-9,]+$/", $request->maxPrice) ? str_replace(",", "", $request->maxPrice) : $request->maxPrice;
         $maxBudget = $request->maxBudget;
-
         $tag_id = $request->tag_id;
-
         $downPayment = $request->downPayment ? $request->downPayment : '0';
-
         $page = $request->page ? $request->page : '1';
-
         $reseller_id = $request->reseller_id;
-
-
-
-
-
-
-
+        $project_name = $request->project_name; // Capture project_name from request
+    
         // Save User Search History
-
         if (count($request->request) > 1) {
-
             if (!$maxBudget) {
-
                 UserSearchHistory::create([
-
                     'user_id' => $user_id,
-
                     'hash' => 'HDfv6',
-
                     'search_type' => 'filter',
-
                     'minDP' => $minDP,
-
                     'maxDP' => $maxDP,
-
                     'minMI' => $minMI,
-
                     'maxMI' => $maxMI,
-
                     'minPrice' => $minPrice,
-
                     'maxPrice' => $maxPrice,
-
-                    // 'area' => $request->area ? implode("|",$request->area) : "",
-
                     "cookie" => $request->cookie("XSRF-TOKEN"),
-
                     'json' => json_encode([
-
                         'area' => $request->area,
-
                         'progress' => $request->progress,
-
                         'type' => $request->type_id,
-
                         'builder' => $request->builder,
-
                         'minDP' => $minDP ?? 0,
-
-                        'maxDP' => $maxDP  ?? 0,
-
-                        'minMI' => $minMI  ?? 0,
-
-                        'maxMI' => $maxMI  ?? 0,
-
-                        'minPrice' => $minPrice  ?? 0,
-
-                        'maxPrice' => $maxPrice  ?? 0,
-
+                        'maxDP' => $maxDP ?? 0,
+                        'minMI' => $minMI ?? 0,
+                        'maxMI' => $maxMI ?? 0,
+                        'minPrice' => $minPrice ?? 0,
+                        'maxPrice' => $maxPrice ?? 0,
                         'maxBudget' => $maxBudget,
-
                         'tag' => $request->tag_id,
-
+                        'project_name' => $request->project_name, // Add to search history
                     ])
-
                 ]);
-
             } else {
-
-
-
                 UserSearchHistory::create([
-
                     'user_id' => $user_id,
-
                     'hash' => 'HDfv6',
-
                     'search_type' => 'calculator',
-
                     'downPayment' => $request->downPayment,
-
                     'maxBudget' => $request->maxBudget,
-
                     'slabCasting' => $request->slabCasting,
-
                     'plinth' => $request->plinth,
-
                     'colour' => $request->colour,
-
                     'monthInstall' => $request->monthInstall,
-
                     'yearlyInstall' => $request->yearlyInstall,
-
                     'halfYearlyInstall' => $request->halfYearlyInstall,
-
                     'quarterlyInstall' => $request->quarterlyInstall,
-
                     'possession' => $request->possession,
-
                     "cookie" => $request->cookie("XSRF-TOKEN"),
-
                     'json' => json_encode([
-
                         'area' => $request->area,
-
                         'type' => $request->type,
-
                         'maxBudget' => $request->maxBudget,
-
                         'downPayment' => $request->downPayment,
-
                         'monthInstall' => $request->monthInstall,
-
                         'yearlyInstall' => $request->yearlyInstall,
-
                         'halfYearlyInstall' => $request->halfYearlyInstall,
-
                         'quarterlyInstall' => $request->quarterlyInstall,
-
                         'possession' => $request->possession,
-
                         'projectType' => $request->projectType,
-
                         'duration' => $request->duration,
-
                         'slabCasting' => $request->slabCasting,
-
                         'plinth' => $request->plinth,
-
                         'colour' => $request->colour
-
                     ], false),
-
                 ]);
-
             }
-
         }
-
-
-
+    
         // For Prefilled values on listings page
-
         $searchData['area'] = $area;
-
         $searchData['progress'] = $progress;
-
         $searchData['type_id'] = $type_id;
-
         $searchData['builder'] = $builder;
-
         $searchData['minDP'] = $minDP;
-
         $searchData['maxDP'] = $maxDP;
-
         $searchData['minMI'] = $minMI;
-
         $searchData['maxMI'] = $maxMI;
-
         $searchData['minPrice'] = $minPrice;
-
         $searchData['maxPrice'] = $maxPrice;
-
         $searchData['maxBudget'] = $maxBudget;
-
         $searchData['tag_id'] = $tag_id;
-
         $searchData['page'] = $page;
-
         $searchData['downPayment'] = $downPayment;
-
         $searchData['reseller_id'] = $reseller_id;
-
+        $searchData['project_name'] = $project_name; // Add to searchData
         $searchData['monthInstall'] = $request->monthInstall ? $request->monthInstall : "";
-
         $searchData['yearlyInstall'] = $request->yearlyInstall ? $request->yearlyInstall : "";
-
         $searchData['halfYearlyInstall'] = $request->halfYearlyInstall ? $request->halfYearlyInstall : "";
-
         $searchData['quarterlyInstall'] = $request->quarterlyInstall ? $request->quarterlyInstall : "";
-
         $searchData['possession'] = $request->possession ? $request->possession : "";
-
         $searchData['calcSearch'] = $request->calcSearch ? $request->calcSearch : false;
-
-        // dd($searchData);
-
-
-
+    
+        // Define $allProjects here to match the index() method
+        $allProjects = Project::withoutGlobalScope('delete')->orderBy('name')->get();
+    
         // Filter Start
-
-        // $projects = $this->ProjectModel->with('units', 'owners', 'location', 'areas', 'tags', 'project_unit_rooms');
-
         $projects = $this->ProjectModel
-
             ->with('units')
-
             ->with('owners')
-
             ->with('location')
-
             ->with('areas')
-
             ->with('tags');
-
-        // ->with('project_unit_rooms');
-
-
-
-
-
-        // dd($projects->get());
-
+    
         $projects = $projects->where("status", 1);
-
+    
+        // Filter by project name
+        if ($project_name) {
+            $projects = $projects->whereIn('id', $project_name);
+        }
+    
         // Filter by builder name
-
-        // if ($builder) {
-
-
-
-        //   $projects = $projects->whereHas('owners', function ($query) use ($builder) {
-
-        //     $query->where('full_name', 'like', '%' . $builder . '%');
-
-        // });
-
-        // }
-
-
-
         if ($builder) {
-
-            // return ($builder);
-
             $projects = $projects->whereHas('owners', function ($query) use ($builder) {
-
                 $query->whereIn('builder_id', $builder);
-
             });
-
         }
-
-
-
+    
         // Filter By Areas
-
         if ($area) {
-
-
-
             $projects = $projects->whereHas('areas', function ($query) use ($area) {
-
                 $query->whereIn('area_id', $area);
-
             });
-
         }
-
-
-
+    
         // Filter by Progress
-
         if ($progress) {
-
             $projects = $projects->whereIn('progress', $progress);
-
         }
-
-
-
+    
         // Filter by Project Type
-
         if ($type_id) {
-
-            // $projects = $projects->whereIn('project_type_id', $type_id);
-
             $projects = $projects->whereHas('units', function ($query) use ($type_id) {
-
                 $query->whereIn('unit_type_id', $type_id);
-
             });
-
         }
-
-
-
+    
         // Filter by Down Payment
-
         if ($minDP || $maxDP) {
-
             $minDP = $minDP ?? 0;
-
             $maxDP = $maxDP ?? Unit::max('down_payment');
-
+    
             $projects = $projects->whereHas('units', function ($query) use ($minDP, $maxDP) {
-
                 $query->whereBetween('down_payment', [$minDP, $maxDP]);
-
             });
-
         }
-
-
-
+    
         // Filter by Monthly Installment
-
         if ($minMI || $maxMI) {
-
             $minMI = $minMI ?? 0;
-
             $maxMI = $maxMI ?? Unit::max('monthly_installment');
-
-
-
+    
             $projects = $projects->whereHas('units', function ($query) use ($minMI, $maxMI) {
-
                 $query->whereBetween('monthly_installment', [$minMI, $maxMI]);
-
             });
-
         }
-
-
-
+    
         // Filter by Price
-
         if ($minPrice || $maxPrice) {
-
             $minPrice = $minPrice ?? 0;
-
             $maxPrice = $maxPrice ?? Unit::max('price');
-
             $projects = $projects->whereHas('units', function ($query) use ($minPrice, $maxPrice) {
-
                 $query->whereBetween('total_unit_amount', [$minPrice, $maxPrice]);
-
             });
-
         }
-
-
-
+    
         // Filter by Budget
-
         if ($minPrice || $maxBudget) {
-
             $minPrice = $minPrice ?? 0;
-
             $maxBudget = $maxBudget ?? Unit::max('price');
-
             $projects = $projects->whereHas('units', function ($query) use ($minPrice, $maxBudget) {
-
                 $query->whereBetween('total_unit_amount', [$minPrice, $maxBudget]);
-
             });
-
         }
-
-
-
+    
         if ($tag_id) {
-
             $projects = $projects->whereHas('tags', function ($query) use ($tag_id) {
-
                 $query->whereIn('tag_id', $tag_id);
-
             });
-
         }
-
-
-
-       // return projects based on search parameters
-
-
-
-         $popular_projects = Activity::where('conversion', 'View Page')->pluck('conversion');
-
-
-
-
-
-        // dd($popular_projects);
-
-
-
+    
+        $popular_projects = Activity::where('conversion', 'View Page')->pluck('conversion');
+    
         if (!empty($request->reseller_id) && $request->reseller_id == "Latest") {
-
-
-
             $projects = $this->ProjectModel->orderBy('created_at', 'desc')->where("status", 1);
-
         } elseif (!empty($request->reseller_id) && $request->reseller_id == "popularity") {
-
-
-
             $projects = $this->ProjectModel->orderBy('views', 'desc')->where("status", 1);
-
         } elseif (!empty($request->reseller_id) && $request->reseller_id == "Oldest") {
-
-
-
             $projects = $this->ProjectModel->orderBy('created_at', 'asc')->where("status", 1);
-
         } elseif (!empty($request->reseller_id) && $request->reseller_id == "Highest_by_price") {
-
-
-
             $projects = $this->ProjectModel->orderBy('min_price', 'desc')->where("status", 1);
-
         } elseif (!empty($request->reseller_id) && $request->reseller_id == "Lowest_by_price") {
-
-
-
             $projects = $this->ProjectModel->orderBy('min_price', 'asc')->where("status", 1);
-
         } elseif (!empty($request->reseller_id) && $request->reseller_id == "Sort_by_progress") {
-
-
-
             $projects = $this->ProjectModel->orderBy('progress', 'asc')->where("status", 1);
-
         } elseif (!empty($request->reseller_id) && $request->reseller_id == "Sort_by_area") {
-
-
-
             $projects = $this->ProjectModel->orderBy('area', 'asc')->where("status", 1);
-
         }
-
-
-
-        // dd($projects->get()[0]["units"]->min("total_unit_amount"));
-
-
-
-        //var_dump($request->reseller_id);
-
+    
         $projects = $projects->paginate($perPageRecord);
-
         $active_project = $this->ProjectModel->where('status', '=', 1)->count();
-
-        // dd($projects);
-
-
-
-
-
+    
         $areas = Area::all();
-
         $progress = Progress::all();
-
         $tags = Tag::all();
-
         $builders = Builder::select('id', 'full_name')->get();
-
         $projectTypes = ProjectType::all();
-
         $recent_view_data = RecentViews::with('project')->whereDate('created_at', Carbon::today());
-
         $recent_view_data = $recent_view_data->where('user_id', Auth::id())->get();
-
-
-
+    
         $projectDetails = [];
-
-
-
-        // foreach ($projects as $Pkey => $project) {
-
-        //     foreach ($project->project_unit_rooms->unique('id') as $Rkey => $roomType) {
-
-        //         foreach ($project->units as $Ukey => $unit) {
-
-        //             $projectDetails[$Pkey][$Rkey][$Ukey] = count($unit->room->where('id', $roomType->id));
-
-        //         }
-
-        //     }
-
-        // }
-
-
-
-        // for ($i=0; $i < count($projects); $i++) {
-
-        //     $projects[$i]->minimumUnitPrice = $this->GetUnitMinimumPrice($projects[$i]->units);
-
-        // }
-
-
-
-        // dd($projects);
-
-
-
-        // return view('project.chk_listings', compact('active_project', 'builders', 'page', 'blderIDs', 'minDP', 'downPayment', 'projects', 'progress', 'searchData', 'areas', 'projectTypes', 'recent_view_data', 'tags', 'projectDetails'));
-
-
-
-
-
+    
         if (!$request->calculatorResult) {
-
             if ($searchData['calcSearch']) {
-
                 if (count($projects) < 1) {
-
                     $projects = $this->ProjectModel->with('progress', 'units', 'owners', 'location', 'areas', 'tags', 'project_unit_rooms')->where('status', 1);
-
                     $projects = $projects->paginate(10);
-
-
-
+    
                     $areas = Area::all();
-
                     $progress = Progress::all();
-
                     $tags = Tag::all();
-
                     $builders = Builder::select('id', 'full_name')->get();
-
                     $projectTypes = ProjectType::all();
-
-
-
+    
                     $recent_view_data = RecentViews::with('project')->whereDate('created_at', Carbon::today());
-
                     $recent_view_data = $recent_view_data->where('user_id', Auth::id())->get();
-
-
-
+    
                     $projectDetails = [];
-
-
-
-                    // foreach ($projects as $Pkey => $project) {
-
-                    //     foreach ($project->project_unit_rooms->unique('id') as $Rkey => $roomType) {
-
-                    //         foreach ($project->units as $Ukey => $unit) {
-
-                    //             $projectDetails[$Pkey][$Rkey][$Ukey] = count($unit->room->where('id', $roomType->id));
-
-                    //         }
-
-                    //     }
-
-                    // }
-
                 }
-
             }
-
-
-
-            return view('projects.index', compact('active_project', 'builders', 'page', 'blderIDs', 'minDP', 'downPayment', 'projects', 'progress', 'searchData', 'areas', 'projectTypes', 'recent_view_data', 'tags', 'projectDetails'));
-
+    
+            return view('projects.index', compact('active_project', 'builders', 'page', 'blderIDs', 'minDP', 'downPayment', 'projects', 'progress', 'searchData', 'areas', 'projectTypes', 'recent_view_data', 'tags', 'projectDetails', 'allProjects'));
         } else {
-
-
-
             if (count($projects) < 1) {
-
                 $projects = $this->ProjectModel->with('progress', 'units', 'owners', 'location', 'areas', 'tags', 'project_unit_rooms')->where('status', 1);
-
                 $projects = $projects->paginate($perPageRecord);
-
-
-
+    
                 $areas = Area::all();
-
                 $progress = Progress::all();
-
                 $tags = Tag::all();
-
                 $builders = Builder::select('id', 'full_name')->get();
-
                 $projectTypes = ProjectType::all();
-
-
-
+    
                 $recent_view_data = RecentViews::with('project')->whereDate('created_at', Carbon::today());
-
                 $recent_view_data = $recent_view_data->where('user_id', Auth::id())->get();
-
-
-
+    
                 $projectDetails = [];
-
-
-
-                // foreach ($projects as $Pkey => $project) {
-
-                //     foreach ($project->project_unit_rooms->unique('id') as $Rkey => $roomType) {
-
-                //         foreach ($project->units as $Ukey => $unit) {
-
-                //             $projectDetails[$Pkey][$Rkey][$Ukey] = count($unit->room->where('id', $roomType->id));
-
-                //         }
-
-                //     }
-
-                // }
-
             }
-
-
-
-            // for ($i=0; $i < count($projects); $i++) {
-
-            //     $projects[$i]->minimumUnitPrice = $this->GetUnitMinimumPrice($projects[$i]->units);
-
-            // }
-
-
-
-
-
-            return view('project.searchprojects', compact('active_project', 'builders', 'page', 'blderIDs', 'minDP', 'downPayment', 'projects', 'progress', 'searchData', 'areas', 'projectTypes', 'recent_view_data', 'tags', 'projectDetails'));
-
+    
+            return view('project.searchprojects', compact('active_project', 'builders', 'page', 'blderIDs', 'minDP', 'downPayment', 'projects', 'progress', 'searchData', 'areas', 'projectTypes', 'recent_view_data', 'tags', 'projectDetails', 'allProjects'));
         }
-
     }
 
 

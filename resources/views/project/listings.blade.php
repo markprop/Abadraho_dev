@@ -17,7 +17,7 @@
                             <div class="sidebar_listing_list style2 mobile_sytle_sidebar mb0">
                                 <div class="sidebar_advanced_search_widget">
                                     <h4 class="mb25 search_heading">Advanced Search <a
-                                            class="filter_closed_btn float-right" href="javascript:void(0)"><small>Hide
+                                            class="filter_closed_btn float-right float" href="javascript:void(0)"><small>Hide
                                                 Filter</small> <span class="flaticon-close"></span></a></h4>
                                     <div class="container-fluid">
                                         <div class="row">
@@ -50,6 +50,32 @@
                                                               method="POST">
                                                             @csrf
                                                             <ul class="sasw_list mb0">
+                                                                <li>
+                                                                    <div class="search_option_two">
+                                                                        <div class="candidate_revew_select">
+                                                                            <h5 class="search_heading">Project Name</h5>
+                                                                            <select class="selectpicker w100 show-tick"
+                                                                                    data-actions-box="true"
+                                                                                    data-done-button="true"
+                                                                                    name="project_name[]" multiple multiple
+                                                                                    data-live-search="true"
+                                                                                    data-live-search-placeholder="Search">
+                                                                                <option disabled value="">Select Project Name
+                                                                                </option>
+                                                                                @if(isset($allProjects) && !$allProjects->isEmpty())
+                                                                                    @foreach ($allProjects as $project)
+                                                                                        <?php $selected = (isset($projectId) && $projectId == $project->id) ? 'selected' : ''; ?>
+                                                                                        <option {{ $selected }} value="{{ $project->id }}">
+                                                                                            {{ $project->name }}
+                                                                                        </option>
+                                                                                    @endforeach
+                                                                                @else
+                                                                                    <option disabled>No projects available</option>
+                                                                                @endif
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
                                                                 <li>
                                                                     <div class="search_option_two">
                                                                         <div class="candidate_revew_select">
@@ -522,220 +548,236 @@
                                 <div class="tab-pane fade" id="nav-profile" role="tabpanel"
                                      aria-labelledby="nav-profile-tab">
                                     <div class="sidebar_advanced_search_widget">
-                                        <div class="col-md-12 p0">
-                                            @csrf
-                                            <img
-                                                src="http://markproperties.pk/projects/wp-content/uploads/2021/03/download.png"
-                                                class="img-responsive gar1 cal_img">
-                                            <div class="cal-colum">
-                                                <h5 class="ttl2">My Budget</h5>
-                                                <h5 class="rem-price1 results"
-                                                    id="cal-result">{{ $searchData['maxBudget'] ?? 0}}</h5>
-                                            </div>
-                                            <br>
-                                        </div>
-
-                                        <div class="row">
-
-                                            <div class="col-md-12 project_type project_type_const">
-                                                <div class="tab-cal col-6" style="padding: 0;">
-                                                    <button id="defaultOpen" val1="Buy" class="tablinks active">
-                                                        FLAT
-                                                    </button>
+                                        <div class="sidebar_sidebar_search_widget">
+                                            <div class="col-md-12 p0">
+                                                @csrf
+                                                <img
+                                                    src="http://markproperties.pk/projects/wp-content/uploads/2021/03/download.png"
+                                                    class="img-responsive gar1 cal_img">
+                                                <div class="cal-colum">
+                                                    <h5 class="ttl2">My Budget</h5>
+                                                    <h5 class="rem-price1 results"
+                                                        id="cal-result">{{ $searchData['maxBudget'] ?? 0}}</h5>
                                                 </div>
-
-                                                <div class="tab-cal col-6" style="padding: 0; float:right;">
-                                                    <button id="defaultOpen" val1="Rent" class="tablinks">
-                                                        CONSTRUCTION
-                                                    </button>
-                                                </div>
-
-
+                                                <br>
                                             </div>
 
-                                        </div>
-                                        <div class="col-sm-12 p0">
-                                            <div class="project_type">
-                                                <div class="construction_options hide">
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col-sm-12">
+                                            <div class="row">
 
-                                                                <input type="tel" class="form-control number"
-                                                                       placeholder="Slab Casting">
-                                                                <br>
-                                                            </div>
-                                                            <div class="col-sm-12">
-
-                                                                <input type="tel" class="form-control number"
-                                                                       placeholder="Plinth">
-                                                                <br>
-                                                            </div>
-
-                                                            <div class="col-sm-12">
-
-                                                                <input type="tel" class="form-control number"
-                                                                       placeholder="Colour">
-                                                                <br>
-                                                            </div>
-
-
-                                                        </div>
+                                                <div class="col-md-12 project_type project_type_const">
+                                                    <div class="tab-cal col-6" style="padding: 0;">
+                                                        <button id="defaultOpen" val1="Buy" class="tablinks active">
+                                                            FLAT
+                                                        </button>
                                                     </div>
 
+                                                    <div class="tab-cal col-6" style="padding: 0; float:right;">
+                                                        <button id="defaultOpen" val1="Rent" class="tablinks">
+                                                            CONSTRUCTION
+                                                        </button>
+                                                    </div>
+
+
+                                                </div>
+
+                                            </div>
+                                            <div class="col-sm-12 p0">
+                                                <div class="project_type">
+                                                    <div class="construction_options hide">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+
+                                                                    <input type="tel" class="form-control number"
+                                                                           placeholder="Slab Casting">
+                                                                    <br>
+                                                                </div>
+                                                                <div class="col-sm-12">
+
+                                                                    <input type="tel" class="form-control number"
+                                                                           placeholder="Plinth">
+                                                                    <br>
+                                                                </div>
+
+                                                                <div class="col-sm-12">
+
+                                                                    <input type="tel" class="form-control number"
+                                                                           placeholder="Colour">
+                                                                    <br>
+                                                                </div>
+
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                                <div>
+
+                                                <div class="search_option_two areaSelect">
+        <div class="candidate_revew_select">
+            <select id="areaSelectDiv" data-all="false"
+                    class="selectpicker w100 show-tick"
+                    data-actions-box="true"
+                    data-done-button="true"
+                    name="area[]"
+                    multiple
+                    data-live-search="true"
+                    data-live-search-placeholder="Search Areas"
+                    title="Please Select">
+                <option value="" disabled selected>Please Select</option>
+                <option value="all" data-tokens="all">Select All</option>
+                <option value="none" data-tokens="none">Deselect All</option>
+                @foreach ($areas as $area)
+                    <option value="{{ $area->id }}"
+                            data-tokens="{{ $area->name }}"
+                            @if ($searchData['area'] && $searchData['calcSearch'])
+                                @foreach ($searchData['area'] as $searcharea)
+                                    @if ($area->id == $searcharea) selected @endif
+                                @endforeach
+                            @endif
+                    >
+                        {{ $area->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+                                                </div>
+
+
+                                                <input type="tel" class="form-control number1 number" name="maxPrice"
+                                                       id="down_payment"
+                                                       placeholder="Down Payment">
+
+                                            </div>
+
+                                            <input class="down_payment_checkbox cal_split_txt" type="checkbox"
+                                                   value="split">
+                                            <label class="cal_split_txt"> Split Down Payment ?</label>
+
+                                            <div class="project_type col-sm-12">
+                                                <div class="down_payment_options hide">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <input type="tel" class="form-control number Booking"
+                                                                   placeholder="Booking">
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <input type="tel" class="form-control number allocation"
+                                                                   placeholder="Allocation">
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <input type="tel" class="form-control number confirmation"
+                                                                   placeholder="Confirmation">
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <input type="tel" class="form-control number start_of_work"
+                                                                   placeholder="Start of Work">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <div>
 
+                                            <div>
                                                 <div class="search_option_two areaSelect">
                                                     <div class="candidate_revew_select">
-                                                        <select id="areaSelectDiv" data-all="false"
+                                                        <select id="duration_month" data-all="false"
                                                                 class="selectpicker w100 show-tick"
                                                                 data-actions-box="true" data-done-button="true"
-                                                                name="area[]" multiple data-live-search="true"
-                                                                data-live-search-placeholder="Search">
+                                                                name="month">
+                                                            <option disabled value=""> Select Months</option>
+                                                            <option value="1" m="1" q="0" h="0" y="0">1
+                                                                Months
+                                                            </option>
+                                                            <option value="3" m="3" q="1" h="0" y="0">3
+                                                                Months
+                                                            </option>
+                                                            <option value="6" m="6" q="2" h="1" y="0">6
+                                                                Months
+                                                            </option>
+                                                            <option value="9" m="9" q="3" h="1" y="0">9
+                                                                Months
+                                                            </option>
+                                                            <option value="12" m="12" q="4" h="2" y="1">12
+                                                                Months
+                                                            </option>
+                                                            <option value="24" m="24" q="8" h="4" y="2">24
+                                                                Months
+                                                            </option>
+                                                            <option value="36" m="36" q="12" h="6" y="3">36
+                                                                Months
+                                                            </option>
+                                                            <option value="48" m="48" q="16" h="8" y="4">48
+                                                                Months
+                                                            </option>
+                                                            <option value="60" m="60" q="20" h="10" y="5">60
+                                                                Months
+                                                            </option>
 
-                                                            <option disabled value="">Select Areas</option>
-                                                            @foreach ($areas as $area)
-                                                                <option value="{{ $area->id }}"
-                                                                        data-tokens="{{ $area->name }}"
-                                                                        @if ($searchData['area'] && $searchData['calcSearch']) @foreach ($searchData['area'] as $searcharea) @if ($area->id == $searcharea) selected @endif
-                                                                    @endforeach
-                                                                    @endif
-                                                                >
-                                                                    {{ $area->name }}
-                                                                </option>
-                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
 
 
-                                            <input type="tel" class="form-control number1 number" name="maxPrice"
-                                                   id="down_payment" placeholder="Down Payment">
+                                            <input type="tel" class="cal_input number1 number" id="Monthly_Installment"
+                                                   placeholder="Monthly Installment">
+                                            <input type="tel" class="cal_input number1 number"
+                                                   id="Quarterly_Installment" placeholder="Quarterly Installment">
+                                            <input type="tel" class="cal_input number1 number"
+                                                   id="Half_Yearly_Installment" placeholder="Half Yearly Installment">
+                                            <input type="tel" class="cal_input number1 number" id="Yearly_Installment"
+                                                   placeholder="Yearly Installment">
+                                            <input type="tel" class="cal_input number1 number" id="Possession"
+                                                   placeholder="Possession">
+                                            <div class="required-msg">Down Payment is required!</div>
+                                            <input id="calculate" class="btn cal_btn disable-btn" type="button"
+                                                   value="Projects in this Budget" disabled>
 
                                         </div>
-
-                                        <input class="down_payment_checkbox cal_split_txt" type="checkbox"
-                                               value="split">
-                                        <label class="cal_split_txt"> Split Down Payment ?</label>
-
-                                        <div class="project_type col-sm-12">
-                                            <div class="down_payment_options hide">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <input type="tel" class="form-control number Booking"
-                                                               placeholder="Booking">
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <input type="tel" class="form-control number allocation"
-                                                               placeholder="Allocation">
-                                                    </div>
-                                                </div>
-                                                <br>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <input type="tel" class="form-control number confirmation"
-                                                               placeholder="Confirmation">
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <input type="tel" class="form-control number start_of_work"
-                                                               placeholder="Start of Work">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                        <div>
-                                            <div class="search_option_two areaSelect">
-                                                <div class="candidate_revew_select">
-                                                    <select id="duration_month" data-all="false"
-                                                            class="selectpicker w100 show-tick"
-                                                            data-actions-box="true" data-done-button="true"
-                                                            name="month">
-                                                        <option disabled value=""> Select Months</option>
-                                                        <option value="1" m="1" q="0" h="0" y="0">1
-                                                            Months
-                                                        </option>
-                                                        <option value="3" m="3" q="1" h="0" y="0">3
-                                                            Months
-                                                        </option>
-                                                        <option value="6" m="6" q="2" h="1" y="0">6
-                                                            Months
-                                                        </option>
-                                                        <option value="9" m="9" q="3" h="1" y="0">9
-                                                            Months
-                                                        </option>
-                                                        <option value="12" m="12" q="4" h="2" y="1">12
-                                                            Months
-                                                        </option>
-                                                        <option value="24" m="24" q="8" h="4" y="2">24
-                                                            Months
-                                                        </option>
-                                                        <option value="36" m="36" q="12" h="6" y="3">36
-                                                            Months
-                                                        </option>
-                                                        <option value="48" m="48" q="16" h="8" y="4">48
-                                                            Months
-                                                        </option>
-                                                        <option value="60" m="60" q="20" h="10" y="5">60
-                                                            Months
-                                                        </option>
-
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                        <input type="tel" class="cal_input number1 number" id="Monthly_Installment"
-                                               placeholder="Monthly Installment">
-                                        <input type="tel" class="cal_input number1 number"
-                                               id="Quarterly_Installment" placeholder="Quarterly Installment">
-                                        <input type="tel" class="cal_input number1 number"
-                                               id="Half_Yearly_Installment" placeholder="Half Yearly Installment">
-                                        <input type="tel" class="cal_input number1 number" id="Yearly_Installment"
-                                               placeholder="Yearly Installment">
-                                        <input type="tel" class="cal_input number1 number" id="Possession"
-                                               placeholder="Possession">
-                                        <div class="required-msg">Down Payment is required!</div>
-                                        <input id="calculate" class="btn cal_btn disable-btn" type="button"
-                                               value="Projects in this Budget" disabled>
-
                                     </div>
                                 </div>
-                                <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
-                                     aria-labelledby="nav-home-tab">
+                                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                                     <div class="sidebar_advanced_search_widget">
                                         <form id="searchFilterForm" action="/projects/listings" method="POST">
-
                                             @csrf
                                             <ul class="sasw_list mb0">
+                                                <li>
+                                                    <div class="search_option_two">
+                                                        <div class="candidate_revew_select">
+                                                            <h5 class="search_heading">Project Name</h5>
+                                                            <select id="divProjectName" data-selected-text-format="count>2" data-all="false" class="selectpicker w100 show-tick" data-actions-box="true" data-done-button="true" name="project_name[]" multiple data-live-search="true" data-live-search-placeholder="Search">
+                                                                <option disabled value="">Select Project Name</option>
+                                                                @if(isset($allProjects) && !$allProjects->isEmpty())
+                                                                    @foreach ($allProjects as $project)
+                                                                        <option value="{{ $project->id }}" 
+                                                                                @if($searchData['project_name'] && in_array($project->id, $searchData['project_name'])) selected @endif>
+                                                                            {{ $project->name }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                @else
+                                                                    <option disabled>No projects available</option>
+                                                                @endif
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </li>
 
                                                 <li>
                                                     <div class="search_option_two">
                                                         <div class="candidate_revew_select">
                                                             <h5 class="search_heading">Area</h5>
-                                                            <select id="divRatings"
-                                                                    data-selected-text-format="count>2"
-                                                                    data-all="false"
-                                                                    class="selectpicker w100 show-tick"
-                                                                    data-actions-box="true" data-done-button="true"
-                                                                    placeholder="Location" name="area[]" multiple
-                                                                    data-live-search="true"
-                                                                    data-live-search-placeholder="Search">
-
+                                                            <select id="divRatings" data-selected-text-format="count>2" data-all="false" class="selectpicker w100 show-tick" data-actions-box="true" data-done-button="true" placeholder="Location" name="area[]" multiple data-live-search="true" data-live-search-placeholder="Search">
                                                                 <option disabled value="">Select Areas</option>
                                                                 @foreach ($areas as $area)
-                                                                    <option value="{{ $area->id }}"
-                                                                            data-tokens="{{ $area->name }}"
-                                                                            @if ($searchData['area']) @foreach ($searchData['area'] as $searcharea) @if ($area->id == $searcharea) selected @endif
-                                                                        @endforeach
-                                                                        @endif
-                                                                    >
+                                                                    <option value="{{ $area->id }}" data-tokens="{{ $area->name }}" 
+                                                                            @if($searchData['area'] && in_array($area->id, $searchData['area'])) selected @endif>
                                                                         {{ $area->name }}
                                                                     </option>
                                                                 @endforeach
@@ -747,25 +789,11 @@
                                                     <div class="search_option_two">
                                                         <div class="candidate_revew_select">
                                                             <h5 class="search_heading">Project Type</h5>
-                                                            <select id="divRatings2"
-                                                                    data-selected-text-format="count>2"
-                                                                    data-all="false"
-                                                                    class="selectpicker w100 show-tick"
-                                                                    data-actions-box="true" data-done-button="true"
-                                                                    name="type_id[]" multiple
-                                                                    data-live-search="true"
-                                                                    data-live-search-placeholder="Search">
-
-                                                                <option disabled value="">Select Project Type
-                                                                </option>
+                                                            <select id="divRatings2" data-selected-text-format="count>2" data-all="false" class="selectpicker w100 show-tick" data-actions-box="true" data-done-button="true" name="type_id[]" multiple data-live-search="true" data-live-search-placeholder="Search">
+                                                                <option disabled value="">Select Project Type</option>
                                                                 @foreach ($projectTypes as $projectType)
-                                                                    <option value="{{ $projectType->id }}"
-                                                                            data-tokens="{{ $projectType->title }}"
-                                                                            @if ($searchData['type_id']) @foreach ($searchData['type_id'] as $searchtype) @if ($projectType->id == $searchtype)
-                                                                            selected @endif
-                                                                        @endforeach
-                                                                        @endif
-                                                                    >
+                                                                    <option value="{{ $projectType->id }}" data-tokens="{{ $projectType->title }}" 
+                                                                            @if($searchData['type_id'] && in_array($projectType->id, $searchData['type_id'])) selected @endif>
                                                                         {{ $projectType->title }}
                                                                     </option>
                                                                 @endforeach
@@ -777,21 +805,11 @@
                                                     <div class="search_option_two">
                                                         <div class="candidate_revew_select">
                                                             <h5 class="search_heading">Progress</h5>
-                                                            <select id="divprogress"
-                                                                    data-selected-text-format="count>2"
-                                                                    data-all="false"
-                                                                    class="selectpicker w100 show-tick"
-                                                                    data-actions-box="true" data-done-button="true"
-                                                                    name="progress[]" multiple>
+                                                            <select id="divprogress" data-selected-text-format="count>2" data-all="false" class="selectpicker w100 show-tick" data-actions-box="true" data-done-button="true" name="progress[]" multiple>
                                                                 <option disabled value="">Progress</option>
                                                                 @foreach ($progress as $progress)
-                                                                    <option
-                                                                        value="{{ $progress->progress_status_name }}"
-                                                                        data-tokens="{{ $progress->progress_status_name }}"
-                                                                        @if ($searchData['progress']) @foreach ($searchData['progress'] as $searchprogress) @if ($progress->id == $searchprogress) selected @endif
-                                                                        @endforeach
-                                                                        @endif
-                                                                    >
+                                                                    <option value="{{ $progress->progress_status_name }}" data-tokens="{{ $progress->progress_status_name }}" 
+                                                                            @if($searchData['progress'] && in_array($progress->progress_status_name, $searchData['progress'])) selected @endif>
                                                                         {{ $progress->progress_status_name }}
                                                                     </option>
                                                                 @endforeach
@@ -804,25 +822,12 @@
                                                     <div class="search_option_two">
                                                         <div class="candidate_revew_select">
                                                             <h5 class="search_heading">Builder</h5>
-                                                            <select id="divbuilder"
-                                                                    data-selected-text-format="count>2"
-                                                                    data-all="false"
-                                                                    class="selectpicker w100 show-tick"
-                                                                    data-done-button="true" data-actions-box="true"
-                                                                    name="builder[]" multiple multiple multiple
-                                                                    data-live-search="true"
-                                                                    data-live-search-placeholder="Search">
-
+                                                            <select id="divbuilder" data-selected-text-format="count>2" data-all="false" class="selectpicker w100 show-tick" data-done-button="true" data-actions-box="true" name="builder[]" multiple data-live-search="true" data-live-search-placeholder="Search">
                                                                 @foreach ($builders as $blder)
-                                                                    <option value="{{ $blder->id }}"
-                                                                            @foreach($blderIDs as $blderID) @if($blder->id == $blderID) selected
-                                                                        @endif
-                                                                        @endforeach
-                                                                    >
+                                                                    <option value="{{ $blder->id }}" 
+                                                                            @if($searchData['builder'] && in_array($blder->id, $searchData['builder'])) selected @endif>
                                                                         {{ $blder->full_name }}
                                                                     </option>
-
-
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -832,84 +837,55 @@
                                                 <li>
                                                     <div class="form-group">
                                                         <h5 class="search_heading">Min Down Payment</h5>
-                                                        <input type="text" min="0" class="form-control" name="minDP"
-                                                               value="{{ $searchData['minDP'] }}">
+                                                        <input type="text" min="0" class="form-control" name="minDP" value="{{ $searchData['minDP'] ?? '' }}">
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div class="form-group">
                                                         <h5 class="search_heading">Max Down Payment</h5>
-                                                        <div id="minDownError" class="hide">value should be greater
-                                                            than Min Down Payment
-                                                        </div>
-                                                        <input type="text" min="0" class="form-control" name="maxDP"
-                                                               value="{{ $searchData['maxDP'] }}">
-                                                        <input type="text" min="0" id="downPayment"
-                                                               style="display:none" value="{{ $downPayment }}">
+                                                        <div id="minDownError" class="hide">value should be greater than Min Down Payment</div>
+                                                        <input type="text" min="0" class="form-control" name="maxDP" value="{{ $searchData['maxDP'] ?? '' }}">
+                                                        <input type="text" min="0" id="downPayment" style="display:none" value="{{ $searchData['downPayment'] ?? '' }}">
                                                     </div>
                                                 </li>
 
                                                 <li>
                                                     <div class="form-group">
                                                         <h5 class="search_heading">Min Monthly Installment</h5>
-                                                        <input type="text" min="0" class="form-control" name="minMI"
-                                                               value="{{ $searchData['minMI'] }}">
+                                                        <input type="text" min="0" class="form-control" name="minMI" value="{{ $searchData['minMI'] ?? '' }}">
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div class="form-group">
                                                         <h5 class="search_heading">Max Monthly Installment</h5>
-                                                        <div id="minMonthlyError" class="hide">value should be
-                                                            greater than Min Monthly Installment
-                                                        </div>
-                                                        <input type="text" min="0" class="form-control" name="maxMI"
-                                                               value="{{ $searchData['maxMI'] }}">
+                                                        <div id="minMonthlyError" class="hide">value should be greater than Min Monthly Installment</div>
+                                                        <input type="text" min="0" class="form-control" name="maxMI" value="{{ $searchData['maxMI'] ?? '' }}">
                                                     </div>
                                                 </li>
 
                                                 <li>
                                                     <div class="form-group">
                                                         <h5 class="search_heading">Min Price</h5>
-                                                        <input type="text" min="0" class="form-control"
-                                                               name="minPrice"
-                                                               value="{{ $searchData['minPrice'] }}">
+                                                        <input type="text" min="0" class="form-control" name="minPrice" value="{{ $searchData['minPrice'] ?? '' }}">
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div class="form-group">
                                                         <h5 class="search_heading">Max Price</h5>
-                                                        <div id="minPriceError" class="hide">value should be greater
-                                                            than Min Price
-                                                        </div>
-                                                        <input type="text" min="0" class="form-control"
-                                                               name="maxPrice"
-                                                               value="{{ $searchData['maxPrice'] }}">
-                                                        <input type="text" min="0" id="maxBudget"
-                                                               style="display:none"
-                                                               value="{{ $searchData['maxBudget'] }}">
+                                                        <div id="minPriceError" class="hide">value should be greater than Min Price</div>
+                                                        <input type="text" min="0" class="form-control" name="maxPrice" value="{{ $searchData['maxPrice'] ?? '' }}">
+                                                        <input type="text" min="0" id="maxBudget" style="display:none" value="{{ $searchData['maxBudget'] ?? '' }}">
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div class="search_option_two">
                                                         <div class="candidate_revew_select">
                                                             <h5 class="search_heading">Tags</h5>
-                                                            <select id="divtag" data-selected-text-format="count>2"
-                                                                    data-all="false"
-                                                                    class="selectpicker w100 show-tick"
-                                                                    data-actions-box="true" data-done-button="true"
-                                                                    name="tag_id[]" multiple data-live-search="true"
-                                                                    data-live-search-placeholder="Search">
-
-                                                                <option disabled value="">Select Project Tags
-                                                                </option>
+                                                            <select id="divtag" data-selected-text-format="count>2" data-all="false" class="selectpicker w100 show-tick" data-actions-box="true" data-done-button="true" name="tag_id[]" multiple data-live-search="true" data-live-search-placeholder="Search">
+                                                                <option disabled value="">Select Project Tags</option>
                                                                 @foreach ($tags as $tag)
-                                                                    <option value="{{ $tag->id }}"
-                                                                            data-tokens="{{ $tag->name }}"
-                                                                            @if ($searchData['tag_id']) @foreach ($searchData['tag_id'] as $searchtag) @if ($tag->id == $searchtag)
-                                                                            selected @endif
-                                                                        @endforeach
-                                                                        @endif
-                                                                    >
+                                                                    <option value="{{ $tag->id }}" data-tokens="{{ $tag->name }}" 
+                                                                            @if($searchData['tag_id'] && in_array($tag->id, $searchData['tag_id'])) selected @endif>
                                                                         {{ $tag->name }}
                                                                     </option>
                                                                 @endforeach
@@ -920,10 +896,7 @@
                                                 <li>
                                                     <div class="search_option_button">
                                                         <div class="required-msg2"> Area is required!</div>
-                                                        <button type="submit" id="searchFilterFormSubmit1" disabled
-                                                                class="btn btn-block btn-thm disable-btn">Search
-                                                        </button>
-                                                        <!-- <button type="button" id="clearFields" class="btn btn-block btn-thm ">Clear Search</button> -->
+                                                        <button type="submit" id="searchFilterFormSubmit1" @if(!$searchData['area'] || empty($searchData['area'])) disabled class="btn btn-block btn-thm disable-btn" @else class="btn btn-block btn-thm" @endif>Search</button>
                                                     </div>
                                                 </li>
                                             </ul>
@@ -1036,128 +1009,90 @@
                     </div>
                     <div class="row" id="search-results">
                         <div class="col-lg-12">
-                        @if(count($projects) > 0)
-                            @foreach ($projects as $Pkey => $project)
-                                <!-- <div class="feat_property list" @if (Auth::id()) onclick="window.location='{{URL::to('/')}}/project/{{ $project->slug }}'" @else data-toggle="modal" class="btn-link-project-detail btn btn-thm float-right" data-target=".bd-example-modal-lg" @endif> -->
+                            @if(count($projects) > 0)
+                                @foreach ($projects as $Pkey => $project)
                                     <?php $afterRedirect = "\/project/" . $project->slug ?>
                                     <div class="feat_property list project_data">
                                         <div class="thumb"
-                                             @if (Auth::id()) onclick="window.location='{{URL::to('/')}}/project/{{ $project->slug }}'"
-                                             @else class="btn-link-project-detail btn btn-thm float-right"
-                                             onclick="OpenLoginRegisterModal('{{$afterRedirect}}')" @endif>
+                                            @if (Auth::id()) onclick="window.location='{{URL::to('/')}}/project/{{ $project->slug }}'"
+                                            @else class="btn-link-project-detail btn btn-thm float-right"
+                                            onclick="OpenLoginRegisterModal('{{$afterRedirect}}')" @endif>
 
-                                            <img class="img-whp" src="/{{ $project->project_cover_img }}"
-                                                 alt="{{ $project->name }}">
+                                            @if ($project->project_cover_img)
+                                                <img class="img-whp" src="{{ asset($project->project_cover_img) }}" alt="{{ $project->name }}">
+                                            @else
+                                                <img class="img-whp" src="{{ asset('path/to/default-image.jpg') }}" alt="Default Image">
+                                            @endif
                                             <div class="ribbon">
                                                 <div class="txt">
                                                     {{ $project->progress }}
                                                 </div>
                                             </div>
 
-                                            <!--<a class="service-wishlist " data-id="1" data-type="property"><i class="fa fa-heart project_icon"></i></a> -->
-                                            <a class="service-wishlist addressclickable" data-id="1"
-                                               data-type="property" value="{{$loop->index+1}}">
-                                                <span id="lat{{$loop->index+1}}"
-                                                      class="d-none lat">{{$project->latitude}}</span>
-                                                <span id="lon{{$loop->index+1}}"
-                                                      class="d-none lon">{{$project->longitude}}</span>
-                                                <i class="fa fa-map-marker project_icon">
-
-                                                </i>
+                                            <a class="service-wishlist addressclickable" data-id="1" data-type="property" value="{{ $loop->index + 1 }}">
+                                                <span id="lat{{ $loop->index + 1 }}" class="d-none lat">{{ $project->latitude }}</span>
+                                                <span id="lon{{ $loop->index + 1 }}" class="d-none lon">{{ $project->longitude }}</span>
+                                                <i class="fa fa-map-marker project_icon"></i>
                                             </a>
-                                            <input type="hidden" class="project_id" value="{{$project->id}}">
+                                            <input type="hidden" class="project_id" value="{{ $project->id }}">
                                             @if (Auth::id())
-                                                <a type="btn" class="add-to-wishlist-btn service-heart" data-id="1"
-                                                   data-type="property"><i class="fa fa-heart project_icon"></i></a>
+                                                <a type="btn" class="add-to-wishlist-btn service-heart" data-id="1" data-type="property"><i class="fa fa-heart project_icon"></i></a>
                                             @else
-                                                <a class="service-heart" data-id="1" data-toggle="modal"
-                                                   data-target=".bd-example-modal-lg" data-type="property"><i
-                                                        class="fa fa-heart project_icon"></i></a>
-                                        @endif
-                                        <!-- <a class="service-photos" data-id="1" data-type="property"><i class="fa fa-camera project_icon"></i></a>-->
+                                                <a class="service-heart" data-id="1" data-toggle="modal" data-target=".bd-example-modal-lg" data-type="property"><i class="fa fa-heart project_icon"></i></a>
+                                            @endif
                                         </div>
                                         <div class="details">
                                             <div class="tc_content">
                                                 <div>
-
                                                     <h3 class="fp_price">
                                                         {{ $project->name }}
-
                                                     </h3>
-
                                                 </div>
-
                                                 <div class="dtls_headr">
                                                     <h4>
-
                                                         <?php
                                                         $minimumProjectUnitPrice = 0;
                                                         if (count($project->units)) {
                                                             $minimumProjectUnitPrice = $project->units->min("total_unit_amount");
                                                         }
                                                         ?>
-
                                                         Starting from
                                                         Rs. {{ \App\Http\Controllers\FrontEnd\ProjectController::convertCurrency((int) $minimumProjectUnitPrice) }}
-
                                                     </h4>
-
                                                 </div>
                                                 <p class="text-builder">
-                                                    By {{ $project->owners->first()->full_name }}
+                                                    By {{ $project->owners->first()->full_name ?? 'Unknown Owner' }}
                                                 </p>
                                                 <p class="text-thm">
-                                        <span>
-                                            @foreach ($project->units->unique('unit_type_id') as $unit)
-
-                                                <span>{{ optional($unit->type)->title }} </span>
-                                                @if($project->units->unique('unit_type_id')->count() > ($loop->index+1))
-                                                    <span>|</span>
-                                                @endif
-                                            @endforeach
-                                        </span>
+                                                    <span>
+                                                        @foreach ($project->units->unique('unit_type_id') as $unit)
+                                                            <span>{{ optional($unit->type)->title }} </span>
+                                                            @if($project->units->unique('unit_type_id')->count() > ($loop->index + 1))
+                                                                <span>|</span>
+                                                            @endif
+                                                        @endforeach
+                                                    </span>
                                                 </p>
                                                 <p class="project_location">
                                                     <span class="flaticon-placeholder"></span>
-                                                    <span class="addressclickable" value="{{$loop->index+1}}">
-                                            <span id="lat{{$loop->index+1}}"
-                                                  class="d-none lat">{{$project->latitude}}</span>
-                                            <span id="lon{{$loop->index+1}}"
-                                                  class="d-none lon">{{$project->longitude}}</span>
-                                                        <!-- <span data-toggle="modal" data-target=".addressModal"> -->
-                                            {!! Str::limit($project->address, 50) !!}
-                                        </span>
-
+                                                    <span class="addressclickable" value="{{ $loop->index + 1 }}">
+                                                        <span id="lat{{ $loop->index + 1 }}" class="d-none lat">{{ $project->latitude }}</span>
+                                                        <span id="lon{{ $loop->index + 1 }}" class="d-none lon">{{ $project->longitude }}</span>
+                                                        {!! Str::limit($project->address, 50) !!}
+                                                    </span>
                                                 </p>
                                                 <p>
                                                     <span> {!! Str::limit($project->details, 125) !!}</span>
                                                 </p>
-
-                                                <span
-                                                    style="color: #ec1c24 !important; font-weight:900; font-size:14px;">
-                                        <br>
-
-                                        No. of views: {{$project->views}}
-
-                                    </span>
-
-                                            <!-- <p style="color: #ec1c24 !important; font-weight:900;">
-                                        <br>
-                                        Added:
-                                        @if ($project->added_time)
-                                                {{ \Carbon\Carbon::parse($project->added_time)->diffForHumans() }}
-                                            @else
-                                                {{ \Carbon\Carbon::parse($project->created_at)->diffForHumans() }}
-                                            @endif
-                                                </p> -->
-
+                                                <span style="color: #ec1c24 !important; font-weight:900; font-size:14px;">
+                                                    <br>
+                                                    No. of views: {{ $project->views }}
+                                                </span>
                                             </div>
                                             <div class="fp_footer search_option_button">
                                                 @if (Auth::id())
                                                     <?php
                                                     $pageUrl = url('/') . "/compare/" . $project->id;
-
-
                                                     $arrActivityLogParams = [
                                                         "log_name" => Config::get("constants.CustomActivityLogs.compareProjectDetail.value"),
                                                         "log_table" => "projects",
@@ -1167,73 +1102,47 @@
                                                         "page_url" => $pageUrl,
                                                     ];
                                                     ?>
-
                                                     <button style="background-color:#fff; border:0px; cursor:pointer;"
                                                             class="float-left float-lg-left float-xl-left"
                                                             onclick='addClickToCompareActivityLog(<?php echo json_encode($arrActivityLogParams); ?>)'>
-                                                        <img src="\assets\images\property\comparison_icon.png"
-                                                             width="35%">Compare
+                                                        <img src="\assets\images\property\comparison_icon.png" width="35%">Compare
                                                     </button>
                                                 @else
-
-
-                                                    <a href="javascript:void(0)"
-                                                       onclick="OpenLoginRegisterModal('/compare/{{$project->id}}')"
-                                                       data-toggle="modal" data-target=".bd-example-modal-lg"
-                                                       class="float-left float-lg-left float-xl-left">
-                                                        <img src="\assets\images\property\comparison_icon.png"
-                                                             width="35%">Compare
+                                                    <a href="javascript:void(0)" onclick="OpenLoginRegisterModal('/compare/{{ $project->id }}')"
+                                                    data-toggle="modal" data-target=".bd-example-modal-lg"
+                                                    class="float-left float-lg-left float-xl-left">
+                                                        <img src="\assets\images\property\comparison_icon.png" width="35%">Compare
                                                     </a>
                                                 @endif
-
                                                 @if (Auth::id())
-                                                    <a href="/project/{{ $project->slug }}" target="_blank"
-                                                       class="btn btn-thm float-right float-lg-right">
+                                                    <a href="/project/{{ $project->slug }}" target="_blank" class="btn btn-thm float-right float-lg-right">
                                                         View Details
                                                     </a>
-
                                                 @else
-                                                    <a href="javascript:void(0)"
-                                                       onclick="OpenLoginRegisterModal('/project/{{ $project->slug }}')"
-                                                       data-toggle="modal"
-                                                       class="btn-link-project-detail btn btn-thm float-right float-lg-right"
-                                                       data-target=".bd-example-modal-lg">
+                                                    <a href="javascript:void(0)" onclick="OpenLoginRegisterModal('/project/{{ $project->slug }}')"
+                                                    data-toggle="modal" class="btn-link-project-detail btn btn-thm float-right float-lg-right"
+                                                    data-target=".bd-example-modal-lg">
                                                         View Details
                                                     </a>
-
-
-
                                                 @endif
                                             </div>
                                             @if((int)$searchData['maxBudget'] > 0)
                                                 @if(round((int)$project->units[0]->price) > (int)$searchData['maxBudget'])
-                                                    <div style="padding: 0px 20px 0px;">Max Budget: <span
-                                                            class='bdg-line-through'>{{$searchData['maxBudget']}}</span>
-                                                        | Increase Max Budget
-                                                    </div>
+                                                    <div style="padding: 0px 20px 0px;">Max Budget: <span class='bdg-line-through'>{{ $searchData['maxBudget'] }}</span> | Increase Max Budget</div>
                                                 @endif
                                             @endif
                                             @if(strpos($_SERVER['REQUEST_URI'], 'downPayment'))
                                                 @if(round((int)$project->units[0]->down_payment) > (int)$downPayment)
-                                                    <div class="ft-dp">Down Payment: <span
-                                                            class='bdg-line-through'>{{$downPayment}}</span> | Increase
-                                                        Down Payment
-                                                    </div>
+                                                    <div class="ft-dp">Down Payment: <span class='bdg-line-through'>{{ $downPayment }}</span> | Increase Down Payment</div>
                                                 @endif
                                             @else
-
                                                 @if($searchData['maxPrice'])
                                                     @if(round((int)$project->max_price) > (int)$searchData['maxPrice'])
-                                                        <div class="ft-dp">Max Price: <span
-                                                                class='bdg-line-through'>{{$searchData['maxPrice']}}</span>
-                                                            | Increase Max Price
-                                                        </div>
+                                                        <div class="ft-dp">Max Price: <span class='bdg-line-through'>{{ $searchData['maxPrice'] }}</span> | Increase Max Price</div>
                                                     @endif
                                                 @endif
                                             @endif
                                         </div>
-
-
                                     </div>
                                 @endforeach
                             @else
@@ -1243,72 +1152,61 @@
                             @endif
 
                             @if ($projects->hasPages())
-                            <div class="col-lg-12 mt20">
-                                <p>Showing {{ $projects->firstItem() }} to {{ $projects->lastItem() }} of {{ $projects->total() }} results</p>
-                                <div class="mbp_pagination">
-                                    <ul class="page_navigation">
-
-                                        <!--Previous page-->
-                                        @if ($projects->onFirstPage())
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true"> <span class="flaticon-left-arrow"></span> Prev</a>
-                                            </li>
-                                        @else
-                                            <li class="page-item">
-                                                <a class="page-link" href="{{ $projects->previousPageUrl() }}" tabindex="-1" aria-disabled="true"> <span class="flaticon-left-arrow"></span> Prev</a>
-                                            </li>
-                                        @endif
-                                        <!--Previous page-->
-
-                                        <!-- Page 1 -->
-                                        @if($projects->currentPage() >= 2)
-                                            <li class="page-item"><a class="page-link" href="{{ $projects->url(1) }}">1</a></li>
-                                        @endif
-                                        <!-- Page 1 -->
-
-                                        <!-- Page 2 -->
-                                        @if($projects->currentPage() > 2)
-                                            <li class="page-item"><a class="page-link" href="#">...</a></li>
-                                        @endif
-                                        <!-- Page 2 -->
-
-                                        @foreach(range($projects->currentPage(), $projects->lastPage()) as $i)
-                                            @if($i >= ($projects->currentPage() - 2) && $i <= ($projects->currentPage() + 2))
-                                                @if ($i == $projects->currentPage())
-                                                    <li class="page-item active" aria-current="page">
-                                                        <a class="page-link" href="#">{{ $i }} <span class="sr-only">(current)</span></a>
-                                                    </li>
-                                                @else
-                                                    <li class="page-item"><a class="page-link" href="{{ $projects->url($i) }}">{{ $i }}</a></li>
-                                                @endif
+                                <div class="col-lg-12 mt20">
+                                    <p>Showing {{ $projects->firstItem() }} to {{ $projects->lastItem() }} of {{ $projects->total() }} results</p>
+                                    <div class="mbp_pagination">
+                                        <ul class="page_navigation">
+                                            <!-- Previous page -->
+                                            @if ($projects->onFirstPage())
+                                                <li class="page-item disabled">
+                                                    <a class="page-link" href="#" href="#" tabindex="-1" aria-disabled="true"> <span class="flaticon-left-arrow"></span> Prev</a>
+                                                </li>
+                                            @else
+                                                <li class="page-item">
+                                                    <a class="page-link" href="{{ $projects->previousPageUrl() }}" tabindex="-1" aria-disabled="true"> <span class="flaticon-left-arrow"></span> Prev</a>
+                                                </li>
                                             @endif
-                                        @endforeach
-
-                                        @if($projects->currentPage() < ($projects->lastPage() - 3))
-                                            <li class="page-item"><a class="page-link" href="#">...</a></li>
-                                        @endif
-
-                                        @if($projects->currentPage() < ($projects->lastPage() - 2))
-                                            <li class="page-item">
-                                                <a class="page-link" href="{{ $projects->url($projects->lastPage()) }}">{{ $projects->lastPage() }}</a>
-                                            </li>
-                                        @endif
-
-                                        {{-- Next Page Link --}}
-                                        @if ($projects->hasMorePages())
-                                            <li class="page-item">
-                                                <a class="page-link" href="{{ $projects->nextPageUrl() }}"><span class="flaticon-right-arrow"></span></a>
-                                            </li>
-                                        @else
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#"><span class="flaticon-right-arrow"></span> Next</a>
-                                            </li>
-                                        @endif
-                                    </ul>
+                                            <!-- Page 1 -->
+                                            @if($projects->currentPage() >= 2)
+                                                <li class="page-item"><a class="page-link" href="{{ $projects->url(1) }}">1</a></li>
+                                            @endif
+                                            <!-- Page 2 -->
+                                            @if($projects->currentPage() > 2)
+                                                <li class="page-item"><a class="page-link" href="#">...</a></li>
+                                            @endif
+                                            @foreach(range($projects->currentPage(), $projects->lastPage()) as $i)
+                                                @if($i >= ($projects->currentPage() - 2) && $i <= ($projects->currentPage() + 2))
+                                                    @if ($i == $projects->currentPage())
+                                                        <li class="page-item active" aria-current="page">
+                                                            <a class="page-link" href="#">{{ $i }} <span class="sr-only">(current)</span></a>
+                                                        </li>
+                                                    @else
+                                                        <li class="page-item"><a class="page-link" href="{{ $projects->url($i) }}">{{ $i }}</a></li>
+                                                    @endif
+                                                @endif
+                                            @endforeach
+                                            @if($projects->currentPage() < ($projects->lastPage() - 3))
+                                                <li class="page-item"><a class="page-link" href="#">...</a></li>
+                                            @endif
+                                            @if($projects->currentPage() < ($projects->lastPage() - 2))
+                                                <li class="page-item">
+                                                    <a class="page-link" href="{{ $projects->url($projects->lastPage()) }}">{{ $projects->lastPage() }}</a>
+                                                </li>
+                                            @endif
+                                            <!-- Next Page Link -->
+                                            @if ($projects->hasMorePages())
+                                                <li class="page-item">
+                                                    <a class="page-link" href="{{ $projects->nextPageUrl() }}"><span class="flaticon-right-arrow"></span></a>
+                                                </li>
+                                            @else
+                                                <li class="page-item disabled">
+                                                    <a class="page-link" href="#"><span class="flaticon-right-arrow"></span> Next</a>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
                             @endif
-
                         </div>
                     </div>
                 </div>
@@ -1330,7 +1228,7 @@
                     <div class="row">
                         <div class="col-sm-12" id="iframe"></div>
                         <div class="col-sm-12 d-none">
-                            <iframe width="100%" height="450" frameborder="0" style="border:0"
+                            <iframe width="100%" height="450" height="450" frameborder="0" style="border:0"
                                     src="https://www.google.com/maps/embed/v1/place?q=40.7127837,-74.0059413&amp;key=AIzaSyC07CvVyZNLAxycxXkMq64WWif3fkS0LE4"></iframe>
                         </div>
                     </div>
@@ -1796,7 +1694,7 @@
                                         if (stack == "?") {
                                             stack += `tag_id[]=${val}`
                                         } else {
-                                            stack += `&tag_id[]=${val}`
+                                            stack += `&${data}[]=${val}`
                                         }
                                     })
                                 }
@@ -1881,7 +1779,7 @@
                                         if (localStorageSessionParams == "?") {
                                             localStorageSessionParams += `area[]=${val}`
                                         } else {
-                                            localStorageSessionParams += `&area[]=${val}`
+                                            localStorageSessionParams += `&${data}[]=${val}`
                                         }
                                     })
                                 }
@@ -2194,7 +2092,7 @@
             });
             // for flat and construction tab
             $(document).on("click", ".project_type_const button", function () {
-                var val = $(this).html();
+                var value = $(this).html();
                 $(".project_type_const").find("button").removeClass("active");
                 $(this).addClass("active");
                 if (val == "FLAT") {
@@ -2320,7 +2218,7 @@
                     $("input#down_payment").attr("disabled", true);
                 } else {
                     $(".down_payment_options").addClass("hide").removeClass("show");
-                    $("input#down_payment").attr("disabled", false);
+                    $("input#down_payment").removeAttr("disabled");
                 }
             });
 
@@ -2477,7 +2375,7 @@
             var projects_inp = $("#project_inp").val();
 
             $("#filter_actions").append(
-                "<div id='wait'><img width='30px' src='https://markproperties.pk/projects/wp-content/themes/markproperties2/images/wait.gif' /></div>"
+                "<div id='wait'><img width='30px' src='https://markproperties.pk/projects/wp-content/themes/markproperties2/images/wait.gif' /> </div>"
             );
             $.ajax({
                 url: "https://markproperties.pk/projects/wp-admin/admin-ajax.php",

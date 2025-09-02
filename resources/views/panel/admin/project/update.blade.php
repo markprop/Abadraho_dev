@@ -59,6 +59,7 @@
                 </div>
               </div>
             </div>
+
             <div class="form-group fv-plugins-icon-container">
               <label>Location Address *</label>
               <input type="text" class="form-control form-control-lg" name="address" value="{{ $project->address }}">
@@ -67,6 +68,7 @@
               <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
               @enderror
             </div>
+
             <div class="form-group fv-plugins-icon-container">
               <label>Areas *</label>
               @if (count($project->areas))
@@ -157,47 +159,49 @@
                 </div>
               </div>
             </div>
+
             <div class="row">
-              <div class="col-xl-6">
+                <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
-                  <label>Project Document ( .pdf Format )</label>
-                  <input type="file" class="form-control form-control-lg" name="project_doc" id="project_doc">
-                  @error('project_doc')
-                  <span class="form-text text-muted">Please upload the project document in .pdf format. {{ $errors->first('project_doc') }}</span>
-                  @enderror
-                  @if ($project->project_doc)
-                  <a href="{{ $project->project_doc }}" target="_blank">View Current Document</a>
-                  @endif
+                      <label>Project Documents (Multiple .pdf Files) (If you Previous one then leave it Blank or add new ones.)</label>
+                      @if ($project->project_doc)
+                          <div class="existing-docs">
+                              <p><strong>Current Documents:</strong></p>
+                              @php $docs_exploded = explode('|', $project->project_doc); @endphp
+                              @foreach ($docs_exploded as $doc)
+                                  <p>{{ basename($doc) }} <small>(Will be retained unless replaced)</small></p>
+                                  <input type="hidden" name="existing_project_docs[]" value="{{ $doc }}">
+                              @endforeach
+                          </div>
+                      @endif
+                      <input type="file" class="form-control form-control-lg" name="project_docs[]" id="project_docs" accept=".pdf" multiple>
+                      @error('project_docs')
+                      <span class="form-text text-muted">Please upload project documents in .pdf format. {{ $errors->first('project_docs') }}</span>
+                      @enderror
+                      <div class="fv-plugins-message-container"></div>
+                  </div>
                 </div>
-              </div>
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
-                  <label>Project Video (MP4 Format)</label>
-                  <input type="file" class="form-control form-control-lg" name="project_video" id="project_video" accept="video/mp4">
-                  <span class="form-text text-muted">Please upload the project video in MP4 format.</span>
+                  <label>YouTube Video Link</label>
+                  <input type="url" class="form-control form-control-lg" name="project_video" id="project_video" placeholder="Paste YouTube URL (e.g., https://www.youtube.com/watch?v=example)" value="{{ old('project_video', $project->project_video) }}">
+                  <span class="form-text text-muted">Please paste the YouTube video URL (e.g., https://www.youtube.com/watch?v=example).</span>
                   @error('project_video')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
                   @enderror
-                  @if ($project->project_video)
-                  <video width="25%" controls>
-                    <source src="{{ $project->project_video }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                  </video>
-                  @endif
                 </div>
               </div>
-            </div>
-            <div class="row">
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
                   <label>Project Cover Img</label>
                   <input type="file" class="form-control form-control-lg" name="project_cover_img" id="project_cover_img">
                   @if ($project->project_cover_img)
-                  <img src="{{ $project->project_cover_img }}" width="25%" />
+                  <img src="{{ asset($project->project_cover_img) }}" width="25%" />
                   @endif
                   @error('project_cover_img')
                   <span class="form-text text-muted">Please upload the project Cover Image. {{ $errors->first('project_cover_img') }}</span>
                   @enderror
+                  <div class="fv-plugins-message-container"></div>
                 </div>
               </div>
               <div class="col-xl-6">
@@ -206,24 +210,26 @@
                   <input type="file" class="form-control form-control-lg" name="project_imgs[]" multiple>
                   @if ($project->project_imgs)
                   @foreach (explode('|', $project->project_imgs) as $img)
-                  <img src="{{ $img }}" width="25%" />
+                  <img src="{{ asset($img) }}" width="25%" />
                   @endforeach
                   @endif
                   @error('project_imgs')
                   <span class="form-text text-muted">Please upload the project Images. {{ $errors->first('project_imgs') }}</span>
                   @enderror
+                  <div class="fv-plugins-message-container"></div>
                 </div>
               </div>
             </div>
+
+            @if(Auth::user()->user_type_id != Config::get("constants.UserTypeIds.Builder"))
             <div class="form-group row">
-              @if(Auth::user()->user_type_id != Config::get("constants.UserTypeIds.Builder"))
               <div class="col-xl-12">
                 <div class="form-group fv-plugins-icon-container">
                   <label>Select Builders</label>
                   <select class="form-control select2" id="kt_select2_3" name="owners[]" aria-placeholder="Select Owners" multiple="multiple">
                     <optgroup label="Select Potential owners from the list">
                       @foreach ($builders as $builder)
-                      <option value="{{ $builder->id }}" {{ collect(old('owners'))->contains($builder->id) ? 'selected' : '' }}>
+                      <option value="{{ $builder->id }}" @if ($project->owners->contains($builder->id)) selected @endif>
                         {{ $builder->full_name }} {{ $builder->last_name }}
                       </option>
                       @endforeach
@@ -231,22 +237,23 @@
                   </select>
                 </div>
               </div>
-              @endif
             </div>
+            @endif
+
             <div class="form-group row">
               <div class="col-xl-12">
                 <label class="col-form-label col-lg-12 bolder">Project Details</label>
                 <textarea name="details" id="kt-ckeditor-1">{{ $project->details }}</textarea>
-                @error('details')
-                <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                @enderror
               </div>
+              @error('details')
+              <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
+              @enderror
             </div>
             <div class="row">
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
                   <label class="col-form-label col-lg-12">Main Heading *</label>
-                  <input type="text" class="form-control form-control-lg" name="main_heading" value="{{ $project->project_info->main_heading }}">
+                  <input type="text" class="form-control form-control-lg" name="main_heading" value="{{ $project->project_info->main_heading ?? '' }}">
                   @error('main_heading')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
                   @enderror
@@ -255,63 +262,65 @@
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
                   <label class="col-form-label col-lg-12">Sub Heading *</label>
-                  <input type="text" class="form-control form-control-lg" name="sub_heading" value="{{ $project->project_info->sub_heading }}">
+                  <input type="text" class="form-control form-control-lg" name="sub_heading" value="{{ $project->project_info->sub_heading ?? '' }}">
                   @error('sub_heading')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
+                  @endif
                 </div>
               </div>
             </div>
+
             <div class="row">
               <div class="col-xl-4">
                 <div class="form-group fv-plugins-icon-container">
                   <label class="col-form-label col-lg-12">Bullet 1 *</label>
-                  <input type="text" class="form-control form-control-lg" name="bullet_1" value="{{ $project->project_info->bullet_1 }}">
+                  <input type="text" class="form-control form-control-lg" name="bullet_1" value="{{ $project->project_info->bullet_1 ?? '' }}">
                   @error('bullet_1')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
+                  @endif
                 </div>
               </div>
               <div class="col-xl-4">
                 <div class="form-group fv-plugins-icon-container">
                   <label class="col-form-label col-lg-12">Bullet 2 *</label>
-                  <input type="text" class="form-control form-control-lg" name="bullet_2" value="{{ $project->project_info->bullet_2 }}">
+                  <input type="text" class="form-control form-control-lg" name="bullet_2" value="{{ $project->project_info->bullet_2 ?? '' }}">
                   @error('bullet_2')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
+                  @endif
                 </div>
               </div>
               <div class="col-xl-4">
                 <div class="form-group fv-plugins-icon-container">
                   <label class="col-form-label col-lg-12">Bullet 3 *</label>
-                  <input type="text" class="form-control form-control-lg" name="bullet_3" value="{{ $project->project_info->bullet_3 }}">
+                  <input type="text" class="form-control form-control-lg" name="bullet_3" value="{{ $project->project_info->bullet_3 ?? '' }}">
                   @error('bullet_3')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
+                  @endif
                 </div>
               </div>
               <div class="col-xl-4">
                 <div class="form-group fv-plugins-icon-container">
                   <label class="col-form-label col-lg-12">Bullet 4 *</label>
-                  <input type="text" class="form-control form-control-lg" name="bullet_4" value="{{ $project->project_info->bullet_4 }}">
+                  <input type="text" class="form-control form-control-lg" name="bullet_4" value="{{ $project->project_info->bullet_4 ?? '' }}">
                   @error('bullet_4')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
+                  @endif
                 </div>
               </div>
               <div class="col-xl-4">
                 <div class="form-group fv-plugins-icon-container">
                   <label class="col-form-label col-lg-12">Bullet 5</label>
-                  <input type="text" class="form-control form-control-lg" name="bullet_5" value="{{ $project->project_info->bullet_5 }}">
+                  <input type="text" class="form-control form-control-lg" name="bullet_5" value="{{ $project->project_info->bullet_5 ?? '' }}">
                 </div>
               </div>
               <div class="col-xl-4">
                 <div class="form-group fv-plugins-icon-container">
                   <label class="col-form-label col-lg-12">Bullet 6</label>
-                  <input type="text" class="form-control form-control-lg" name="bullet_6" value="{{ $project->project_info->bullet_6 }}">
+                  <input type="text" class="form-control form-control-lg" name="bullet_6" value="{{ $project->project_info->bullet_6 ?? '' }}">
                 </div>
               </div>
             </div>
+
             <div class="form-group row">
               <div class="col-xl-12">
                 <div class="form-group fv-plugins-icon-container">
@@ -327,18 +336,19 @@
                 </div>
               </div>
             </div>
+
             <div class="row">
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
-                  <label class="">Marketed By</label>
+                  <label>Marketed By</label>
                   <input type="text" class="form-control form-control-lg" name="marketed_by" value="{{ $project->marketed_by }}">
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="form-group">
-                  <label>Using Locales(DE)</label>
+                  <label>Customized Added Time</label>
                   <div class="input-group date" id="kt_datetimepicker_2" data-target-input="nearest">
-                    <input type="text" name="added_time" class="form-control datetimepicker-input" placeholder="Select date &amp; time" data-target="#kt_datetimepicker_2" value="{{ $time }}">
+                    <input type="text" name="added_time" class="form-control datetimepicker-input" placeholder="Select date &amp; time" data-target="#kt_datetimepicker_2" value="{{ $project->added_time ?? '' }}" style="height: 44px">
                     <div class="input-group-append" data-target="#kt_datetimepicker_2" data-toggle="datetimepicker">
                       <span class="input-group-text">
                         <i class="ki ki-calendar"></i>
@@ -355,7 +365,7 @@
                   <textarea class="form-control" name="meta_title" id="kt_autosize_1" rows="3" style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 76px;">{{ $project->meta_title }}</textarea>
                   @error('meta_title')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
+                  @endif
                 </div>
               </div>
             </div>
@@ -366,7 +376,7 @@
                   <textarea class="form-control" name="meta_description" id="kt_autosize_1" rows="3" style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 76px;">{{ $project->meta_description }}</textarea>
                   @error('meta_description')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
+                  @endif
                 </div>
               </div>
             </div>
@@ -377,7 +387,7 @@
                   <textarea class="form-control" name="meta_tags" id="kt_autosize_1" rows="3" style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 76px;">{{ $project->meta_tags }}</textarea>
                   @error('meta_tags')
                   <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
-                  @enderror
+                  @endif
                 </div>
               </div>
             </div>
@@ -432,6 +442,5 @@
 <!--end::Page Vendors-->
 <!--begin::Page Scripts(used by this page)-->
 <script src="assets/js/pages/crud/forms/editors/ckeditor-classic.js"></script>
-<!--end::Page Scripts-->
 <script src="assets/js/pages/crud/forms/widgets/bootstrap-datetimepicker.js"></script>
 @endsection

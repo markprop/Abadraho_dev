@@ -20,7 +20,7 @@
                             <br><br><br>
                         </div>
                         <div class="home_adv_srch_opt">
-                            @include('projects.partials.search', ['home' => true])
+                            @include('projects.partials.search', ['home' => true, 'allProjects' => $allProjects])
                         </div>
                     </div>
                 </div>
