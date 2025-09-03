@@ -24,7 +24,7 @@ class HomeController extends Controller
         // $this->middleware('auth');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $areas = Area::get();
         $progress = Progress::all();
@@ -37,10 +37,21 @@ class HomeController extends Controller
         $featured_properties = Project::orderBy('id', 'desc')->where('status', 1)->take(5)->get();
         $tags = Tag::all();
         $builders = Builder::select('id', 'full_name')->get();
-        $allProjects = Project::withoutGlobalScope('delete')->orderBy('name')->get(); // Add this line
+        $allProjects = Project::withoutGlobalScope('delete')->orderBy('name')->get();
+
+        // Initialize $searchData for the search form
+        // $searchData = UserSearchHistory::where('search_type', 'calculator')
+        //     ->where(function ($q) use ($request) {
+        //         return $q->where("cookie", $request->cookie("XSRF-TOKEN"))->orWhere("user_id", auth()->id());
+        //     })
+        //     ->orderBy('id', 'desc')
+        //     ->first();
+
+        // $searchData = $searchData ? json_decode($searchData->json, true) : [];
 
         $projectDetails = [];
 
+        // return view('home', compact('progress', 'builders', 'areas', 'projectTypes', 'featured_properties', 'blogs', 'tags', 'projectDetails', 'categories', 'allProjects', 'searchData'));
         return view('home', compact('progress', 'builders', 'areas', 'projectTypes', 'featured_properties', 'blogs', 'tags', 'projectDetails', 'categories', 'allProjects'));
     }
 

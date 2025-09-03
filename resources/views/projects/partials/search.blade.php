@@ -14,8 +14,8 @@
                                             <select class="selectpicker" name="project_name[]" multiple="multiple" data-live-search="true" data-actions-box="true" data-live-search-placeholder="Please Select" title="Project Name">
                                                 @if(isset($allProjects) && !$allProjects->isEmpty())
                                                     @foreach ($allProjects as $project)
-                                                        <option value="{{ $project->id }}" 
-                                                                @if($searchData['project_name'] && in_array($project->id, $searchData['project_name'])) selected @endif>
+                                                        <option value="{{ $project->id }}"
+                                                                @if(isset($searchData['project_name']) && is_array($searchData['project_name']) && in_array($project->id, $searchData['project_name'])) selected @endif>
                                                             {{ $project->name }}
                                                         </option>
                                                     @endforeach
@@ -35,8 +35,8 @@
                                         <div class="ui_kit_multi_select_box">
                                             <select class="selectpicker" name="area[]" multiple="multiple" data-live-search="true" data-actions-box="true" data-live-search-placeholder="Please Select" title="Select Area">
                                                 @foreach ($areas as $area)
-                                                    <option value="{{ $area->id }}" 
-                                                            @if($searchData['area'] && in_array($area->id, $searchData['area'])) selected @endif>
+                                                    <option value="{{ $area->id }}"
+                                                            @if(isset($searchData['area']) && is_array($searchData['area']) && in_array($area->id, $searchData['area'])) selected @endif>
                                                         {{ $area->name }}
                                                     </option>
                                                 @endforeach
@@ -53,8 +53,8 @@
                                         <div class="ui_kit_multi_select_box">
                                             <select class="selectpicker" name="type_id[]" multiple="multiple" data-live-search="true" data-actions-box="true" data-live-search-placeholder="Please Select" title="Project Type">
                                                 @foreach ($projectTypes as $projectType)
-                                                    <option value="{{ $projectType->id }}" 
-                                                            @if($searchData['type_id'] && in_array($projectType->id, $searchData['type_id'])) selected @endif>
+                                                    <option value="{{ $projectType->id }}"
+                                                            @if(isset($searchData['type_id']) && is_array($searchData['type_id']) && in_array($projectType->id, $searchData['type_id'])) selected @endif>
                                                         {{ $projectType->title }}
                                                     </option>
                                                 @endforeach
@@ -67,40 +67,40 @@
                             <!-- Advanced Filters (Hidden by Default) -->
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
-                                    <input type="text" min="0" class="form-control" placeholder="Max Down Payment" name="maxDP" value="{{ $searchData['maxDP'] ?? '' }}">
-                                    <input type="text" min="0" id="downPayment" style="display:none" value="{{ $searchData['downPayment'] ?? '' }}">
+                                    <input type="text" min="0" class="form-control" placeholder="Max Down Payment" name="maxDP" value="{{ isset($searchData['maxDP']) ? $searchData['maxDP'] : '' }}">
+                                    <input type="text" min="0" id="downPayment" style="display:none" value="{{ isset($searchData['downPayment']) ? $searchData['downPayment'] : '' }}">
                                 </div>
                             </div>
 
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
-                                    <input type="text" min="0" class="form-control" placeholder="Max Monthly Installment" name="maxMI" value="{{ $searchData['maxMI'] ?? '' }}">
+                                    <input type="text" min="0" class="form-control" placeholder="Max Monthly Installment" name="maxMI" value="{{ isset($searchData['maxMI']) ? $searchData['maxMI'] : '' }}">
                                 </div>
                             </div>
 
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
-                                    <input type="text" min="0" class="form-control" placeholder="Min Down Payment" name="minDP" value="{{ $searchData['minDP'] ?? '' }}">
+                                    <input type="text" min="0" class="form-control" placeholder="Min Down Payment" name="minDP" value="{{ isset($searchData['minDP']) ? $searchData['minDP'] : '' }}">
                                 </div>
                             </div>
 
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
-                                    <input type="text" min="0" class="form-control" placeholder="Min Monthly Installment" name="minMI" value="{{ $searchData['minMI'] ?? '' }}">
+                                    <input type="text" min="0" class="form-control" placeholder="Min Monthly Installment" name="minMI" value="{{ isset($searchData['minMI']) ? $searchData['minMI'] : '' }}">
                                 </div>
                             </div>
 
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
-                                    <input type="text" min="0" class="form-control" placeholder="Min Price" name="minPrice" value="{{ $searchData['minPrice'] ?? '' }}">
+                                    <input type="text" min="0" class="form-control" placeholder="Min Price" name="minPrice" value="{{ isset($searchData['minPrice']) ? $searchData['minPrice'] : '' }}">
                                 </div>
                             </div>
 
                             <div class="col-md-3 toggle-advanced-fields hide">
                                 <div class="form-group">
                                     <div id="minPriceError" class="hide">Value should be greater than Min Price</div>
-                                    <input type="text" min="0" class="form-control" placeholder="Max Price" name="maxPrice" value="{{ $searchData['maxPrice'] ?? '' }}">
-                                    <input type="text" min="0" id="maxBudget" style="display:none" value="{{ $searchData['maxBudget'] ?? '' }}">
+                                    <input type="text" min="0" class="form-control" placeholder="Max Price" name="maxPrice" value="{{ isset($searchData['maxPrice']) ? $searchData['maxPrice'] : '' }}">
+                                    <input type="text" min="0" id="maxBudget" style="display:none" value="{{ isset($searchData['maxBudget']) ? $searchData['maxBudget'] : '' }}">
                                 </div>
                             </div>
 
@@ -108,8 +108,8 @@
                                 <div class="form-group">
                                     <select class="selectpicker" name="progress[]" multiple="multiple" data-live-search="true" data-actions-box="true" data-live-search-placeholder="Please Select" title="Select Project Progress">
                                         @foreach ($progress as $progressItem)
-                                            <option value="{{ $progressItem->progress_status_name }}" 
-                                                    @if($searchData['progress'] && in_array($progressItem->progress_status_name, $searchData['progress'])) selected @endif>
+                                            <option value="{{ $progressItem->progress_status_name }}"
+                                                    @if(isset($searchData['progress']) && is_array($searchData['progress']) && in_array($progressItem->progress_status_name, $searchData['progress'])) selected @endif>
                                                 {{ $progressItem->progress_status_name }}
                                             </option>
                                         @endforeach
@@ -121,8 +121,8 @@
                                 <div class="form-group">
                                     <select class="selectpicker" name="builder[]" multiple="multiple" data-live-search="true" data-actions-box="true" data-live-search-placeholder="Please Select" title="Select Builder">
                                         @foreach ($builders as $builder)
-                                            <option value="{{ $builder->id }}" 
-                                                    @if($searchData['builder'] && in_array($builder->id, $searchData['builder'])) selected @endif>
+                                            <option value="{{ $builder->id }}"
+                                                    @if(isset($searchData['builder']) && is_array($searchData['builder']) && in_array($builder->id, $searchData['builder'])) selected @endif>
                                                 {{ $builder->full_name }}
                                             </option>
                                         @endforeach
@@ -134,8 +134,8 @@
                                 <div class="form-group">
                                     <select class="selectpicker" name="tag_id[]" multiple="multiple" data-live-search="true" data-actions-box="true" data-live-search-placeholder="Please Select" title="Select Tags">
                                         @foreach ($tags as $tag)
-                                            <option value="{{ $tag->id }}" 
-                                                    @if($searchData['tag_id'] && in_array($tag->id, $searchData['tag_id'])) selected @endif>
+                                            <option value="{{ $tag->id }}"
+                                                    @if(isset($searchData['tag_id']) && is_array($searchData['tag_id']) && in_array($tag->id, $searchData['tag_id'])) selected @endif>
                                                 {{ $tag->name }}
                                             </option>
                                         @endforeach
@@ -185,6 +185,12 @@
                 var text = $('#more-less-txt').text();
                 $('#more-less-txt').text(text === 'More' ? 'Less' : 'More');
             });
+
+            // Reset form fields for first-time users
+            if (!window.location.search) {
+                $('#searchProperties')[0].reset();
+                $('.selectpicker').selectpicker('refresh');
+            }
         });
     </script>
     <!-- End::Page Scripts -->
