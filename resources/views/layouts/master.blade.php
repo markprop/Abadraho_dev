@@ -855,7 +855,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.js"></script>
     <script type="text/javascript" src="/assets/js/timepicker.js?v={!! time() !!}"></script>
     <script type="text/javascript" src="/assets/js/wow.min.js?v={!! time() !!}"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC07CvVyZNLAxycxXkMq64WWif3fkS0LE4&callback=initMap"
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC07CvVyZNLAxycxXkMq64WWif3fkS0LE4&callback=initMap" -->
             type="text/javascript"></script>
     <script type="text/javascript" src="/assets/js/googlemaps1.js?v={!! time() !!}"></script>
     <script type="text/javascript" src="/assets/js/googlemaps2.js?v={!! time() !!}"></script>

@@ -4,7 +4,7 @@
 @section('meta_description', $project->meta_description ?? '')
 @section('meta_title', $project->meta_title ?? $project->name)
 
-<style>
+<!-- <style>
     .hide {
         display: none !important;
     }
@@ -30,6 +30,190 @@
     }
     .bullet-list li {
         margin-bottom: 10px;
+    }
+    /* Custom marker CSS */
+    .marker-container {
+        position: relative;
+        width: 60px;
+        height: 60px;
+    }
+    .marker-logo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solidrgb(115, 51, 58); /* Light red border, a lighter shade of #ec1c24 */
+    }
+    /* Remove pulse and highlight styles as they are no longer needed */
+    /* Custom popup styling inspired by listing */
+    .mapboxgl-popup-content {
+        padding: 10px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        width: 300px;
+        font-family: Arial, sans-serif;
+    }
+    .popup-cover {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+    .popup-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin: 0 0 5px;
+    }
+    .popup-address {
+        font-size: 14px;
+        color: #666;
+        margin: 0;
+    }
+</style> -->
+<style>
+    .hide {
+        display: none !important;
+    }
+    .calc-extra-option-btn {
+        padding: 15px 20px;
+        color: #fff;
+    }
+    .calc-extra-option-btn:hover {
+        color: #ec1c24;
+    }
+    /* for select2 dropdown */
+    .dropdown-toggle {
+        height: 46px !important;
+    }
+    .pod-details {
+        font-weight: normal !important;
+        width: 130px !important;
+        display: -webkit-inline-box;
+    }
+    .badge-tag {
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    .bullet-list li {
+        margin-bottom: 10px;
+    }
+
+    /* Marker */
+    .marker-container {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    .marker-logo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid rgb(238, 52, 52);
+        transition: all 0.3s ease;
+    }
+    .marker-container:hover {
+        transform: scale(1.1);
+    }
+    .marker-container:hover .marker-logo {
+        border: 2px solid rgb(140, 54, 23);
+        box-shadow: 0 0 8px rgba(183, 47, 51, 0.9);
+    }
+
+    /* Popup */
+    .mapboxgl-popup {
+        max-width: 280px !important;
+        font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Remove default tip background */
+    .mapboxgl-popup-tip {
+        display: none !important;
+    }
+
+    /* Card container */
+    .popup-card {
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        width: 260px;
+    }
+
+    /* Cover image */
+    .popup-cover {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Body section */
+    .popup-body {
+        padding: 12px 14px;
+    }
+
+    /* Title */
+    .popup-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #222;
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    /* Subtitle (address / developer name) */
+    .popup-address {
+        font-size: 13px;
+        font-weight: 500;
+        color: #6b7280;
+        margin-top: 2px;
+        margin-bottom: 6px;
+    }
+
+    /* Price section */
+    .popup-price {
+        font-size: 14px;
+        font-weight: 600;
+        color: #111;
+        margin-top: 4px;
+    }
+
+    .popup-price strong {
+        font-size: 15px;
+        color: #000;
+    }
+
+    /* Delivery date / footer */
+    .popup-footer {
+        padding: 10px 14px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #6b7280;
+        border-top: 1px solid #f1f1f1;
+        background: #fafafa;
+    }
+
+    /* Badge (like Presale(EOI)) */
+    .popup-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: #0d62ff;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 6px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
 </style>
 
@@ -601,7 +785,7 @@
                                             <li>
                                                 <p>
                                                     <span class="pod-details">Discount Price: </span>
-                                                    <span>{{ \App\Http\Controllers\FrontEnd\ProjectController::convertCurrency((int) $project->discount_price) }}</span>
+                                                    <span>{{ $project->discount_price }}</span>
                                                 </p>
                                             </li>
                                             <li>
@@ -1392,33 +1576,19 @@
                         @endif
 
                         <div class="col-lg-12">
-
                             <div id="tab-location" class="application_statics mt30">
-
                                 <div class="utf-boxed-list-headline-item">
-
                                     <h3>Location</h3>
-
                                 </div>
-
                                 <h4 class="mb30 flaticon-maps-and-flags"><small class="mt-3 mt-lg-0">
-
-                                        {{ $project->address }}<br>
-
-                                    </small></h4>
-
+                                    {{ $project->address }}<br>
+                                </small></h4>
                                 <div class="property_video p0">
-
                                     <div class="thumb">
-
-                                        <div class="h400" id="map-canvas2"></div>
-
+                                        <div id="map-canvas2" style="height: 400px; width: 100%; border-radius: 8px;"></div> <!-- Enhanced styling -->
                                     </div>
-
                                 </div>
-
                             </div>
-
                         </div>
 
                         <!-- @if ($project->project_video)
@@ -2916,7 +3086,7 @@
 
     </section>
 
-
+    @include('projects.partials.location_modal')
 
     <section id="feature-property" class="whychose_us feature-property">
 
@@ -4536,6 +4706,105 @@
 
     </script>
 
+<!-- Add Mapbox CSS and JS -->
+<link href='https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css' rel='stylesheet' />
+<script src='https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js'></script>
+
+<div id="map-canvas2" style="width:100%;height:500px;border-radius:10px;overflow:hidden;"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        mapboxgl.accessToken = '{{ env('MAPBOX_ACCESS_TOKEN') }}';
+
+        // Get current project coordinates and price
+        var section = document.querySelector('.listing-title-area');
+        var currentLat = section ? parseFloat(section.dataset.projectLatitude) : 24.8607;
+        var currentLng = section ? parseFloat(section.dataset.projectLongitude) : 67.0011;
+        var projectPrice = section && section.dataset.projectPrice ? parseFloat(section.dataset.projectPrice) : ({{ $project->discount_price ?? $project->units->min('total_unit_amount') ?? 6700000 }});
+
+        if (!section || isNaN(currentLat) || isNaN(currentLng)) {
+            console.log('Current project coordinates not found, fallback: Karachi');
+            currentLat = 24.8607;
+            currentLng = 67.0011;
+        }
+
+        var map = new mapboxgl.Map({
+            container: 'map-canvas2',
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [currentLng, currentLat],
+            zoom: 11,
+            pitch: 45,
+            bearing: 0
+        });
+
+        map.addControl(new mapboxgl.NavigationControl({ showCompass: true }));
+        map.addControl(new mapboxgl.GeolocateControl({
+            positionOptions: { enableHighAccuracy: true },
+            trackUserLocation: true
+        }));
+
+        map.on('load', function () {
+            map.flyTo({
+                center: [currentLng, currentLat],
+                zoom: 13,
+                pitch: 45,
+                bearing: 20,
+                speed: 0.8,
+                curve: 1.2,
+                easing: function (t) { return t; }
+            });
+
+            // Custom marker
+            var markerElement = document.createElement('div');
+            markerElement.className = 'marker-container';
+            var logoElement = document.createElement('img');
+            logoElement.className = 'marker-logo';
+            logoElement.src = '{{ asset($project->project_cover_img) }}';
+            markerElement.appendChild(logoElement);
+
+            // Custom popup HTML with dynamic price
+            var popupHTML = `
+                <div class="popup-card">
+                    <img src="{{ asset($project->project_cover_img ?? 'path/to/default.jpg') }}" 
+                        class="popup-cover" alt="{{ $project->name }}">
+                    <div class="popup-body">
+                        <div class="popup-badge">Presale (EOI)</div>
+                        <h3 class="popup-title">{{ $project->name }}</h3>
+                        <p class="popup-address">{{ $project->address }}</p>
+                        <p class="popup-price"><strong>PKR {{ $project->discount_price }}</strong></p>
+                    </div>
+                    <div class="popup-footer">
+                        📍 Latitude: ${currentLat}, Longitude: ${currentLng}
+                    </div>
+                </div>
+            `;
+
+            var popup = new mapboxgl.Popup({
+                closeButton: true,
+                closeOnClick: true,
+                offset: 25,
+                anchor: 'bottom'
+            }).setHTML(popupHTML);
+
+            var marker = new mapboxgl.Marker(markerElement)
+                .setLngLat([currentLng, currentLat])
+                .setPopup(popup)
+                .addTo(map);
+
+            // Close popup when clicking outside marker
+            map.on('click', function (e) {
+                var features = map.queryRenderedFeatures(e.point);
+                if (!features.length) {
+                    popup.remove();
+                }
+            });
+        });
+
+        map.on('error', function (e) {
+            console.error('Map error:', e.error);
+        });
+    });
+</script>
 
 <!-- Magnific Popup CSS and JS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
