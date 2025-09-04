@@ -85,8 +85,8 @@
           </div>
 
           <div class="col-xs-6 text-xs-right">
-
-            <a href="/admin/tag/create" type="button" class="btn admin_ad_btn_red mr-2">Add Tags</a>
+            <span class="badge badge-primary mr-2" style="font-size:14px; padding:8px 12px;">Total Tags: {{ method_exists($tags, 'total') ? $tags->total() : $tags->count() }}</span>
+            <a href="/admin/tag/create" type="button" class="btn admin_ad_btn_red">Add Tags</a>
 
           </div>
 

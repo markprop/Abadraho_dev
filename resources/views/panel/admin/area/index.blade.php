@@ -93,8 +93,8 @@
           </div>
 
           <div class="col-xs-6 text-xs-right">
-
-            <a href="/admin/area/create" type="button" class="btn admin_ad_btn_red mr-2">Add Area</a>
+            <span class="badge badge-primary mr-2" style="font-size:14px; padding:8px 12px;">Total Areas: {{ method_exists($areas, 'total') ? $areas->total() : $areas->count() }}</span>
+            <a href="/admin/area/create" type="button" class="btn admin_ad_btn_red">Add Area</a>
 
           </div>
 

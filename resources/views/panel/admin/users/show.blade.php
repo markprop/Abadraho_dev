@@ -22,6 +22,11 @@
         <!--end::Search Form-->
       </div>
       <!--end::Details-->
+      <div class="d-flex align-items-center">
+        <a href="/admin/manage_users/{{ $admin->id }}/edit" class="btn admin_ad_btn">
+          <i class="fa fa-edit mr-2"></i> Edit User
+        </a>
+      </div>
     </div>
   </div>
   <!--end::Subheader-->

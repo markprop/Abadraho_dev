@@ -85,8 +85,8 @@
           </div>
 
           <div class="col-xs-6 text-xs-right">
-
-            <a href="/admin/builder/create" type="button" class="btn admin_ad_btn_red mr-2">Add Builder</a>
+            <span class="badge badge-primary mr-2" style="font-size:14px; padding:8px 12px;">Total Builders: {{ method_exists($builders, 'total') ? $builders->total() : $builders->count() }}</span>
+            <a href="/admin/builder/create" type="button" class="btn admin_ad_btn_red">Add Builder</a>
 
           </div>
 

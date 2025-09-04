@@ -56,7 +56,7 @@ class Project extends Model
         });
     }
 
-    public function getRoutKeyName()
+    public function getRouteKeyName()
     {
         return 'slug';
     }

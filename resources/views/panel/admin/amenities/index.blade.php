@@ -41,7 +41,8 @@
             </div>
           </div>
           <div class="col-xs-6 text-xs-right">
-            <a href="/admin/amenities/create" type="button" class="btn admin_ad_btn_red mr-2">Add Amenities</a>
+            <span class="badge badge-primary mr-2" style="font-size:14px; padding:8px 12px;">Total Amenities: {{ method_exists($amenities, 'total') ? $amenities->total() : $amenities->count() }}</span>
+            <a href="/admin/amenities/create" type="button" class="btn admin_ad_btn_red">Add Amenities</a>
           </div>
         </div>
         <div class="card-body">

@@ -85,8 +85,8 @@
           </div>
 
           <div class="col-xs-6 text-xs-right">
-
-            <a href="/admin/project_type/create" type="button" class="btn admin_ad_btn_red mr-2">Add Project Type</a>
+            <span class="badge badge-primary mr-2" style="font-size:14px; padding:8px 12px;">Total Project Types: {{ method_exists($projectTypes, 'total') ? $projectTypes->total() : $projectTypes->count() }}</span>
+            <a href="/admin/project_type/create" type="button" class="btn admin_ad_btn_red">Add Project Type</a>
 
           </div>
 

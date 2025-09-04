@@ -85,8 +85,8 @@
           </div>
 
           <div class="col-xs-6 text-xs-right">
-
-            <a href="/admin/room_type/create" type="button" class="btn admin_ad_btn_red mr-2">Add Room Type</a>
+            <span class="badge badge-primary mr-2" style="font-size:14px; padding:8px 12px;">Total Room Types: {{ method_exists($roomTypes, 'total') ? $roomTypes->total() : $roomTypes->count() }}</span>
+            <a href="/admin/room_type/create" type="button" class="btn admin_ad_btn_red">Add Room Type</a>
 
           </div>
 

@@ -9,6 +9,11 @@
             <div class="d-flex align-items-center flex-wrap mr-2">
                 <h5 class="text-dark font-weight-bold mt-2 mb-2 mr-5">Broker Details</h5>
             </div>
+            <div class="d-flex align-items-center">
+                <a href="/admin/brokers/{{ $broker->id }}/edit" class="btn admin_ad_btn">
+                    <i class="fa fa-edit mr-2"></i> Edit Broker
+                </a>
+            </div>
         </div>
     </div>
 

@@ -85,8 +85,8 @@
           </div>
 
           <div class="col-xs-6 text-xs-right">
-
-            <a href="/admin/project/create" type="button" class="btn admin_ad_btn_red mr-2">Add Project</a>
+            <span class="badge badge-primary mr-2" style="font-size:14px; padding:8px 12px;">Total Projects: {{ method_exists($projects, 'total') ? $projects->total() : $projects->count() }}</span>
+            <a href="/admin/project/create" type="button" class="btn admin_ad_btn_red">Add Project</a>
 
           </div>
 
@@ -554,9 +554,9 @@
 
                   </td>
 
-                  <td><a href="/admin/project/{{ $project->id }}"><i class="fa fa-eye"></i></a>
+                  <td><a href="/admin/project/{{ $project->slug }}"><i class="fa fa-eye"></i></a>
 
-                    <a href="/admin/project/{{ $project->id }}/edit"><i class="fa fa-edit ml-2"></i></a>
+                    <a href="/admin/project/{{ $project->slug }}/edit"><i class="fa fa-edit ml-2"></i></a>
 
                     <!-- <a href="/admin/project/{{ $project->slug }}/delete" onclick="javascript: return confirm('Please confirm deletion');">
 

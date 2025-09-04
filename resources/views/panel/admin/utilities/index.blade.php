@@ -42,7 +42,8 @@
             </div>
           </div>
           <div class="col-xs-6 text-xs-right">
-            <a href="/admin/utilities/create" type="button" class="btn admin_ad_btn_red mr-2">Add Utilities</a>
+            <span class="badge badge-primary mr-2" style="font-size:14px; padding:8px 12px;">Total Utilities: {{ method_exists($utilities, 'total') ? $utilities->total() : $utilities->count() }}</span>
+            <a href="/admin/utilities/create" type="button" class="btn admin_ad_btn_red">Add Utilities</a>
           </div>
         </div>
         <div class="card-body">

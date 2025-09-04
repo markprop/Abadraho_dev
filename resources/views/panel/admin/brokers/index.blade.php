@@ -26,6 +26,9 @@
               <h3 class="card-label">Brokers</h3>
             </div>
           </div>
+          <div class="col-xs-6 text-xs-right">
+            <span class="badge badge-primary" style="font-size:14px; padding:8px 12px;">Total Brokers: {{ method_exists($admins, 'total') ? $admins->total() : $admins->count() }}</span>
+          </div>
         </div>
         <div class="card-body">
           <div class="mb-7">

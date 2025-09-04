@@ -41,9 +41,9 @@
               <h3 class="card-label">Active Projects</h3>
             </div>
           </div>
-          <!-- <div class="col-xs-6 text-xs-right">
-            <a href="/admin/project/create" type="button" class="btn admin_ad_btn_red mr-2">ADD PROJECT</a>
-          </div> -->
+          <div class="col-xs-6 text-xs-right">
+            <span class="badge badge-primary" style="font-size:14px; padding:8px 12px;">Total Active Projects: {{ method_exists($projects, 'total') ? $projects->total() : $projects->count() }}</span>
+          </div>
         </div>
         <div class="card-body">
 

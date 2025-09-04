@@ -59,6 +59,9 @@
               <div class="d-flex justify-content-between pb-10 pb-md-20 flex-column flex-md-row">
                 <h1 class="display-4 text-white font-weight-boldest mb-10">{{ $project->name }}</h1>
                 <div class="d-flex flex-column align-items-md-end px-0">
+                  <a href="/admin/project/{{ $project->slug }}/edit" class="btn btn-warning font-weight-bold mb-3" style="background:#ffb100; border:none; color:#1f1f1f;">
+                    <i class="fa fa-edit mr-2"></i> Edit Project
+                  </a>
                   <span class="text-white d-flex flex-column align-items-md-end opacity-70">
                     <span>{{ $project->address }}</span>
                   </span>
