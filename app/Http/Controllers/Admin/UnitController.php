@@ -476,25 +476,77 @@ class UnitController extends Controller
             }
             // return response()->json($data, 200);
             if ($ErrorMsg == "") {
-                $DataSet = UnitRoom::where("id", $request->table_id)->update([
-                    "unit_id" => $request->unit_id,
-                    "project_id" => $request->project_id,
-                    "width" => $request->width,
-                    "width_feet" => $request->width_feet,
-                    "width_inches" => $request->width_inches,
-                    "length" => $request->length,
-                    "length_feet" => $request->length_feet,
-                    "length_inches" => $request->length_inches,
-                    "room_type_id" => $request->room_type_id,
-                    "covered_area" => $request->covered_area,
-                    "extras" => $request->extras,
-                    // "is_display_on_listing" => $request->is_display_on_listing,
-                ]);
-                if ($DataSet) {
-                    $data["status"] = true;
-                    $data["message"] = "Unit room details updated successfully.";
-                    $data["data"] = $DataSet;
+                $roomIdsRaw = $request->input('room_ids');
+                $roomIds = [];
+                if (!empty($roomIdsRaw)) {
+                    if (is_array($roomIdsRaw)) {
+                        $roomIds = $roomIdsRaw;
+                    } else {
+                        $roomIds = array_filter(explode(',', $roomIdsRaw));
+                    }
                 }
+
+                // Calculate single room area and total area if values provided
+                $width = floatval($request->width_feet) + (floatval($request->width_inches) / 12);
+                $length = floatval($request->length_feet) + (floatval($request->length_inches) / 12);
+                $singleArea = $width * $length; // in SqFt
+                $extrasCount = intval($request->extras ?: 0);
+                $totalArea = $singleArea * $extrasCount;
+                $coveredAreaToPersist = $request->covered_area ?: $totalArea;
+
+                if (count($roomIds) > 0) {
+                    // Update the first record with totals so merged row reflects new numbers
+                    $firstId = $roomIds[0];
+                    $DataSet = UnitRoom::where("id", $firstId)->update([
+                        "unit_id" => $request->unit_id,
+                        "project_id" => $request->project_id,
+                        "width" => $request->width,
+                        "width_feet" => $request->width_feet,
+                        "width_inches" => $request->width_inches,
+                        "length" => $request->length,
+                        "length_feet" => $request->length_feet,
+                        "length_inches" => $request->length_inches,
+                        "room_type_id" => $request->room_type_id,
+                        "covered_area" => $coveredAreaToPersist,
+                        "extras" => $extrasCount,
+                    ]);
+
+                    // Set remaining records in the group to zeroed extras/area but keep dimensions/type in sync
+                    $remainingIds = array_slice($roomIds, 1);
+                    if (count($remainingIds) > 0) {
+                        UnitRoom::whereIn('id', $remainingIds)->update([
+                            "unit_id" => $request->unit_id,
+                            "project_id" => $request->project_id,
+                            "width" => $request->width,
+                            "width_feet" => $request->width_feet,
+                            "width_inches" => $request->width_inches,
+                            "length" => $request->length,
+                            "length_feet" => $request->length_feet,
+                            "length_inches" => $request->length_inches,
+                            "room_type_id" => $request->room_type_id,
+                            "covered_area" => 0,
+                            "extras" => 0,
+                        ]);
+                    }
+                } else {
+                    // Fallback: update only the targeted record
+                    $DataSet = UnitRoom::where("id", $request->table_id)->update([
+                        "unit_id" => $request->unit_id,
+                        "project_id" => $request->project_id,
+                        "width" => $request->width,
+                        "width_feet" => $request->width_feet,
+                        "width_inches" => $request->width_inches,
+                        "length" => $request->length,
+                        "length_feet" => $request->length_feet,
+                        "length_inches" => $request->length_inches,
+                        "room_type_id" => $request->room_type_id,
+                        "covered_area" => $coveredAreaToPersist,
+                        "extras" => $extrasCount,
+                    ]);
+                }
+
+                $data["status"] = true;
+                $data["message"] = "Unit room details updated successfully.";
             }
         } catch (\Throwable $e) {
             DB::rollback();
