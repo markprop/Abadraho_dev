@@ -33,7 +33,7 @@
           <h2 class="card-title text-uppercase">Update Project</h2>
         </div>
         <!--begin::Form-->
-        <form class="form mt-5" method="POST" action="/admin/project/{{ $project->id }}" enctype="multipart/form-data">
+        <form class="form mt-5" method="POST" action="{{ route('admin_panel.project.update', $project->slug) }}" enctype="multipart/form-data">
           @csrf
           @method('PUT')
           <div class="col-xl-12">
@@ -163,58 +163,304 @@
             <div class="row">
                 <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
-                      <label>Project Documents (Multiple .pdf Files) (If you Previous one then leave it Blank or add new ones.)</label>
+                      <label class="text-dark font-weight-bold mb-4" style="font-size: 16px; color: #2c3e50;">
+                          <i class="fas fa-file-pdf text-danger mr-2"></i>Project Documents
+                          <small class="text-muted d-block mt-1" style="font-size: 12px; font-weight: normal;">Upload multiple PDF files for project documentation</small>
+                      </label>
+                      
+                      <!-- Existing Documents Preview -->
                       @if ($project->project_doc)
-                          <div class="existing-docs">
-                              <p><strong>Current Documents:</strong></p>
+                          <div class="existing-docs-preview mb-4">
+                              <div class="d-flex align-items-center mb-3">
+                                  <h6 class="mb-0 text-dark font-weight-bold" style="font-size: 14px;">
+                                      <i class="fas fa-folder-open text-primary mr-2"></i>Current Documents
+                                  </h6>
+                                  <span class="badge badge-light-primary ml-2" id="existing_docs_count">{{ count(explode('|', $project->project_doc)) }}</span>
+                              </div>
+                              <div class="file-preview-container" style="max-height: 220px; overflow-y: auto; background: #f8f9fa; border: 1px solid #e3e6f0; border-radius: 12px; padding: 15px;">
+                                  <div class="d-flex flex-wrap">
                               @php $docs_exploded = explode('|', $project->project_doc); @endphp
-                              @foreach ($docs_exploded as $doc)
-                                  <p>{{ basename($doc) }} <small>(Will be retained unless replaced)</small></p>
-                                  <input type="hidden" name="existing_project_docs[]" value="{{ $doc }}">
+                                      @foreach ($docs_exploded as $index => $doc)
+                                          <div class="file-card position-relative mr-3 mb-3" style="width: 160px; transition: all 0.3s ease;">
+                                              <div class="card h-100" style="border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; background: white;">
+                                                  <!-- PDF Preview -->
+                                                  <div class="d-flex flex-column align-items-center justify-content-center p-3" 
+                                                       style="height: 120px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px 12px 0 0;">
+                                                      <i class="fas fa-file-pdf fa-3x text-danger mb-2" style="filter: drop-shadow(0 2px 4px rgba(220,53,69,0.2));"></i>
+                                                      <small class="text-dark text-center font-weight-medium" style="font-size: 11px; line-height: 1.3; word-break: break-word;">
+                                                          {{ strlen(basename($doc)) > 20 ? substr(basename($doc), 0, 20) . '...' : basename($doc) }}
+                                                      </small>
+                                                  </div>
+                                                  
+                                                  <!-- Action Buttons -->
+                                                  <div class="card-body p-2">
+                                                      <div class="d-flex justify-content-between align-items-center">
+                                                          <a href="{{ asset($doc) }}" target="_blank" class="btn btn-sm btn-outline-primary" style="font-size: 11px; padding: 4px 8px;">
+                                                              <i class="fas fa-download mr-1"></i>View
+                                                          </a>
+                                                          <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                                  style="width: 28px; height: 28px; padding: 0; border-radius: 50%;"
+                                                                  onclick="removeExistingDoc({{ $index }})" title="Remove document">
+                                                              <i class="fas fa-times" style="font-size: 10px;"></i>
+                                                          </button>
+                                                      </div>
+                                                  </div>
+                                                  
+                                                  <!-- Hidden input for existing doc -->
+                                                  <input type="hidden" name="existing_project_docs[]" value="{{ $doc }}" id="existing_doc_{{ $index }}">
+                                              </div>
+                                          </div>
                               @endforeach
+                                  </div>
+                              </div>
                           </div>
                       @endif
-                      <input type="file" class="form-control form-control-lg" name="project_docs[]" id="project_docs" accept=".pdf" multiple>
+                      
+                      <!-- New Documents Upload Area -->
+                      <div class="new-docs-upload">
+                          <div class="d-flex align-items-center mb-3">
+                              <h6 class="mb-0 text-dark font-weight-bold" style="font-size: 14px;">
+                                  <i class="fas fa-plus-circle text-success mr-2"></i>Add New Documents
+                              </h6>
+                          </div>
+                          
+                          <div class="d-flex flex-wrap" id="new_docs_preview" style="max-height: 220px; overflow-y: auto; background: #f8f9fa; border: 1px solid #e3e6f0; border-radius: 12px; padding: 15px; display: none;">
+                              <!-- New documents will be previewed here -->
+                          </div>
+                          
+                          <!-- Upload Button -->
+                          <div id="docs_upload_btn">
+                              <div class="upload-area" onclick="document.getElementById('project_docs').click()" 
+                                   style="height: 120px; border: 2px dashed #cbd3da; border-radius: 12px; background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                                  <div class="upload-content">
+                                      <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2" style="opacity: 0.7;"></i>
+                                      <div class="text-center">
+                                          <div class="text-dark font-weight-bold mb-1" style="font-size: 14px;">Upload PDF Documents</div>
+                                          <small class="text-muted" style="font-size: 12px;">Click to browse or drag & drop files</small>
+                                      </div>
+                                  </div>
+                                  <div class="upload-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(0,123,255,0.1) 0%, rgba(0,123,255,0.05) 100%); opacity: 0; transition: opacity 0.3s ease;"></div>
+                              </div>
+                          </div>
+                          
+                          <!-- Hidden file input -->
+                          <input type="file" class="form-control form-control-lg d-none" name="project_docs[]" id="project_docs" accept=".pdf" multiple onchange="previewNewDocs(this)">
+                      </div>
+                      
                       @error('project_docs')
-                      <span class="form-text text-muted">Please upload project documents in .pdf format. {{ $errors->first('project_docs') }}</span>
+                      <div class="alert alert-danger mt-2" style="font-size: 12px; padding: 8px 12px; border-radius: 8px;">
+                          <i class="fas fa-exclamation-triangle mr-1"></i>{{ $errors->first('project_docs') }}
+                      </div>
                       @enderror
                       <div class="fv-plugins-message-container"></div>
                   </div>
                 </div>
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
-                  <label>YouTube Video Link</label>
-                  <input type="url" class="form-control form-control-lg" name="project_video" id="project_video" placeholder="Paste YouTube URL (e.g., https://www.youtube.com/watch?v=example)" value="{{ old('project_video', $project->project_video) }}">
-                  <span class="form-text text-muted">Please paste the YouTube video URL (e.g., https://www.youtube.com/watch?v=example).</span>
+                  <label class="text-dark font-weight-bold mb-3" style="font-size: 16px; color: #2c3e50;">
+                      <i class="fab fa-youtube text-danger mr-2"></i>YouTube Video Link
+                      <small class="text-muted d-block mt-1" style="font-size: 12px; font-weight: normal;">Add a promotional video for your project</small>
+                  </label>
+                  <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text" style="background: #f8f9fa; border-color: #e3e6f0;">
+                              <i class="fab fa-youtube text-danger"></i>
+                          </span>
+                      </div>
+                      <input type="url" class="form-control form-control-lg" name="project_video" id="project_video" 
+                             placeholder="https://www.youtube.com/watch?v=example" 
+                             value="{{ old('project_video', $project->project_video) }}"
+                             style="border-color: #e3e6f0; border-left: none;">
+                  </div>
+                  <small class="form-text text-muted mt-2" style="font-size: 12px;">
+                      <i class="fas fa-info-circle mr-1"></i>Paste the complete YouTube URL to embed the video
+                  </small>
                   @error('project_video')
-                  <div class="fv-plugins-message-container text-danger">{{ $message }}</div>
+                  <div class="alert alert-danger mt-2" style="font-size: 12px; padding: 8px 12px; border-radius: 8px;">
+                      <i class="fas fa-exclamation-triangle mr-1"></i>{{ $message }}
+                  </div>
                   @enderror
                 </div>
               </div>
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
-                  <label>Project Cover Img</label>
-                  <input type="file" class="form-control form-control-lg" name="project_cover_img" id="project_cover_img">
-                  @if ($project->project_cover_img)
-                  <img src="{{ asset($project->project_cover_img) }}" width="25%" />
-                  @endif
+                  <label class="text-dark font-weight-bold mb-4" style="font-size: 16px; color: #2c3e50;">
+                      <i class="fas fa-image text-primary mr-2"></i>Project Cover Image
+                      <small class="text-muted d-block mt-1" style="font-size: 12px; font-weight: normal;">Main image displayed for your project</small>
+                  </label>
+                  
+                  <!-- Cover Image Preview Card -->
+                  <div class="file-preview-card" id="cover_img_preview" style="display: {{ $project->project_cover_img ? 'block' : 'none' }};">
+                      <div class="card position-relative" style="border-radius: 16px; width: 240px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.12); transition: all 0.3s ease; background: white;">
+                          <!-- Image Preview -->
+                          <div style="position: relative; overflow: hidden; border-radius: 16px 16px 0 0;">
+                              <img id="cover_img_preview_img" src="{{ $project->project_cover_img ? asset($project->project_cover_img) : '' }}" 
+                                   alt="Cover Image" class="card-img-top" style="height: 160px; width: 240px; object-fit: cover; transition: transform 0.3s ease;">
+                              
+                              <!-- Overlay for actions -->
+                              <div class="position-absolute" style="top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%); opacity: 0; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center;">
+                                  <div class="d-flex">
+                                      <button type="button" class="btn btn-light rounded-circle mr-2" 
+                                              style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"
+                                              onclick="document.getElementById('project_cover_img').click()" title="Change image">
+                                          <i class="fas fa-edit text-primary"></i>
+                                      </button>
+                                      <button type="button" class="btn btn-light rounded-circle" 
+                                              style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"
+                                              onclick="removeCoverImage()" title="Remove image">
+                                          <i class="fas fa-trash text-danger"></i>
+                                      </button>
+                                  </div>
+                              </div>
+                          </div>
+                          
+                          <!-- Card Footer -->
+                          <div class="card-body p-3" style="background: #f8f9fa;">
+                              <div class="d-flex align-items-center justify-content-between">
+                                  <div>
+                                      <h6 class="mb-0 text-dark font-weight-bold" style="font-size: 13px;">Cover Image</h6>
+                                      <small class="text-muted" style="font-size: 11px;">Main project image</small>
+                                  </div>
+                                  <div class="d-flex">
+                                      <button type="button" class="btn btn-sm btn-outline-primary mr-1" 
+                                              style="font-size: 11px; padding: 4px 8px;"
+                                              onclick="document.getElementById('project_cover_img').click()">
+                                          <i class="fas fa-edit mr-1"></i>Edit
+                                      </button>
+                                      <button type="button" class="btn btn-sm btn-outline-danger" 
+                                              style="font-size: 11px; padding: 4px 8px;"
+                                              onclick="removeCoverImage()">
+                                          <i class="fas fa-trash mr-1"></i>Remove
+                                      </button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  <!-- File Input (Hidden) -->
+                  <input type="file" class="form-control form-control-lg d-none" name="project_cover_img" id="project_cover_img" 
+                         accept="image/*" onchange="previewCoverImage(this)">
+                  
+                  <!-- Upload Button (shown when no file) -->
+                  <div id="cover_img_upload_btn" style="display: {{ $project->project_cover_img ? 'none' : 'block' }};">
+                      <div class="upload-area" onclick="document.getElementById('project_cover_img').click()" 
+                           style="height: 160px; width: 240px; border: 2px dashed #cbd3da; border-radius: 16px; background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                          <div class="upload-content">
+                              <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3" style="opacity: 0.6;"></i>
+                              <div class="text-center">
+                                  <div class="text-dark font-weight-bold mb-1" style="font-size: 14px;">Upload Cover Image</div>
+                                  <small class="text-muted" style="font-size: 12px;">Click to browse or drag & drop</small>
+                              </div>
+                          </div>
+                          <div class="upload-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(0,123,255,0.1) 0%, rgba(0,123,255,0.05) 100%); opacity: 0; transition: opacity 0.3s ease;"></div>
+                      </div>
+                  </div>
+                  
+                  <!-- Hidden input for tracking removal -->
+                  <input type="hidden" name="cover_img_removed" id="cover_img_removed" value="0">
+                  
                   @error('project_cover_img')
-                  <span class="form-text text-muted">Please upload the project Cover Image. {{ $errors->first('project_cover_img') }}</span>
+                  <div class="alert alert-danger mt-2" style="font-size: 12px; padding: 8px 12px; border-radius: 8px;">
+                      <i class="fas fa-exclamation-triangle mr-1"></i>{{ $errors->first('project_cover_img') }}
+                  </div>
                   @enderror
                   <div class="fv-plugins-message-container"></div>
                 </div>
               </div>
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
-                  <label>Project Images (Can Add Multiple)</label>
-                  <input type="file" class="form-control form-control-lg" name="project_imgs[]" multiple>
+                  <label class="text-dark font-weight-bold mb-4" style="font-size: 16px; color: #2c3e50;">
+                      <i class="fas fa-images text-success mr-2"></i>Project Images
+                      <small class="text-muted d-block mt-1" style="font-size: 12px; font-weight: normal;">Upload multiple images showcasing your project</small>
+                  </label>
+                  
+                  <!-- Existing Images Preview -->
                   @if ($project->project_imgs)
-                  @foreach (explode('|', $project->project_imgs) as $img)
-                  <img src="{{ asset($img) }}" width="25%" />
-                  @endforeach
+                      <div class="existing-images-preview mb-4">
+                          <div class="d-flex align-items-center mb-3">
+                              <h6 class="mb-0 text-dark font-weight-bold" style="font-size: 14px;">
+                                  <i class="fas fa-folder-open text-success mr-2"></i>Current Images
+                              </h6>
+                              <span class="badge badge-light-success ml-2" id="existing_imgs_count">{{ count(explode('|', $project->project_imgs)) }}</span>
+                          </div>
+                          <div class="file-preview-container" style="max-height: 220px; overflow-y: auto; background: #f8f9fa; border: 1px solid #e3e6f0; border-radius: 12px; padding: 15px;">
+                              <div class="d-flex flex-wrap">
+                                  @php $imgs_exploded = explode('|', $project->project_imgs); @endphp
+                                  @foreach ($imgs_exploded as $index => $img)
+                                      <div class="file-card position-relative mr-3 mb-3" style="width: 160px; transition: all 0.3s ease;">
+                                          <div class="card h-100" style="border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; background: white; overflow: hidden;">
+                                              <!-- Image Preview -->
+                                              <div style="position: relative; overflow: hidden; height: 120px;">
+                                                  <img src="{{ asset($img) }}" alt="Project Image" class="card-img-top" style="height: 120px; width: 160px; object-fit: cover; transition: transform 0.3s ease;">
+                                                  
+                                                  <!-- Overlay for actions -->
+                                                  <div class="position-absolute" style="top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%); opacity: 0; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center;">
+                                                      <button type="button" class="btn btn-light rounded-circle" 
+                                                              style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;"
+                                                              onclick="removeExistingImage({{ $index }})" title="Remove image">
+                                                          <i class="fas fa-trash text-danger"></i>
+                                                      </button>
+                                                  </div>
+                                              </div>
+                                              
+                                              <!-- Card Footer -->
+                                              <div class="card-body p-2" style="background: #f8f9fa;">
+                                                  <div class="d-flex justify-content-between align-items-center">
+                                                      <small class="text-muted" style="font-size: 10px;">Image {{ $index + 1 }}</small>
+                                                      <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                              style="font-size: 10px; padding: 2px 6px;"
+                                                              onclick="removeExistingImage({{ $index }})">
+                                                          <i class="fas fa-trash mr-1"></i>Remove
+                                                      </button>
+                                                  </div>
+                                              </div>
+                                              
+                                              <!-- Hidden input for existing image -->
+                                              <input type="hidden" name="existing_project_imgs[]" value="{{ $img }}" id="existing_img_{{ $index }}">
+                                          </div>
+                                      </div>
+                                  @endforeach
+                              </div>
+                          </div>
+                      </div>
                   @endif
+                  
+                  <!-- New Images Upload Area -->
+                  <div class="new-images-upload">
+                      <div class="d-flex align-items-center mb-3">
+                          <h6 class="mb-0 text-dark font-weight-bold" style="font-size: 14px;">
+                              <i class="fas fa-plus-circle text-success mr-2"></i>Add New Images
+                          </h6>
+                      </div>
+                      
+                      <div class="d-flex flex-wrap" id="new_imgs_preview" style="max-height: 220px; overflow-y: auto; background: #f8f9fa; border: 1px solid #e3e6f0; border-radius: 12px; padding: 15px; display: none;">
+                          <!-- New images will be previewed here -->
+                      </div>
+                      
+                      <!-- Upload Button -->
+                      <div id="imgs_upload_btn">
+                          <div class="upload-area" onclick="document.getElementById('project_imgs').click()" 
+                               style="height: 120px; border: 2px dashed #cbd3da; border-radius: 12px; background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                              <div class="upload-content">
+                                  <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2" style="opacity: 0.7;"></i>
+                                  <div class="text-center">
+                                      <div class="text-dark font-weight-bold mb-1" style="font-size: 14px;">Upload Project Images</div>
+                                      <small class="text-muted" style="font-size: 12px;">Click to browse or drag & drop files</small>
+                                  </div>
+                              </div>
+                              <div class="upload-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(0,123,255,0.1) 0%, rgba(0,123,255,0.05) 100%); opacity: 0; transition: opacity 0.3s ease;"></div>
+                          </div>
+                      </div>
+                      
+                      <!-- Hidden file input -->
+                      <input type="file" class="form-control form-control-lg d-none" name="project_imgs[]" id="project_imgs" multiple onchange="previewNewImages(this)">
+                  </div>
+                  
                   @error('project_imgs')
-                  <span class="form-text text-muted">Please upload the project Images. {{ $errors->first('project_imgs') }}</span>
+                  <div class="alert alert-danger mt-2" style="font-size: 12px; padding: 8px 12px; border-radius: 8px;">
+                      <i class="fas fa-exclamation-triangle mr-1"></i>{{ $errors->first('project_imgs') }}
+                  </div>
                   @enderror
                   <div class="fv-plugins-message-container"></div>
                 </div>
@@ -431,6 +677,70 @@
 <!--begin::Page Custom Styles(used by this page)-->
 <link href="assets/css/pages/wizard/wizard-1.css" rel="stylesheet" type="text/css" />
 <!--end::Page Custom Styles-->
+
+<!-- Custom CSS for enhanced file preview -->
+<style>
+    .file-card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .file-card .card:hover {
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+    }
+    
+    .file-card:hover .position-absolute {
+        opacity: 1 !important;
+    }
+    
+    .upload-area:hover {
+        border-color: #007bff !important;
+        background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%) !important;
+    }
+    
+    .upload-area:hover .upload-overlay {
+        opacity: 1 !important;
+    }
+    
+    .file-preview-container::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .file-preview-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+    
+    .file-preview-container::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+    
+    .file-preview-container::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+    
+    .badge {
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 12px;
+    }
+    
+    .btn-sm {
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+    
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    }
+    
+    .input-group-text {
+        border-color: #e3e6f0;
+        background-color: #f8f9fa;
+    }
+</style>
 @endsection
 
 @section('footer')
@@ -443,4 +753,178 @@
 <!--begin::Page Scripts(used by this page)-->
 <script src="assets/js/pages/crud/forms/editors/ckeditor-classic.js"></script>
 <script src="assets/js/pages/crud/forms/widgets/bootstrap-datetimepicker.js"></script>
+
+<!-- Custom JavaScript for file preview functionality -->
+<script>
+    // Cover Image Functions
+    function previewCoverImage(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            const isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension);
+            
+            if (isImage) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('cover_img_preview_img').src = e.target.result;
+                    document.getElementById('cover_img_preview').style.display = 'block';
+                    document.getElementById('cover_img_upload_btn').style.display = 'none';
+                    document.getElementById('cover_img_removed').value = '0';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    }
+
+    function removeCoverImage() {
+        document.getElementById('cover_img_preview').style.display = 'none';
+        document.getElementById('cover_img_upload_btn').style.display = 'block';
+        document.getElementById('project_cover_img').value = '';
+        document.getElementById('cover_img_removed').value = '1';
+    }
+
+    // New Documents Functions
+    function previewNewDocs(input) {
+        if (input.files && input.files.length > 0) {
+            const previewContainer = document.getElementById('new_docs_preview');
+            const uploadBtn = document.getElementById('docs_upload_btn');
+            
+            previewContainer.innerHTML = '';
+            previewContainer.style.display = 'block';
+            uploadBtn.style.display = 'none';
+            
+            Array.from(input.files).forEach((file, index) => {
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                if (fileExtension === 'pdf') {
+                    const cardDiv = document.createElement('div');
+                    cardDiv.className = 'file-card position-relative mr-3 mb-3';
+                    cardDiv.style.cssText = 'width: 160px; transition: all 0.3s ease;';
+                    
+                    cardDiv.innerHTML = `
+                        <div class="card h-100" style="border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; background: white;">
+                            <div class="d-flex flex-column align-items-center justify-content-center p-3" style="height: 120px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px 12px 0 0;">
+                                <i class="fas fa-file-pdf fa-3x text-danger mb-2" style="filter: drop-shadow(0 2px 4px rgba(220,53,69,0.2));"></i>
+                                <small class="text-dark text-center font-weight-medium" style="font-size: 11px; line-height: 1.3; word-break: break-word;">
+                                    ${file.name.length > 20 ? file.name.substring(0, 20) + '...' : file.name}
+                                </small>
+                            </div>
+                            <div class="card-body p-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="#" target="_blank" class="btn btn-sm btn-outline-primary" style="font-size: 11px; padding: 4px 8px;">
+                                        <i class="fas fa-download mr-1"></i>View
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                                            style="width: 28px; height: 28px; padding: 0; border-radius: 50%;"
+                                            onclick="removeNewDoc(${index})" title="Remove document">
+                                        <i class="fas fa-times" style="font-size: 10px;"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    previewContainer.appendChild(cardDiv);
+                }
+            });
+        }
+    }
+
+    function removeNewDoc(index) {
+        const previewContainer = document.getElementById('new_docs_preview');
+        const cards = previewContainer.children;
+        if (cards.length === 1) {
+            previewContainer.style.display = 'none';
+            document.getElementById('docs_upload_btn').style.display = 'block';
+            document.getElementById('project_docs').value = '';
+        } else {
+            cards[index].remove();
+        }
+    }
+
+    // New Images Functions
+    function previewNewImages(input) {
+        if (input.files && input.files.length > 0) {
+            const previewContainer = document.getElementById('new_imgs_preview');
+            const uploadBtn = document.getElementById('imgs_upload_btn');
+            
+            previewContainer.innerHTML = '';
+            previewContainer.style.display = 'block';
+            uploadBtn.style.display = 'none';
+            
+            Array.from(input.files).forEach((file, index) => {
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                const isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension);
+                
+                if (isImage) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const cardDiv = document.createElement('div');
+                        cardDiv.className = 'file-card position-relative mr-3 mb-3';
+                        cardDiv.style.cssText = 'width: 160px; transition: all 0.3s ease;';
+                        
+                        cardDiv.innerHTML = `
+                            <div class="card h-100" style="border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; background: white; overflow: hidden;">
+                                <div style="position: relative; overflow: hidden; height: 120px;">
+                                    <img src="${e.target.result}" alt="Project Image" class="card-img-top" style="height: 120px; width: 160px; object-fit: cover; transition: transform 0.3s ease;">
+                                    
+                                    <div class="position-absolute" style="top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%); opacity: 0; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center;">
+                                        <button type="button" class="btn btn-light rounded-circle" 
+                                                style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;"
+                                                onclick="removeNewImage(${index})" title="Remove image">
+                                            <i class="fas fa-trash text-danger"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-body p-2" style="background: #f8f9fa;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted" style="font-size: 10px;">New Image ${index + 1}</small>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                style="font-size: 10px; padding: 2px 6px;"
+                                                onclick="removeNewImage(${index})">
+                                            <i class="fas fa-trash mr-1"></i>Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        previewContainer.appendChild(cardDiv);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    }
+
+    function removeNewImage(index) {
+        const previewContainer = document.getElementById('new_imgs_preview');
+        const cards = previewContainer.children;
+        if (cards.length === 1) {
+            previewContainer.style.display = 'none';
+            document.getElementById('imgs_upload_btn').style.display = 'block';
+            document.getElementById('project_imgs').value = '';
+        } else {
+            cards[index].remove();
+        }
+    }
+
+    // Existing Documents Functions
+    function removeExistingDoc(index) {
+        const docElement = document.getElementById('existing_doc_' + index);
+        if (docElement) {
+            docElement.value = ''; // Mark for removal
+            docElement.closest('.card').style.display = 'none';
+        }
+    }
+
+    // Existing Images Functions
+    function removeExistingImage(index) {
+        const imgElement = document.getElementById('existing_img_' + index);
+        if (imgElement) {
+            imgElement.value = ''; // Mark for removal
+            imgElement.closest('.card').style.display = 'none';
+        }
+    }
+</script>
 @endsection

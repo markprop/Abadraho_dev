@@ -32,7 +32,7 @@ class LoginRequest extends FormRequest
 
     public function withValidator($validator)
     {
-        $validator->sometimes('user_type', 'required|in:buyer,agent', function ($input) {
+        $validator->sometimes('user_type', 'required|in:buyer,agent,builder', function ($input) {
             return request()->has('user_type');
         });
     }

@@ -43,12 +43,18 @@ class UnitController extends Controller
      */
     public function create(Request $request)
     {
-        $project = Project::get()->where('id', 12);
-        $project_id = $request->id;
+        // Get project by slug or id
+        $project = Project::where('slug', $request->id)->orWhere('id', $request->id)->first();
+        
+        if (!$project) {
+            return redirect()->back()->with('error', 'Project not found');
+        }
+        
+        $project_id = $project->id;
         $measurements = Measurement::all();
         $types = ProjectType::all();
         $installments = InstallmentType::all();
-        // dd($project, $request->id, 'create unit');
+        
         return view('panel.admin.unit.create', compact('project_id', 'measurements', 'types', 'installments'));
     }
 
@@ -58,8 +64,36 @@ class UnitController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(UnitRequest $request)
+    public function store(Request $request)
     {
+        // Debug: Log the request data
+        \Log::info('Unit Store Request Data:', [
+            'project_id' => $request->project_id,
+            'all_data' => $request->all()
+        ]);
+        
+        // If project_id is not provided, try to get it from the URL or session
+        if (!$request->project_id) {
+            // Try to get project_id from the referer URL
+            $referer = $request->header('referer');
+            if ($referer && preg_match('/\/admin\/unit\/create\?id=([^&]+)/', $referer, $matches)) {
+                $project = Project::where('slug', $matches[1])->orWhere('id', $matches[1])->first();
+                if ($project) {
+                    $request->merge(['project_id' => $project->id]);
+                }
+            }
+        }
+        
+        // Validate required fields
+        $request->validate([
+            'title' => 'required',
+            'price' => 'required',
+            'down_payment' => 'required',
+            'monthly_installment' => 'required',
+            'unit_type_id' => 'required',
+            'project_id' => 'required|integer|exists:projects,id'
+        ]);
+        
         if ($request->measurement_type == NULL) {
             $request->measurement_type = 1;
         }
@@ -122,7 +156,7 @@ class UnitController extends Controller
             $project->save();
         }
         
-       return redirect('/admin/project/' .$project->id)->with('successMsg', 'Unit has been Added!');
+       return redirect('/admin/project/' . $project->slug)->with('successMsg', 'Unit has been Added!');
 
         // return redirect('/admin/project/' . $project->slug);
         // dd($unit, 'store', $request->all());
@@ -211,7 +245,7 @@ class UnitController extends Controller
             $unit->payment_plan_img = $payment_plan_img_name;
         }
         // If Image Deleted
-        elseif ($request->payment_plan_img_remove == 1) {
+        elseif ($request->payment_plan_removed == 1) {
             $image_path = 'uploads/project_images/project_' . $unit->project_id . '/unit_' . $unit->id . '/' . $unit->payment_plan_img;
             Storage::disk('public')->delete($image_path); // Changed to use Storage facade with public disk
             $unit->payment_plan_img = NULL;
@@ -233,7 +267,7 @@ class UnitController extends Controller
             $unit->floor_plan_img = $floor_plan_img_name;
         }
         // If Image Deleted
-        elseif ($request->floor_plan_img_remove == 1) {
+        elseif ($request->floor_plan_removed == 1) {
             $image_path = 'uploads/project_images/project_' . $unit->project_id . '/unit_' . $unit->id . '/' . $unit->floor_plan_img;
             Storage::disk('public')->delete($image_path); // Changed to use Storage facade with public disk
             $unit->floor_plan_img = NULL;
@@ -250,7 +284,7 @@ class UnitController extends Controller
             $project->save();
         }
         
-        return redirect('/admin/project/' .$project->id)->with('successMsg', 'Unit has been Updated!');
+        return redirect('/admin/project/' . $project->slug)->with('successMsg', 'Unit has been Updated!');
 
         // return redirect()->back()->withSuccess('Unit has been Updated!');
 

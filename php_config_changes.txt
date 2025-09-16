@@ -1,0 +1,35 @@
+PHP Configuration Changes for XAMPP
+=====================================
+
+File: C:\xampp\php\php.ini
+
+Find and update these lines:
+
+1. post_max_size = 100M
+   (Currently: 40M - needs to be increased)
+
+2. upload_max_filesize = 100M  
+   (Currently: 40M - needs to be increased)
+
+3. max_file_uploads = 20
+   (Keep this as is - allows multiple files)
+
+4. memory_limit = 512M
+   (Currently: 512M - this is fine)
+
+5. max_execution_time = 300
+   (Add this if not present - for large file uploads)
+
+6. max_input_time = 300
+   (Add this if not present - for large file uploads)
+
+After making these changes:
+1. Save the php.ini file
+2. Restart Apache in XAMPP Control Panel
+3. Test the upload functionality
+
+Alternative: Create .htaccess file in project root with:
+php_value post_max_size 100M
+php_value upload_max_filesize 100M
+php_value max_execution_time 300
+php_value max_input_time 300

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 use App\Helpers\AppHelper;
 use Illuminate\Support\Facades\Hash;
 
-class BrokerManagementController extends Controller
+class AgentManagementController extends Controller
 {
     public function __construct()
     {
@@ -23,29 +23,29 @@ class BrokerManagementController extends Controller
     }
 
     /**
-     * Display a listing of the brokers.
+     * Display a listing of the agents.
      * Supports optional search by name and email similar to UserManagementController.
      */
     public function index(Request $request)
     {
-        $brokers = Broker::orderBy('created_at', 'DESC');
+        $agents = Broker::orderBy('created_at', 'DESC');
 
         $searchQuery = [];
         $searchQuery['name'] = $request->get('userName') ? $request->get('userName') : null;
         $searchQuery['email'] = $request->get('userEmail') ? $request->get('userEmail') : null;
 
-        $searchQuery['email'] && $brokers = $brokers->where('contact_email', $searchQuery['email']);
-        $searchQuery['name'] && $brokers = $brokers->where('contact_person_name', 'LIKE', '%'.$searchQuery['name'].'%');
+        $searchQuery['email'] && $agents = $agents->where('contact_email', $searchQuery['email']);
+        $searchQuery['name'] && $agents = $agents->where('contact_person_name', 'LIKE', '%'.$searchQuery['name'].'%');
 
-        $brokers = $brokers->get();
+        $agents = $agents->get();
 
-        return view('panel.admin.brokers.index', ['admins' => $brokers, 'searchQuery' => $searchQuery]);
+        return view('panel.admin.agents.index', ['admins' => $agents, 'searchQuery' => $searchQuery]);
     }
 
     public function create()
     {
         $areas = Area::orderBy('name')->get();
-        return view('panel.admin.brokers.create', compact('areas'));
+        return view('panel.admin.agents.create', compact('areas'));
     }
 
     public function store(Request $request)
@@ -57,7 +57,7 @@ class BrokerManagementController extends Controller
             'login_password' => 'required|string|min:8',
             'company_name' => 'nullable|string|max:255',
             'company_address' => 'nullable|string',
-            'broker_since_years' => 'nullable|integer|min:0|max:200',
+            'agent_since_years' => 'nullable|integer|min:1950|max:2025',
             'deals_in' => 'nullable|array',
             'deals_in.*' => 'string',
             'expertise_areas' => 'nullable|array',
@@ -74,7 +74,7 @@ class BrokerManagementController extends Controller
             'contact_email' => $data['contact_email'],
             'company_name' => $data['company_name'] ?? null,
             'company_address' => $data['company_address'] ?? null,
-            'broker_since_years' => $data['broker_since_years'] ?? 0,
+            'agent_since_years' => $data['agent_since_years'] ?? 0,
             'deals_in' => $data['deals_in'] ?? [],
         ];
         if (Schema::hasColumn('brokers', 'first_name')) {
@@ -126,19 +126,20 @@ class BrokerManagementController extends Controller
 
         $payload['user_id'] = $user->id;
         $payload['password'] = Hash::make($data['login_password']);
+        $payload['plain_password'] = $data['login_password'];
 
         $broker = Broker::create($payload);
 
         $broker->areas()->sync($data['expertise_areas'] ?? []);
 
-        return redirect('/admin/brokers')->with('status', 'Broker created successfully');
+        return redirect('/admin/agents')->with('status', 'Agent created successfully');
     }
 
     public function edit(Broker $broker)
     {
         $areas = Area::orderBy('name')->get();
         $selectedAreaIds = $broker->areas()->pluck('areas.id')->toArray();
-        return view('panel.admin.brokers.edit', compact('broker', 'areas', 'selectedAreaIds'));
+        return view('panel.admin.agents.edit', compact('broker', 'areas', 'selectedAreaIds'));
     }
 
     public function update(Request $request, Broker $broker)
@@ -150,7 +151,7 @@ class BrokerManagementController extends Controller
             'login_password' => 'nullable|string|min:8',
             'company_name' => 'nullable|string|max:255',
             'company_address' => 'nullable|string',
-            'broker_since_years' => 'nullable|integer|min:0|max:200',
+            'agent_since_years' => 'nullable|integer|min:1950|max:2025',
             'deals_in' => 'nullable|array',
             'deals_in.*' => 'string',
             'expertise_areas' => 'nullable|array',
@@ -167,7 +168,7 @@ class BrokerManagementController extends Controller
             'contact_email' => $data['contact_email'],
             'company_name' => $data['company_name'] ?? null,
             'company_address' => $data['company_address'] ?? null,
-            'broker_since_years' => $data['broker_since_years'] ?? 0,
+            'agent_since_years' => $data['agent_since_years'] ?? 0,
             'deals_in' => $data['deals_in'] ?? [],
         ];
         if (Schema::hasColumn('brokers', 'first_name')) {
@@ -224,6 +225,7 @@ class BrokerManagementController extends Controller
                 if (!empty($data['login_password'])) {
                     $user->password = Hash::make($data['login_password']);
                     $payload['password'] = Hash::make($data['login_password']);
+                    $payload['plain_password'] = $data['login_password'];
                 }
                 $user->save();
             }
@@ -233,13 +235,13 @@ class BrokerManagementController extends Controller
 
         $broker->areas()->sync($data['expertise_areas'] ?? []);
 
-        return redirect('/admin/brokers')->with('status', 'Broker updated successfully');
+        return redirect('/admin/agents')->with('status', 'Agent updated successfully');
     }
 
     public function show(Broker $broker)
     {
         $broker->load('areas');
-        return view('panel.admin.brokers.show', compact('broker'));
+        return view('panel.admin.agents.show', compact('broker'));
     }
 
     public function destroy(Request $request)
@@ -249,7 +251,7 @@ class BrokerManagementController extends Controller
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
-                'broker_id' => ['required', 'numeric'],
+                'agent_id' => ['required', 'numeric'],
             ]);
 
             if ($validator->fails()) {
@@ -260,12 +262,12 @@ class BrokerManagementController extends Controller
             }
 
             if ($ErrorMsg == "") {
-                $eloquent = Broker::where("id", $request->broker_id);
+                $eloquent = Broker::where("id", $request->agent_id);
                 $deleteTrash = AppHelper::isArchiveRecord($eloquent);
                 if ($deleteTrash["status"]) {
                     $data["status"] = $deleteTrash["status"];
-                    $data["message"] = "Broker deleted successfully.";
-                    $updatedRecord = DB::select("select * from brokers where id = " . (int)$request->broker_id);
+                    $data["message"] = "Agent deleted successfully.";
+                    $updatedRecord = DB::select("select * from brokers where id = " . (int)$request->agent_id);
                     $data["data"] = (count($updatedRecord) > 0) ? $updatedRecord : [];
                 } else {
                     $ErrorMsg = $deleteTrash["message"];
@@ -273,7 +275,7 @@ class BrokerManagementController extends Controller
             }
         } catch (\Throwable $e) {
             DB::rollback();
-            $ErrorMsg = "Error Occurred while deleting broker. Exception Msg : " . $e->getMessage();
+            $ErrorMsg = "Error Occurred while deleting agent. Exception Msg : " . $e->getMessage();
             $data["status"] = false;
             $data["message"] = $ErrorMsg;
         }

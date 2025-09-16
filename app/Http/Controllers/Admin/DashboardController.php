@@ -57,7 +57,7 @@ class DashboardController extends Controller
             $dashboardData["totalProjects"] = $projects->get()->count();
             $dashboardData['admin'] = false;
             $dashboardData["totalBuilders"] = 0;
-            $dashboardData["totalBrokers"] = Broker::count(); // Total brokers count
+            $dashboardData["totalBrokers"] = Broker::count(); // Total agents count
             $dashboardData["totalPendingProjects"] = $projects->where('status', 2)->get()->count();
             $dashboardData["totalActiveProjects"] = $allProjects->where('status', 1)->get()->count();
             $dashboardData["totalWebSiteUser"] = User::where("user_type_id", Config::get("constants.UserTypeIds.WebSiteUser"))->get()->count();
@@ -69,7 +69,7 @@ class DashboardController extends Controller
             $dashboardData["totalPendingProjects"] = Project::where('status', 2)->get()->count();
             $dashboardData["totalActiveProjects"] = Project::where('status', 1)->get()->count();
             $dashboardData["totalBuilders"] = Builder::get()->count();
-            $dashboardData["totalBrokers"] = Broker::count(); // Total brokers count
+            $dashboardData["totalBrokers"] = Broker::count(); // Total agents count
             $dashboardData["totalWebSiteUser"] = User::where("user_type_id", Config::get("constants.UserTypeIds.WebSiteUser"))->get()->count();
             $dashboardData["totalFavorites"] = Wishlist::where("user_id", Auth::user()->id)->get()->count();
         }

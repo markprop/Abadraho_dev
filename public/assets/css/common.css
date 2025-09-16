@@ -2,3 +2,42 @@ header.header-nav.menu_style_home_one.style2{
     z-index: 99999;
     position: relative;
 }
+
+/* Custom styles for social media icons in footer */
+.footer_social_widget li a {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #ffffff;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 36px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.footer_social_widget li a i {
+    color: #ffffff !important;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.footer_social_widget li a:hover {
+    background-color: #e33324;
+    border-color: #e33324;
+    transform: translateY(-2px);
+}
+
+.footer_social_widget li a:hover i {
+    color: #ffffff !important;
+}
+
+/* Ensure proper spacing between icons */
+.footer_social_widget li {
+    margin-right: 15px !important;
+    margin-bottom: 10px;
+}
+
+.footer_social_widget li:last-child {
+    margin-right: 0 !important;
+}

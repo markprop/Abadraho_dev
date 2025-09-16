@@ -147,14 +147,14 @@ Route::get('admin/create_user', 'Admin\UserManagementController@create_user');
 Route::post('admin/add-new-user', 'Admin\UserManagementController@AddNewUser')->name("user.add");
 Route::post('admin/manage_users/delete', 'Admin\UserManagementController@destroy')->name("user.delete");
 
-// Broker Management (under User Management)
-Route::get('admin/brokers', 'Admin\BrokerManagementController@index');
-Route::get('admin/brokers/create', 'Admin\BrokerManagementController@create');
-Route::post('admin/brokers', 'Admin\BrokerManagementController@store');
-Route::get('admin/brokers/{broker}', 'Admin\BrokerManagementController@show');
-Route::get('admin/brokers/{broker}/edit', 'Admin\BrokerManagementController@edit');
-Route::put('admin/brokers/{broker}', 'Admin\BrokerManagementController@update');
-Route::post('admin/brokers/delete', 'Admin\BrokerManagementController@destroy')->name('admin.brokers.delete');
+// Agent Management (under User Management)
+Route::get('admin/agents', 'Admin\AgentManagementController@index');
+Route::get('admin/agents/create', 'Admin\AgentManagementController@create');
+Route::post('admin/agents', 'Admin\AgentManagementController@store');
+Route::get('admin/agents/{broker}', 'Admin\AgentManagementController@show');
+Route::get('admin/agents/{broker}/edit', 'Admin\AgentManagementController@edit');
+Route::put('admin/agents/{broker}', 'Admin\AgentManagementController@update');
+Route::post('admin/agents/delete', 'Admin\AgentManagementController@destroy')->name('admin.agents.delete');
 
 // Admin Zoho Forms
 Route::get('admin/listing', 'Admin\InquiryController@index')->name('admin.zoho.index');
@@ -280,6 +280,10 @@ Route::get('/projects/listings', 'FrontEnd\ProjectListingController@index')->nam
 
 Route::get('/projects', 'FrontEnd\ProjectListingController@index')->name("project.all");
 Route::get('/projects/{slug}', 'FrontEnd\ProjectListingController@index')->name("slug.listing");
+
+// Off-Plan Routes
+Route::get('/off-plan', 'FrontEnd\OffPlanController@index')->name("off-plan.index");
+Route::get('/off-plan/map-data', 'FrontEnd\OffPlanController@getProjectsForMap')->name("off-plan.map-data");
 
 // /{areas}&{location}
 

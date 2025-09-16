@@ -24,6 +24,7 @@ class Admin extends Authenticatable implements MustVerifyEmail
 
     public function projects()
     {
-        return $this->belongsToMany(Project::class, 'project_users', 'user_id')->withTimestamps();
+        return $this->belongsToMany(Project::class, 'project_users', 'admin_id')
+            ->withTimestamps();
     }
 }

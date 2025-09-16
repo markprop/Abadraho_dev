@@ -124,16 +124,16 @@
                         @php
                             $videos = [
                                 [
-                                    'project_video' => 'public/assets/media/project_videos/project_1/p1.mp4',
+                                    'project_video' => 'uploads/project_videos/project_1/p1.mp4',
                                 ],
                                 [
-                                    'project_video' => 'public/assets/media/project_videos/project_2/p2.mp4',
+                                    'project_video' => 'uploads/project_videos/project_2/p2.mp4',
                                 ],
                                 [
-                                    'project_video' => 'public/assets/media/project_videos/project_3/p3.mp4',
+                                    'project_video' => 'uploads/project_videos/project_1/p1.mp4',
                                 ],
                                 [
-                                    'project_video' => 'public/assets/media/project_videos/project_4/p4.mp4',
+                                    'project_video' => 'uploads/project_videos/project_2/p2.mp4',
                                 ]
                             ];
                         @endphp
@@ -142,12 +142,8 @@
                                 @if (!empty($video['project_video']) && $video['project_video'])
                                     <div class="video-card">
                                         <div class="video-container">
-                                            @php
-                                                $videoPath = str_replace('public/', '', $video['project_video']);
-                                                $fullVideoPath = $videoPath ? 'storage/' . $videoPath : '';
-                                            @endphp
                                             <video id="video-{{ $index }}" controls muted style="width: 100%; height: 380px; object-fit: cover; border-radius: 10px;" poster="">
-                                                <source src="{{ asset($fullVideoPath) }}" type="video/mp4">
+                                                <source src="{{ asset($video['project_video']) }}" type="video/mp4">
                                                 Your browser does not support the video tag.
                                             </video>
                                         </div>

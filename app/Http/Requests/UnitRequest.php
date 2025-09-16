@@ -28,7 +28,8 @@ class UnitRequest extends FormRequest
             'price' => 'required',
             'down_payment' => 'required',
             'monthly_installment' => 'required',
-            'unit_type_id' => 'required'
+            'unit_type_id' => 'required',
+            'project_id' => 'required|integer|exists:projects,id'
         ];
     }
 }

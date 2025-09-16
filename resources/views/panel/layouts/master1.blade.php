@@ -503,11 +503,11 @@ $fileModified = date('hms');
                       </a>
                     </li>
                     <li class="menu-item" aria-haspopup="true">
-                      <a href="/admin/brokers" class="menu-link">
+                      <a href="/admin/agents" class="menu-link">
                         <i class="menu-bullet menu-bullet-dot">
                           <span></span>
                         </i>
-                        <span class="menu-text">Broker Listing</span>
+                        <span class="menu-text">Agent Listing</span>
                       </a>
                     </li>
                     <li class="menu-item" aria-haspopup="true">

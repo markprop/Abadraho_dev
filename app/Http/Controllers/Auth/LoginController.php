@@ -80,10 +80,9 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        if (!$request->session()->has('user_type')) {
-            $userType = $user->user_type_id ? $user->userType->user_type_name : 'buyer';
-            $request->session()->put('user_type', $userType);
-        }
+        // All users (including agents) login as buyers on the website
+        $request->session()->put('user_type', 'buyer');
+        
         return redirect()->intended($this->redirectPath());
     }
 

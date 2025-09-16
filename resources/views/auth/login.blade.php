@@ -10,6 +10,11 @@
                         <button class="tab btn btn-sm @if(!session('user_type') || session('user_type') == 'buyer') btn-primary @else btn-secondary @endif" data-type="buyer">Buyer</button>
                         <button class="tab btn btn-sm @if(session('user_type') == 'agent') btn-primary @else btn-secondary @endif" data-type="agent">Agent</button>
                     </div>
+                    @if(session('user_type') == 'agent')
+                        <div class="mt-2 text-center">
+                            <small class="text-muted">Agents: Use your email and password provided by admin to login as a regular user</small>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="card-body">
@@ -72,6 +77,7 @@
                     </form>
                     <div class="mt-4">
                         <p class="text-center">Don't have an account? <a href="{{ route('admin.register') }}">Register</a></p>
+                        <p class="text-center"><a href="/">← Back to Home</a></p>
                     </div>
                 </div>
             </div>

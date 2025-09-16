@@ -72,17 +72,24 @@ class ProjectController extends Controller
     
             // Find the matching document
             $fullPath = null;
+            $originalFilename = null;
+            
             foreach ($docs_exploded as $doc) {
+                // The doc path already includes the project folder structure
                 $decodedBasename = rawurldecode(basename($doc));
                 $decodedFilename = rawurldecode($filename);
+                
                 \Log::info('Comparing filenames', [
                     'doc' => $doc,
                     'decodedBasename' => $decodedBasename,
                     'decodedFilename' => $decodedFilename,
                     'match' => $decodedBasename === $decodedFilename
                 ]);
+                
                 if ($decodedBasename === $decodedFilename) {
+                    // The doc path is already in the correct format: project_{id}/filename.pdf
                     $fullPath = public_path('uploads/project_documents/' . $doc);
+                    $originalFilename = $decodedFilename;
                     break;
                 }
             }
@@ -111,6 +118,17 @@ class ProjectController extends Controller
                     return redirect()->back()->with('error', 'The file is empty or inaccessible.');
                 }
     
+                // Validate PDF content by checking the PDF header
+                if (substr($fileContent, 0, 4) !== '%PDF') {
+                    \Log::error('Invalid PDF file - missing PDF header', [
+                        'projectId' => $projectId,
+                        'filename' => $filename,
+                        'fullPath' => $fullPath,
+                        'firstBytes' => bin2hex(substr($fileContent, 0, 10))
+                    ]);
+                    return redirect()->back()->with('error', 'The file is not a valid PDF document.');
+                }
+    
                 // Log file details for debugging
                 \Log::info('Serving file', [
                     'projectId' => $projectId,
@@ -121,15 +139,16 @@ class ProjectController extends Controller
                     'firstBytes' => bin2hex(substr($fileContent, 0, 10))
                 ]);
     
-                // Serve the file with explicit headers
+                // Serve the file with proper headers
                 return response($fileContent, 200, [
                     'Content-Type' => 'application/pdf',
                     'Content-Length' => $fileSize,
-                    'Content-Disposition' => 'attachment; filename="' . rawurldecode($filename) . '"',
+                    'Content-Disposition' => 'attachment; filename="' . $originalFilename . '"',
                     'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
                     'Pragma' => 'no-cache',
-                    'Expires' => '0'
-                ])->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+                    'Expires' => '0',
+                    'Accept-Ranges' => 'bytes'
+                ]);
             }
     
             // Log error and redirect with message
@@ -145,7 +164,8 @@ class ProjectController extends Controller
             \Log::error('Error downloading PDF', [
                 'projectId' => $projectId,
                 'filename' => $filename,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
             return redirect()->back()->with('error', 'An error occurred while downloading the file.');
         }

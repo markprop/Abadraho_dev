@@ -9,7 +9,7 @@
           <h5 class="text-dark font-weight-bold my-1 mr-5">User Management</h5>
           <ul class="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-2 font-size-sm">
             <li class="breadcrumb-item text-muted">
-              <a href="" class="text-muted">Broker Listing</a>
+              <a href="" class="text-muted">Agent Listing</a>
             </li>
           </ul>
         </div>
@@ -23,11 +23,11 @@
         <div class="card-header flex-wrap border-0 pt-6 pb-0">
           <div class="col-xs-6">
             <div class="card-title">
-              <h3 class="card-label">Brokers</h3>
+              <h3 class="card-label">Agents</h3>
             </div>
           </div>
           <div class="col-xs-6 text-xs-right">
-            <span class="badge badge-primary" style="font-size:14px; padding:8px 12px;">Total Brokers: {{ method_exists($admins, 'total') ? $admins->total() : $admins->count() }}</span>
+            <span class="badge badge-primary" style="font-size:14px; padding:8px 12px;">Total Agents: {{ method_exists($admins, 'total') ? $admins->total() : $admins->count() }}</span>
           </div>
         </div>
         <div class="card-body">
@@ -38,7 +38,7 @@
                   <div class="card-body">
                     <section class="search-sec">
                       <div class="container">
-                        <form method="get" action="/admin/brokers">
+                        <form method="get" action="/admin/agents">
                           <div class="form-row">
                             <div class="col-12 col-md-4 col-lg-4 col-xl-4">
                               <label class="search_heading">Name</label>
@@ -51,7 +51,7 @@
                             <div class="col-12 col-md-4 col-lg-4 col-xl-4">
                               <label class="search_heading">-</label><br>
                               <button type="submit" class="btn admin_ad_btn_red mb-2">Search</button>
-                              <a href="/admin/brokers/create" class="btn admin_ad_btn mb-2">Add Broker</a>
+                              <a href="/admin/agents/create" class="btn admin_ad_btn mb-2">Add Agent</a>
                             </div>
                           </div>
                         </form>
@@ -91,9 +91,9 @@
                   </td>
                   <td>{{ $admin->created_at }}</td>
                   <td>
-                    <a href="/admin/brokers/{{ $admin->id }}"><i class="fa fa-eye ml-2"></i></a>
-                    <a href="/admin/brokers/{{ $admin->id }}/edit"><i class="fa fa-edit ml-2"></i></a>
-                    <a onclick="deleteBroker('{{ $admin->id }}')" href="javascript:void(0)">
+                    <a href="/admin/agents/{{ $admin->id }}"><i class="fa fa-eye ml-2"></i></a>
+                    <a href="/admin/agents/{{ $admin->id }}/edit"><i class="fa fa-edit ml-2"></i></a>
+                    <a onclick="deleteAgent('{{ $admin->id }}')" href="javascript:void(0)">
                       <i class="fa fa-trash ml-2"></i>
                     </a>
                   </td>
@@ -129,11 +129,11 @@
 <script src="assets/js/pages/custom/projects/add-project.js"></script>
 <script src="assets/js/pages/crud/ktdatatable/base/html-table.js"></script>
 <script>
-  function deleteBroker(broker_id) {
+  function deleteAgent(agent_id) {
     if (parseInt(broker_id)) {
       ShowSweetAlertConfirm({
         title: "Are you sure ?",
-        text: "You want to delete this Broker!",
+        text: "You want to delete this Agent!",
         icon: "warning",
         showDenyButton: true,
         showCancelButton: true,
@@ -141,8 +141,8 @@
         denyButtonText: `No`,
       }, function(result) {
         if (result.isConfirmed) {
-          let requestRoute = "/admin/brokers/delete";
-          let requestParams = { broker_id: broker_id };
+          let requestRoute = "/admin/agents/delete";
+          let requestParams = { agent_id: agent_id };
           CallLaravelAction(requestRoute, requestParams, function(response) {
             if (response.status) {
               let SweetAlertParams = {
@@ -157,8 +157,8 @@
             } else {
               var ErrorMsg = response.message;
               if (typeof response.error !== "undefined") {
-                if (typeof response.error.broker_id !== "undefined") {
-                  ErrorMsg = response.error.broker_id;
+                if (typeof response.error.agent_id !== "undefined") {
+                  ErrorMsg = response.error.agent_id;
                 }
               }
               let SweetAlertParams = {

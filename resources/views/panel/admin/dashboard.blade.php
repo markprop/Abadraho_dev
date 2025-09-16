@@ -77,14 +77,14 @@
                     </div>
                     <!-- End: Customers Card -->
 
-                    <!-- Begin: Brokers Card -->
+                    <!-- Begin: Agents Card -->
                     <div class="col-sm-6 col-md-3">
-                        <a href="/admin/brokers">
+                        <a href="/admin/agents">
                             <div class="dashboard-report-card card info">
                                 <div class="card-content">
-                                    <span class="card-title">Brokers</span>
+                                    <span class="card-title">Agents</span>
                                     <span class="card-amount">{{ $totalBrokers }}</span>
-                                    <span class="card-desc">Total Brokers</span>
+                                    <span class="card-desc">Total Agents</span>
                                 </div>
                                 <div class="card-media">
                                     <i class="fa fa-users"></i>
@@ -92,7 +92,7 @@
                             </div>
                         </a>
                     </div>
-                    <!-- End: Brokers Card -->
+                    <!-- End: Agents Card -->
                 @endif
 
                 <!-- Begin: Favorites Card -->

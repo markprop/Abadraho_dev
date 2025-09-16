@@ -27,18 +27,28 @@
                 </div>
 
                 <!-- Form for updating unit details -->
-                <form class="form mt-5" method="POST" action="/admin/unit/{{ $unit->id }}" enctype="multipart/form-data">
+                <form class="form mt-5" id="frmValidate" method="POST" action="/admin/unit/{{ $unit->id }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="col-xl-12">
+                        <!-- Hidden Project ID -->
+                        <div class="form-group fv-plugins-icon-container d-none">
+                            <label>Project ID {{ $unit->project_id }}</label>
+                            <div class="col-sm-9">
+                                <input type="number" min="0" step="any" class="form-control form-control-lg" name="project_id" value="{{ old('project_id', $unit->project_id) }}" required>
+                                @error('project_id')
+                                    <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
                         <div class="row">
                             <!-- Title input -->
                             <div class="col-xl-6">
                                 <div class="form-group fv-plugins-icon-container">
                                     <label>Title *</label>
-                                    <input type="text" min="0" step="any" class="form-control form-control-lg" name="title" value="{{ $unit->title }}">
+                                    <input type="text" class="form-control form-control-lg" name="title" value="{{ old('title', $unit->title) }}" required>
                                     @error('title')
-                                    <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                        <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -46,9 +56,9 @@
                             <div class="col-xl-6">
                                 <div class="form-group fv-plugins-icon-container">
                                     <label>Rooms</label>
-                                    <input type="text" min="0" step="any" class="form-control form-control-lg" name="rooms" value="{{ $unit->rooms }}">
-                                    @error('covered_area')
-                                    <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                    <input type="text" class="form-control form-control-lg" name="rooms" value="{{ old('rooms', $unit->rooms) }}">
+                                    @error('rooms')
+                                        <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -60,28 +70,22 @@
                                     <label>Covered Area</label>
                                     <div class="row">
                                         <div class="col-sm-7">
-                                            @if ($unit->covered_area)
-                                            <input type="number" min="0" step="any" class="form-control form-control-lg" name="covered_area" value="{{ round($unit->covered_area / $measurements[$unit->measurement_type - 1]->convertor, 5) }}">
-                                            @else
-                                            <input type="number" min="0" step="any" class="form-control form-control-lg" name="covered_area" value="">
-                                            @endif
+                                            <input type="number" min="0" step="any" class="form-control form-control-lg" name="covered_area" value="{{ old('covered_area', $unit->covered_area ? round($unit->covered_area / $measurements[$unit->measurement_type - 1]->convertor, 5) : '') }}">
+                                            @error('covered_area')
+                                                <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                         <div class="col-sm-5">
                                             <select name="measurement_type" class="form-control form-control-lg">
                                                 <option disabled selected hidden value="">Select Measurement Type...</option>
                                                 @foreach ($measurements as $measurement)
-                                                <option value="{{ $measurement->id }}" {{ $measurement->id == $unit->measurement_type ? 'selected' : '' }}>
-                                                    {{ $measurement->name }}
-                                                </option>
+                                                    <option value="{{ $measurement->id }}" {{ old('measurement_type', $unit->measurement_type) == $measurement->id ? 'selected' : '' }}>
+                                                        {{ $measurement->name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            @error('covered_area')
-                                            <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
-                                            @enderror
                                             @error('measurement_type')
-                                            <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                                <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
                                     </div>
@@ -91,16 +95,16 @@
                             <div class="col-xl-6">
                                 <div class="form-group fv-plugins-icon-container">
                                     <label>Unit Type *</label>
-                                    <select name="unit_type_id" class="form-control form-control-lg">
+                                    <select name="unit_type_id" class="form-control form-control-lg" required>
                                         <option disabled selected hidden value="">Select Unit Type...</option>
                                         @foreach ($types as $type)
-                                        <option value="{{ $type->id }}" {{ $unit->unit_type_id == $type->id ? 'selected' : '' }}>
-                                            {{ $type->title }}
-                                        </option>
+                                            <option value="{{ $type->id }}" {{ old('unit_type_id', $unit->unit_type_id) == $type->id ? 'selected' : '' }}>
+                                                {{ $type->title }}
+                                            </option>
                                         @endforeach
                                     </select>
                                     @error('unit_type_id')
-                                    <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                        <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -110,19 +114,19 @@
                             <div class="col-xl-4">
                                 <div class="form-group fv-plugins-icon-container">
                                     <label>Price *</label>
-                                    <input type="number" min="0" step="any" class="form-control form-control-lg" name="price" value="{{ round($unit->price, 2) }}">
+                                    <input type="number" min="0" step="any" class="form-control form-control-lg" name="price" value="{{ old('price', round($unit->price, 2)) }}" required>
                                     @error('price')
-                                    <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                        <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
                             <!-- Loan Amount input -->
                             <div class="col-xl-4">
                                 <div class="form-group fv-plugins-icon-container">
-                                    <label>Loan Amount *</label>
-                                    <input type="number" min="0" step="any" class="form-control form-control-lg" name="loan_amount" value="{{ round($unit->loan_amount, 2) }}">
+                                    <label>Loan Amount</label>
+                                    <input type="number" min="0" step="any" class="form-control form-control-lg" name="loan_amount" value="{{ old('loan_amount', round($unit->loan_amount, 2)) }}">
                                     @error('loan_amount')
-                                    <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                        <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -130,9 +134,9 @@
                             <div class="col-xl-4">
                                 <div class="form-group fv-plugins-icon-container">
                                     <label>Down Payment *</label>
-                                    <input type="number" min="0" step="any" class="form-control form-control-lg" name="down_payment" value="{{ round($unit->down_payment, 2) }}">
+                                    <input type="number" min="0" step="any" class="form-control form-control-lg" name="down_payment" value="{{ old('down_payment', round($unit->down_payment, 2)) }}" required>
                                     @error('down_payment')
-                                    <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                        <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -142,9 +146,9 @@
                             <div class="col-sm-6">
                                 <div class="form-group fv-plugins-icon-container">
                                     <label>Monthly Installment *</label>
-                                    <input type="number" min="0" step="any" class="form-control form-control-lg" name="monthly_installment" value="{{ round($unit->monthly_installment, 2) }}">
+                                    <input type="number" min="0" step="any" class="form-control form-control-lg" name="monthly_installment" value="{{ old('monthly_installment', round($unit->monthly_installment, 2)) }}" required>
                                     @error('monthly_installment')
-                                    <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                        <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -152,243 +156,167 @@
                             <div class="col-xl-6">
                                 <label>Installment Type *</label>
                                 <div class="row">
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-6">
                                         <select name="installment_type" class="form-control form-control-lg">
                                             <option disabled selected hidden value="">Select Installment Type...</option>
                                             @foreach ($installments as $installment)
-                                            <option value="{{ $installment->id }}" {{ $installment->id == $unit->installment_type ? 'selected' : '' }}>
-                                                {{ $installment->name }}
-                                            </option>
+                                                <option value="{{ $installment->id }}" {{ old('installment_type', $unit->installment_type) == $installment->id ? 'selected' : '' }}>
+                                                    {{ $installment->name }}
+                                                </option>
                                             @endforeach
                                         </select>
-                                    </div>
-                                    <div class="col-sm-7">
-                                        <div class="form-group fv-plugins-icon-container">
-                                            <input type="number" min="0" step="any" class="form-control form-control-lg" name="installment" value="{{ round($unit->installment, 2) }}" placeholder="Installment Length*">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12">
                                         @error('installment_type')
-                                        <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                            <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
                                         @enderror
-                                        @error('installment')
-                                        <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
-                                        @enderror
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group fv-plugins-icon-container">
+                                            <input type="number" min="0" step="any" class="form-control form-control-lg" name="installment" value="{{ old('installment', round($unit->installment, 2)) }}" placeholder="Installment Length in Months*" required>
+                                            @error('installment')
+                                                <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <!-- Image Upload Sections -->
                         <div class="row">
-                            <!-- Payment Plan image upload -->
+                            <!-- Payment Plan Section -->
                             <div class="col-xl-6">
                                 <div class="form-group fv-plugins-icon-container">
-                                    <label>Payment Plan</label>
-                                    <div class="col-lg-9 col-xl-12">
-                                        <div class="image-input image-input-outline" id="kt_image_4" style="background-image: url(assets/media/users/blank.png)">
-                                            <div class="image-input-wrapper" style="background-image: url(uploads/project_images/project_{{ $unit->project_id }}/unit_{{ $unit->id }}/{{ $unit->payment_plan_img }})"></div>
-                                            <label class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="change" data-toggle="tooltip" title="" data-original-title="Change Picture">
-                                                <i class="fa fa-pen icon-sm text-muted"></i>
-                                                <input type="file" name="payment_plan_img" accept=".png, .jpg, .jpeg" />
-                                                <input type="hidden" name="payment_plan_img_remove" value="0" />
-                                            </label>
-                                            <span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="cancel" data-toggle="tooltip" title="Cancel avatar">
-                                                <i class="ki ki-bold-close icon-xs text-muted"></i>
-                                            </span>
-                                            <span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="remove" data-toggle="tooltip" title="Remove Picture">
-                                                <i class="ki ki-bold-close icon-xs text-muted"></i>
-                                            </span>
-                                        </div>
-                                        <span class="form-text text-muted">After image removal, hidden input's value is set to "1"</span>
-                                    </div>
-                                </div>
-                                <!-- Code example for Payment Plan image -->
-                                <div class="example-code">
-                                    <ul class="example-nav nav nav-tabs nav-bold nav-tabs-line nav-tabs-line-2x">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" data-toggle="tab" href="#example_code_4_html">HTML</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" data-toggle="tab" href="#example_code_4_js">JS</a>
-                                        </li>
-                                    </ul>
-                                    <span class="example-copy" data-toggle="tooltip" title="Copy code"></span>
-                                    <div class="tab-content">
-                                        <div class="tab-pane active" id="example_code_4_html" role="tabpanel">
-                                            <div class="example-highlight">
-                                                <pre>
-                                                    <code class="language-html">
-&lt;div class="image-input image-input-outline" id="kt_image_4" style="background-image: url(assets/media/users/blank.png)"&gt;
-    &lt;div class="image-input-wrapper" style="background-image: url(uploads/project_images/project_{{ $unit->project_id }}/unit_{{ $unit->id }}/{{ $unit->payment_plan_img }})"&gt;&lt;/div&gt;
-    &lt;label class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="change" data-toggle="tooltip" title="" data-original-title="Change Picture"&gt;
-        &lt;i class="fa fa-pen icon-sm text-muted"&gt;&lt;/i&gt;
-        &lt;input type="file" name="payment_plan_img" accept=".png, .jpg, .jpeg"/&gt;
-        &lt;input type="hidden" name="payment_plan_img_remove" value="0"/&gt;
-    &lt;/label&gt;
-    &lt;span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="cancel" data-toggle="tooltip" title="Cancel avatar"&gt;
-        &lt;i class="ki ki-bold-close icon-xs text-muted"&gt;&lt;/i&gt;
-    &lt;/span&gt;
-    &lt;span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="remove" data-toggle="tooltip" title="Remove Picture"&gt;
-        &lt;i class="ki ki-bold-close icon-xs text-muted"&gt;&lt;/i&gt;
-    &lt;/span&gt;
-&lt;/div&gt;
-                                                    </code>
-                                                </pre>
+                                    <label class="text-dark font-weight-bold mb-3">Payment Plan</label>
+                                    
+                                    <!-- File Preview Card -->
+                                    <div class="file-preview-card" id="payment_plan_preview" style="display: {{ $unit->payment_plan_img ? 'block' : 'none' }};">
+                                        <div class="card position-relative" style="border-radius: 8px; width: 150px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                            <!-- Image Preview (for image files) -->
+                                            <img id="payment_plan_preview_img" src="{{ $unit->payment_plan_img && in_array(strtolower(pathinfo($unit->payment_plan_img, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']) ? asset('uploads/project_images/project_' . $unit->project_id . '/unit_' . $unit->id . '/' . $unit->payment_plan_img) : '' }}" 
+                                                 alt="Payment Plan" class="card-img-top" style="height: 100px; width: 150px; object-fit: cover; display: {{ $unit->payment_plan_img && in_array(strtolower(pathinfo($unit->payment_plan_img, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']) ? 'block' : 'none' }};">
+                                            
+                                            <!-- PDF Preview (for PDF files) -->
+                                            <div id="payment_plan_preview_pdf" class="d-flex flex-column align-items-center justify-content-center" 
+                                                 style="height: 100px; width: 150px; background-color: #f8f9fa; display: {{ $unit->payment_plan_img && strtolower(pathinfo($unit->payment_plan_img, PATHINFO_EXTENSION)) == 'pdf' ? 'flex' : 'none' }};">
+                                                <i class="fas fa-file-pdf fa-3x text-danger mb-2"></i>
+                                                <small class="text-muted text-center px-2">{{ $unit->payment_plan_img ? pathinfo($unit->payment_plan_img, PATHINFO_FILENAME) : '' }}</small>
+                                                <a href="{{ $unit->payment_plan_img ? asset('uploads/project_images/project_' . $unit->project_id . '/unit_' . $unit->id . '/' . $unit->payment_plan_img) : '#' }}" 
+                                                   target="_blank" class="btn btn-sm btn-outline-primary mt-1">
+                                                    <i class="fas fa-download"></i> Download
+                                                </a>
+                                            </div>
+                                            
+                                            <!-- Edit Icon -->
+                                            <div class="position-absolute" style="top: 5px; right: 5px;">
+                                                <button type="button" class="btn btn-sm btn-light rounded-circle" 
+                                                        style="width: 30px; height: 25px; display: flex; align-items: center; justify-content: center;"
+                                                        onclick="document.getElementById('payment_plan_img').click()">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                </button>
+                                            </div>
+                                            
+                                            <!-- Remove Icon -->
+                                            <div class="position-absolute" style="bottom: 5px; right: 5px;">
+                                                <button type="button" class="btn btn-sm btn-light rounded-circle" 
+                                                        style="width: 25px; height: 25px; display: flex; align-items: center; justify-content: center;"
+                                                        onclick="removePaymentPlanImage()">
+                                                    <i class="fas fa-times text-danger"></i>
+                                                </button>
                                             </div>
                                         </div>
-                                        <div class="tab-pane" id="example_code_4_js">
-                                            <div class="example-highlight">
-                                                <pre style="height:400px">
-                                                    <code class="language-js">
-var avatar4 = new KTImageInput('kt_image_4');
-avatar4.on('cancel', function(imageInput) {
-    if (typeof swal !== 'undefined' && typeof swal.fire === 'function') {
-        swal.fire({
-            title: 'Image successfully canceled!',
-            icon: 'success',
-            buttonsStyling: false,
-            confirmButtonText: 'Awesome!',
-            confirmButtonClass: 'btn btn-primary font-weight-bold'
-        });
-    }
-    imageInput.element.querySelector('[name="payment_plan_img_remove"]').value = "0";
-});
-avatar4.on('change', function(imageInput) {
-    if (typeof swal !== 'undefined' && typeof swal.fire === 'function') {
-        swal.fire({
-            title: 'Image successfully changed!',
-            icon: 'success',
-            buttonsStyling: false,
-            confirmButtonText: 'Awesome!',
-            confirmButtonClass: 'btn btn-primary font-weight-bold'
-        });
-    }
-    imageInput.element.querySelector('[name="payment_plan_img_remove"]').value = "0";
-});
-avatar4.on('remove', function(imageInput) {
-    if (typeof swal !== 'undefined' && typeof swal.fire === 'function') {
-        swal.fire({
-            title: 'Image successfully removed!',
-            icon: 'success',
-            buttonsStyling: false,
-            confirmButtonText: 'Got it!',
-            confirmButtonClass: 'btn btn-primary font-weight-bold'
-        });
-    } else {
-        console.warn('SweetAlert2 (swal) is not available. Proceeding without confirmation.');
-    }
-    imageInput.element.querySelector('[name="payment_plan_img_remove"]').value = "1";
-});
-                                                    </code>
-                                                </pre>
-                                            </div>
+                                        <div class="mt-2">
+                                            <small class="text-muted">After image removal hidden input's value is set to "l"</small>
                                         </div>
                                     </div>
+                                    
+                                    <!-- File Input (Hidden) -->
+                                    <input type="file" class="form-control form-control-lg d-none" name="payment_plan_img" id="payment_plan_img" 
+                                           accept="image/*,.pdf" onchange="previewPaymentPlanImage(this)">
+                                    
+                                    <!-- Upload Button (shown when no file) -->
+                                    <div id="payment_plan_upload_btn" style="display: {{ $unit->payment_plan_img ? 'none' : 'block' }};">
+                                        <button type="button" class="btn btn-outline-primary btn-block" 
+                                                style="height: 100px; border: 2px dashed #007bff;"
+                                                onclick="document.getElementById('payment_plan_img').click()">
+                                            <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i><br>
+                                            <span>Click to upload Payment Plan<br><small class="text-muted">(Images or PDF)</small></span>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Hidden input for tracking removal -->
+                                    <input type="hidden" name="payment_plan_removed" id="payment_plan_removed" value="0">
+                                    
+                                    @error('payment_plan_img')
+                                        <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
-                            <!-- Floor Plan image upload -->
+                            
+                            <!-- Floor Plan Section -->
                             <div class="col-xl-6">
                                 <div class="form-group fv-plugins-icon-container">
-                                    <label>Floor Plan</label>
-                                    <div class="col-lg-9 col-xl-12">
-                                        <div class="image-input image-input-outline" id="kt_image_5" style="background-image: url(assets/media/users/blank.png)">
-                                            <div class="image-input-wrapper" style="background-image: url(uploads/project_images/project_{{ $unit->project_id }}/unit_{{ $unit->id }}/{{ $unit->floor_plan_img }})"></div>
-                                            <label class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="change" data-toggle="tooltip" title="" data-original-title="Change Picture">
-                                                <i class="fa fa-pen icon-sm text-muted"></i>
-                                                <input type="file" name="floor_plan_img" accept=".png, .jpg, .jpeg" />
-                                                <input type="hidden" name="floor_plan_img_remove" value="0" />
-                                            </label>
-                                            <span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="cancel" data-toggle="tooltip" title="Cancel avatar">
-                                                <i class="ki ki-bold-close icon-xs text-muted"></i>
-                                            </span>
-                                            <span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="remove" data-toggle="tooltip" title="Remove Picture">
-                                                <i class="ki ki-bold-close icon-xs text-muted"></i>
-                                            </span>
-                                        </div>
-                                        <span class="form-text text-muted">After image removal, hidden input's value is set to "1"</span>
-                                    </div>
-                                </div>
-                                <!-- Code example for Floor Plan image -->
-                                <div class="example-code">
-                                    <ul class="example-nav nav nav-tabs nav-bold nav-tabs-line nav-tabs-line-2x">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" data-toggle="tab" href="#example_code_5_html">HTML</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" data-toggle="tab" href="#example_code_5_js">JS</a>
-                                        </li>
-                                    </ul>
-                                    <span class="example-copy" data-toggle="tooltip" title="Copy code"></span>
-                                    <div class="tab-content">
-                                        <div class="tab-pane active" id="example_code_5_html" role="tabpanel">
-                                            <div class="example-highlight">
-                                                <pre>
-                                                    <code class="language-html">
-&lt;div class="image-input image-input-outline" id="kt_image_5" style="background-image: url(assets/media/users/blank.png)"&gt;
-    &lt;div class="image-input-wrapper" style="background-image: url(uploads/project_images/project_{{ $unit->project_id }}/unit_{{ $unit->id }}/{{ $unit->floor_plan_img }})"&gt;&lt;/div&gt;
-    &lt;label class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="change" data-toggle="tooltip" title="" data-original-title="Change Picture"&gt;
-        &lt;i class="fa fa-pen icon-sm text-muted"&gt;&lt;/i&gt;
-        &lt;input type="file" name="floor_plan_img" accept=".png, .jpg, .jpeg"/&gt;
-        &lt;input type="hidden" name="floor_plan_img_remove" value="0"/&gt;
-    &lt;/label&gt;
-    &lt;span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="cancel" data-toggle="tooltip" title="Cancel avatar"&gt;
-        &lt;i class="ki ki-bold-close icon-xs text-muted"&gt;&lt;/i&gt;
-    &lt;/span&gt;
-    &lt;span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="remove" data-toggle="tooltip" title="Remove Picture"&gt;
-        &lt;i class="ki ki-bold-close icon-xs text-muted"&gt;&lt;/i&gt;
-    &lt;/span&gt;
-&lt;/div&gt;
-                                                    </code>
-                                                </pre>
+                                    <label class="text-dark font-weight-bold mb-3">Floor Plan</label>
+                                    
+                                    <!-- File Preview Card -->
+                                    <div class="file-preview-card" id="floor_plan_preview" style="display: {{ $unit->floor_plan_img ? 'block' : 'none' }};">
+                                        <div class="card position-relative" style="border-radius: 8px; width: 150px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                            <!-- Image Preview (for image files) -->
+                                            <img id="floor_plan_preview_img" src="{{ $unit->floor_plan_img && in_array(strtolower(pathinfo($unit->floor_plan_img, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']) ? asset('uploads/project_images/project_' . $unit->project_id . '/unit_' . $unit->id . '/' . $unit->floor_plan_img) : '' }}" 
+                                                 alt="Floor Plan" class="card-img-top" style="height: 100px; width: 150px; object-fit: cover; display: {{ $unit->floor_plan_img && in_array(strtolower(pathinfo($unit->floor_plan_img, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']) ? 'block' : 'none' }};">
+                                            
+                                            <!-- PDF Preview (for PDF files) -->
+                                            <div id="floor_plan_preview_pdf" class="d-flex flex-column align-items-center justify-content-center" 
+                                                 style="height: 100px; width: 150px; background-color: #f8f9fa; display: {{ $unit->floor_plan_img && strtolower(pathinfo($unit->floor_plan_img, PATHINFO_EXTENSION)) == 'pdf' ? 'flex' : 'none' }};">
+                                                <i class="fas fa-file-pdf fa-3x text-danger mb-2"></i>
+                                                <small class="text-muted text-center px-2">{{ $unit->floor_plan_img ? pathinfo($unit->floor_plan_img, PATHINFO_FILENAME) : '' }}</small>
+                                                <a href="{{ $unit->floor_plan_img ? asset('uploads/project_images/project_' . $unit->project_id . '/unit_' . $unit->id . '/' . $unit->floor_plan_img) : '#' }}" 
+                                                   target="_blank" class="btn btn-sm btn-outline-primary mt-1">
+                                                    <i class="fas fa-download"></i> Download
+                                                </a>
+                                            </div>
+                                            
+                                            <!-- Edit Icon -->
+                                            <div class="position-absolute" style="top: 5px; right: 5px;">
+                                                <button type="button" class="btn btn-sm btn-light rounded-circle" 
+                                                        style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;"
+                                                        onclick="document.getElementById('floor_plan_img').click()">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                </button>
+                                            </div>
+                                            
+                                            <!-- Remove Icon -->
+                                            <div class="position-absolute" style="bottom: 5px; right: 5px;">
+                                                <button type="button" class="btn btn-sm btn-light rounded-circle" 
+                                                        style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;"
+                                                        onclick="removeFloorPlanImage()">
+                                                    <i class="fas fa-times text-danger"></i>
+                                                </button>
                                             </div>
                                         </div>
-                                        <div class="tab-pane" id="example_code_5_js">
-                                            <div class="example-highlight">
-                                                <pre style="height:400px">
-                                                    <code class="language-js">
-var avatar5 = new KTImageInput('kt_image_5');
-avatar5.on('cancel', function(imageInput) {
-    if (typeof swal !== 'undefined' && typeof swal.fire === 'function') {
-        swal.fire({
-            title: 'Image successfully canceled!',
-            icon: 'success',
-            buttonsStyling: false,
-            confirmButtonText: 'Awesome!',
-            confirmButtonClass: 'btn btn-primary font-weight-bold'
-        });
-    }
-    imageInput.element.querySelector('[name="floor_plan_img_remove"]').value = "0";
-});
-avatar5.on('change', function(imageInput) {
-    if (typeof swal !== 'undefined' && typeof swal.fire === 'function') {
-        swal.fire({
-            title: 'Image successfully changed!',
-            icon: 'success',
-            buttonsStyling: false,
-            confirmButtonText: 'Awesome!',
-            confirmButtonClass: 'btn btn-primary font-weight-bold'
-        });
-    }
-    imageInput.element.querySelector('[name="floor_plan_img_remove"]').value = "0";
-});
-avatar5.on('remove', function(imageInput) {
-    if (typeof swal !== 'undefined' && typeof swal.fire === 'function') {
-        swal.fire({
-            title: 'Image successfully removed!',
-            icon: 'success',
-            buttonsStyling: false,
-            confirmButtonText: 'Got it!',
-            confirmButtonClass: 'btn btn-primary font-weight-bold'
-        });
-    } else {
-        console.warn('SweetAlert2 (swal) is not available. Proceeding without confirmation.');
-    }
-    imageInput.element.querySelector('[name="floor_plan_img_remove"]').value = "1";
-});
-                                                    </code>
-                                                </pre>
-                                            </div>
+                                        <div class="mt-2">
+                                            <small class="text-muted">After image removal hidden input's value is set to "l"</small>
                                         </div>
                                     </div>
+                                    
+                                    <!-- File Input (Hidden) -->
+                                    <input type="file" class="form-control form-control-lg d-none" name="floor_plan_img" id="floor_plan_img" 
+                                           accept="image/*,.pdf" onchange="previewFloorPlanImage(this)">
+                                    
+                                    <!-- Upload Button (shown when no file) -->
+                                    <div id="floor_plan_upload_btn" style="display: {{ $unit->floor_plan_img ? 'none' : 'block' }};">
+                                        <button type="button" class="btn btn-outline-primary btn-block" 
+                                                style="height: 100px; border: 2px dashed #007bff;"
+                                                onclick="document.getElementById('floor_plan_img').click()">
+                                            <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i><br>
+                                            <span>Click to upload Floor Plan<br><small class="text-muted">(Images or PDF)</small></span>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Hidden input for tracking removal -->
+                                    <input type="hidden" name="floor_plan_removed" id="floor_plan_removed" value="0">
+                                    
+                                    @error('floor_plan_img')
+                                        <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -397,11 +325,10 @@ avatar5.on('remove', function(imageInput) {
                             <div class="col-xl-12">
                                 <div class="form-group fv-plugins-icon-container">
                                     <label>Unit Description</label>
-                                    <textarea class="form-control" name="description" id="kt_autosize_1" rows="3" style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 76px;">{{ $unit->description }}</textarea>
+                                    <textarea class="form-control" name="description" id="kt_autosize_1" rows="3" style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 76px;">{{ old('description', $unit->description) }}</textarea>
                                     @error('description')
-                                    <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                        <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
                                     @enderror
-                                    <div class="fv-plugins-message-container"></div>
                                 </div>
                             </div>
                         </div>
@@ -411,10 +338,10 @@ avatar5.on('remove', function(imageInput) {
                     <div class="card-footer">
                         <div class="row">
                             <div class="col-6 col-lg-6 text-left">
-                                <a href="{{ Request::get('cancel') }}" type="reset" class="btn admin_ad_btn_red">Cancel</a>
+                                <a href="{{ Request::get('cancel') }}" type="reset" class="btn btn-secondary">Cancel</a>
                             </div>
                             <div class="col-6 col-lg-6 text-right">
-                                <button type="submit" class="btn mr-2 admin_ad_btn">Update</button>
+                                <button onclick="FormSubmit()" type="button" class="btn admin_ad_btn mr-2">Update</button>
                             </div>
                         </div>
                     </div>
@@ -432,7 +359,96 @@ avatar5.on('remove', function(imageInput) {
 
 @section('footer')
 <!-- Page-specific JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="assets/js/pages/custom/projects/add-project.js"></script>
-<script src="assets/js/pages/crud/file-upload/image-input.js"></script>
+<script>
+    function FormSubmit() {
+        if (SubmitForm("frmValidate")) {
+            ShowLoader();
+            $("#frmValidate").submit();
+        }
+    }
+
+    // Payment Plan File Functions
+    function previewPaymentPlanImage(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            const isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension);
+            const isPdf = fileExtension === 'pdf';
+            
+            if (isImage) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('payment_plan_preview_img').src = e.target.result;
+                    document.getElementById('payment_plan_preview_img').style.display = 'block';
+                    document.getElementById('payment_plan_preview_pdf').style.display = 'none';
+                    document.getElementById('payment_plan_preview').style.display = 'block';
+                    document.getElementById('payment_plan_upload_btn').style.display = 'none';
+                    document.getElementById('payment_plan_removed').value = '0';
+                }
+                reader.readAsDataURL(file);
+            } else if (isPdf) {
+                document.getElementById('payment_plan_preview_img').style.display = 'none';
+                document.getElementById('payment_plan_preview_pdf').style.display = 'flex';
+                document.getElementById('payment_plan_preview').style.display = 'block';
+                document.getElementById('payment_plan_upload_btn').style.display = 'none';
+                document.getElementById('payment_plan_removed').value = '0';
+                
+                // Update PDF preview content
+                const pdfPreview = document.getElementById('payment_plan_preview_pdf');
+                const fileName = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
+                pdfPreview.querySelector('small').textContent = fileName;
+                pdfPreview.querySelector('a').href = URL.createObjectURL(file);
+            }
+        }
+    }
+
+    function removePaymentPlanImage() {
+        document.getElementById('payment_plan_preview').style.display = 'none';
+        document.getElementById('payment_plan_upload_btn').style.display = 'block';
+        document.getElementById('payment_plan_img').value = '';
+        document.getElementById('payment_plan_removed').value = '1';
+    }
+
+    // Floor Plan File Functions
+    function previewFloorPlanImage(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            const isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension);
+            const isPdf = fileExtension === 'pdf';
+            
+            if (isImage) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('floor_plan_preview_img').src = e.target.result;
+                    document.getElementById('floor_plan_preview_img').style.display = 'block';
+                    document.getElementById('floor_plan_preview_pdf').style.display = 'none';
+                    document.getElementById('floor_plan_preview').style.display = 'block';
+                    document.getElementById('floor_plan_upload_btn').style.display = 'none';
+                    document.getElementById('floor_plan_removed').value = '0';
+                }
+                reader.readAsDataURL(file);
+            } else if (isPdf) {
+                document.getElementById('floor_plan_preview_img').style.display = 'none';
+                document.getElementById('floor_plan_preview_pdf').style.display = 'flex';
+                document.getElementById('floor_plan_preview').style.display = 'block';
+                document.getElementById('floor_plan_upload_btn').style.display = 'none';
+                document.getElementById('floor_plan_removed').value = '0';
+                
+                // Update PDF preview content
+                const pdfPreview = document.getElementById('floor_plan_preview_pdf');
+                const fileName = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
+                pdfPreview.querySelector('small').textContent = fileName;
+                pdfPreview.querySelector('a').href = URL.createObjectURL(file);
+            }
+        }
+    }
+
+    function removeFloorPlanImage() {
+        document.getElementById('floor_plan_preview').style.display = 'none';
+        document.getElementById('floor_plan_upload_btn').style.display = 'block';
+        document.getElementById('floor_plan_img').value = '';
+        document.getElementById('floor_plan_removed').value = '1';
+    }
+</script>
 @endsection

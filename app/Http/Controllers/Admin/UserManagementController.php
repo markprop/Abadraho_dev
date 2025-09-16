@@ -28,7 +28,7 @@ class UserManagementController extends Controller
     public function index(Request $request)
     {
 
-        $admins = User::orderBy("created_at", "DESC");
+        $admins = User::with('User_type')->orderBy("created_at", "DESC");
         // dd(explode(" ", $request['userName'])[0]);
         $searchQuery = [];
         $searchQuery['name'] = $request->userName ? $request->userName : null;

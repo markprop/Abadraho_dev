@@ -1,53 +1,57 @@
 @extends('panel.layouts.master1')
 
 @section('content')
+<!-- Main content container -->
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-  <!--begin::Subheader-->
-  <div class="subheader py-2 py-lg-4 subheader-solid" id="kt_subheader">
-    <div class="container-fluid d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
-      <!--begin::Details-->
-      <div class="d-flex align-items-center flex-wrap mr-2">
-        <!--begin::Title-->
-        <h5 class="text-dark font-weight-bold mt-2 mb-2 mr-5">Edit Unit</h5>
-        <!--end::Title-->
-        <!--begin::Separator-->
-        <div class="subheader-separator subheader-separator-ver mt-2 mb-2 mr-5 bg-gray-200"></div>
-        <!--end::Separator-->
-        <!--begin::Search Form-->
-        <div class="d-flex align-items-center" id="kt_subheader_search">
-          <span class="text-dark-50 font-weight-bold" id="kt_subheader_total">Enter Unit details and
-            submit</span>
-        </div>
-        <!--end::Search Form-->
-      </div>
-      <!--end::Details-->
-    </div>
-  </div>
-  <!--end::Subheader-->
-  <!--begin::Entry-->
-  <div class="d-flex flex-column-fluid">
-    <!--begin::Container-->
-    <div class="container">
-      <!--begin::Card-->
-      <div class="card card-custom gutter-b example example-compact">
-        <div class="card-header" style="padding: 1rem 1.25rem;">
-          <h2 class="card-title text-uppercase">Edit Unit of the Project</h2>
-        </div>
-        <!--begin::Form-->
-        <form class="form mt-5" method="POST" action="/admin/unit/{{ $unit->id }}" enctype="multipart/form-data">
-          @csrf
-          @method('PUT')
-          <div class="col-xl-12">
-            <div class="row">
-
-              <div class="col-xl-6">
-                <div class="form-group fv-plugins-icon-container">
-                  <label>Title *</label>
-                  <input type="text" min="0" step="any" class="form-control form-control-lg" name="title" value="{{ $unit->title }}">
-                  @error('title')
-                  <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
-                  @enderror
+    <!-- Subheader section -->
+    <div class="subheader py-2 py-lg-4 subheader-solid" id="kt_subheader">
+        <div class="container-fluid d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
+            <!-- Subheader details -->
+            <div class="d-flex align-items-center flex-wrap mr-2">
+                <h5 class="text-dark font-weight-bold mt-2 mb-2 mr-5">Edit Unit</h5>
+                <div class="subheader-separator subheader-separator-ver mt-2 mb-2 mr-5 bg-gray-200"></div>
+                <div class="d-flex align-items-center" id="kt_subheader_search">
+                    <span class="text-dark-50 font-weight-bold" id="kt_subheader_total">Enter Unit details and submit</span>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content entry -->
+    <div class="d-flex flex-column-fluid">
+        <div class="container">
+            <!-- Card for form -->
+            <div class="card card-custom gutter-b example example-compact">
+                <div class="card-header" style="padding: 1rem 1.25rem;">
+                    <h2 class="card-title text-uppercase">Edit Unit of the Project</h2>
+                </div>
+
+                <!-- Form for updating unit details -->
+                <form class="form mt-5" id="frmValidate" method="POST" action="/admin/unit/{{ $unit->id }}" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="col-xl-12">
+                        <!-- Hidden Project ID -->
+                        <div class="form-group fv-plugins-icon-container d-none">
+                            <label>Project ID {{ $unit->project_id }}</label>
+                            <div class="col-sm-9">
+                                <input type="number" min="0" step="any" class="form-control form-control-lg" name="project_id" value="{{ old('project_id', $unit->project_id) }}" required>
+                                @error('project_id')
+                                    <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- Title input -->
+                            <div class="col-xl-6">
+                                <div class="form-group fv-plugins-icon-container">
+                                    <label>Title *</label>
+                                    <input type="text" class="form-control form-control-lg" name="title" value="{{ old('title', $unit->title) }}" required>
+                                    @error('title')
+                                        <span class="fv-plugins-message-container text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
               </div>
               <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">

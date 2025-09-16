@@ -8,6 +8,9 @@
     <a href="/projects/listings" class="{{  request()->segment(1) == 'projects' ? 'current' : '' }}"><span class="title">Find Projects</span></a>
 </li>
 <li>
+    <a href="/off-plan" class="{{  request()->segment(1) == 'off-plan' ? 'current' : '' }}"><span class="title">Off-Plan</span></a>
+</li>
+<li>
     <a href="/compare"><span class="title">Compare</span></a>
 </li>
 <li>

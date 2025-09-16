@@ -190,7 +190,7 @@
                 <div class="col-xl-6">
                 <div class="form-group fv-plugins-icon-container">
                     <label>YouTube Video Link</label>
-                    <input type="url" class="form-control form-control-lg" name="project_video" id="project_video" placeholder="Paste YouTube URL (e.g., https://www.youtube.com/watch?v=example)" value="{{ old('project_video', optional($project)->project_video ?? '') }}">
+                    <input type="url" class="form-control form-control-lg" name="project_video" id="project_video" placeholder="Paste YouTube URL (e.g., https://www.youtube.com/watch?v=example)" value="{{ old('project_video') }}">
                     <span class="form-text text-muted">Please paste the YouTube video URL (e.g., https://www.youtube.com/watch?v=example).</span>
                     @error('project_video')
                     <div class="fv-plugins-message-container text-danger">{{ $message }}</div>

@@ -592,6 +592,9 @@ $fileModified = date('hms');
           <li>
             <a href="/projects/listings"><span class="title">Projects</span></a>
           </li>
+          <li>
+            <a href="/off-plan"><span class="title">Off-Plan</span></a>
+          </li>
 
           <li>
             <a href="/blogs"><span class="title">Blogs</span></a>
@@ -606,50 +609,7 @@ $fileModified = date('hms');
     @yield('content')
 
     <!-- Our Footer -->
-    <section class="footer_one">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-6 col-md-6 col-lg-3 col-xl-3 pr0 pl0">
-            <div class="footer_about_widget">
-              <h4>About Us</h4>
-              <p>Abad Raho stands for quality, trust, and authenticity in the real estate industry
-                that deals in marketing and sales of residential and commercial projects.</p>
-            </div>
-          </div>
-          <div class="col-sm-6 col-md-6 col-lg-3 col-xl-3">
-            <div class="footer_qlink_widget">
-              <h4>Quick Links</h4>
-              <ul class="list-unstyled">
-                <li><a href="/about">About Us</a></li>
-                <li><a href="/terms&condition">Terms & Conditions</a></li>
-                <li><a href="/contact">Contact Us</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-sm-6 col-md-6 col-lg-3 col-xl-3">
-            <div class="footer_contact_widget">
-              <h4>Contact Us</h4>
-              <ul class="list-unstyled">
-                <li><a href="#">info@markproperties.pk</a></li>
-                <li><a href="#">Plot Number B-354, Ground Floor</a></li>
-                <li><a href="#">Block 7-8 Kathiawaar C.H.S Karachi.</a></li>
-                <li><a href="tel:03167031554">+92 316-703-1554</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-sm-6 col-md-6 col-lg-3 col-xl-3">
-            <div class="footer_social_widget">
-              <h4>Follow us</h4>
-              <ul class="mb30">
-                <li class="list-inline-item"><a href="https://www.facebook.com/markpropertiespk"><i class="fa fa-facebook"></i></a></li>
-                <li class="list-inline-item"><a href="https://www.instagram.com/markproperties.pk/?hl=en"><i class="fa fa-instagram"></i></a></li>
-                <li class="list-inline-item"><a href="https://www.linkedin.com/company/markpropertiespk/?viewAsMember=true"><i class="fa fa-linkedin"></i></a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <x-footer />
 
     <!-- Our Footer Bottom Area -->
     <section class="footer_middle_area pt40 pb40">

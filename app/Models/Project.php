@@ -93,7 +93,15 @@ class Project extends Model
     }
     public function users()
     {
-        return $this->belongsToMany(Admin::class, 'project_users')->withTimestamps();
+        return $this->belongsToMany(Admin::class, 'project_users', 'project_id', 'admin_id')
+            ->withTimestamps()
+            ->withPivot('created_at')
+            ->orderByPivot('created_at', 'desc');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(Admin::class, 'created_by', 'id');
     }
     public function location()
     {

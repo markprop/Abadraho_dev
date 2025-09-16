@@ -215,6 +215,295 @@
         border-radius: 6px;
         box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
+
+    /* Project Attachments Scroll Container */
+    .attachments-scroll-container {
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        gap: 15px;
+        padding: 15px 0;
+        scrollbar-width: thin;
+        scrollbar-color: #ec1c24 #f1f1f1;
+    }
+
+    .attachments-scroll-container::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .attachments-scroll-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .attachments-scroll-container::-webkit-scrollbar-thumb {
+        background: #ec1c24;
+        border-radius: 4px;
+    }
+
+    .attachments-scroll-container::-webkit-scrollbar-thumb:hover {
+        background: #c41e3a;
+    }
+
+    .attachment-item {
+        flex: 0 0 auto;
+        min-width: 200px;
+        max-width: 250px;
+    }
+
+    /* Responsive Navigation Tabs */
+    .sticky-nav-tabs-container {
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        padding: 8px;
+        margin-bottom: 30px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        border: 1px solid #e9ecef;
+        scrollbar-width: thin;
+        scrollbar-color: #ec1c24 #f1f1f1;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .sticky-nav-tabs-container::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .sticky-nav-tabs-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .sticky-nav-tabs-container::-webkit-scrollbar-thumb {
+        background: #ec1c24;
+        border-radius: 3px;
+    }
+
+    .sticky-nav-tabs-container::-webkit-scrollbar-thumb:hover {
+        background: #c41e3a;
+    }
+
+    .sticky-nav-tabs-container .nav-item {
+        flex: 0 0 auto;
+        margin: 0 2px;
+    }
+
+    .sticky-nav-tab {
+        display: block;
+        padding: 10px 16px;
+        color: #6c757d;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        position: relative;
+        background: transparent;
+        white-space: nowrap;
+        min-width: fit-content;
+    }
+
+    .sticky-nav-tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid #c41e3a;
+    }
+
+    /* All sticky nav tabs now use the same consistent styling */
+    .sticky-nav-tab {
+        background: transparent;
+        color: #6c757d;
+        font-weight: 500;
+        position: relative;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .sticky-nav-tab:hover {
+        color: #ec1c24;
+        background: rgba(236, 28, 36, 0.08);
+        transform: translateY(-1px);
+    }
+
+    .sticky-nav-tab.active {
+        color: #fff;
+        background: linear-gradient(135deg, #ec1c24, #c41e3a);
+        box-shadow: 0 4px 20px rgba(236, 28, 36, 0.3);
+    }
+
+    /* Standardized Button Styles */
+    .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 14px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        line-height: 1.4;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+    }
+
+    /* Primary Button (btn-thm) */
+    .btn-thm {
+        background: linear-gradient(135deg, #ec1c24, #c41e3a);
+        color: #fff;
+        border: 2px solid transparent;
+    }
+
+    .btn-thm:hover {
+        background: linear-gradient(135deg, #c41e3a, #a01a2e);
+        color: #fff;
+        box-shadow: 0 4px 20px rgba(236, 28, 36, 0.4);
+    }
+
+    /* Social Media Buttons */
+    .btn-social {
+        padding: 8px 16px;
+        font-size: 13px;
+        border-radius: 6px;
+        margin: 2px;
+    }
+
+    .btn-danger.btn-social {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: #fff;
+    }
+
+    .btn-danger.btn-social:hover {
+        background: linear-gradient(135deg, #c82333, #a71e2a);
+        color: #fff;
+    }
+
+    .btn-success.btn-social {
+        background: linear-gradient(135deg, #28a745, #1e7e34);
+        color: #fff;
+    }
+
+    .btn-success.btn-social:hover {
+        background: linear-gradient(135deg, #1e7e34, #155724);
+        color: #fff;
+    }
+
+    .btn-secondary.btn-social {
+        background: linear-gradient(135deg, #6c757d, #545b62);
+        color: #fff;
+    }
+
+    .btn-secondary.btn-social:hover {
+        background: linear-gradient(135deg, #545b62, #3d4043);
+        color: #fff;
+    }
+
+    /* Full Width Buttons */
+    .btn-block {
+        width: 100%;
+        display: block;
+    }
+
+    /* Form Buttons */
+    .form-btn {
+        margin-top: 15px;
+        padding: 12px 24px;
+        font-size: 16px;
+    }
+
+    /* Add Field Button */
+    .add_field_button {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+    }
+
+    .add_field_button:hover {
+        background: linear-gradient(135deg, #138496, #0f6674);
+        color: #fff;
+    }
+
+    /* Wishlist Button */
+    .add-to-wishlist-btn {
+        background: transparent;
+        color: #ec1c24;
+        border: 2px solid #ec1c24;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+    .add-to-wishlist-btn:hover {
+        background: #ec1c24;
+        color: #fff;
+    }
+
+    /* Link Buttons */
+    .btn-link-project-detail {
+        background: linear-gradient(135deg, #ec1c24, #c41e3a);
+        color: #fff;
+        text-decoration: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-size: 14px;
+        display: inline-block;
+    }
+
+    .btn-link-project-detail:hover {
+        background: linear-gradient(135deg, #c41e3a, #a01a2e);
+        color: #fff;
+        text-decoration: none;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .sticky-nav-tabs-container {
+            padding: 6px;
+            margin-bottom: 20px;
+            gap: 4px;
+        }
+
+        .sticky-nav-tab {
+            padding: 8px 12px;
+            font-size: 13px;
+            min-width: auto;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .sticky-nav-tabs-container {
+            padding: 4px;
+            gap: 2px;
+        }
+
+        .sticky-nav-tab {
+            padding: 6px 8px;
+            font-size: 12px;
+        }
+    }
 </style>
 
 @section('content')
@@ -395,7 +684,7 @@
 
                         </div>
 
-                        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <a class="carousel-control-prev btn" href="#carouselExampleControls" role="button" data-slide="prev">
 
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
 
@@ -403,7 +692,7 @@
 
                         </a>
 
-                        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                        <a class="carousel-control-next btn" href="#carouselExampleControls" role="button" data-slide="next">
 
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
 
@@ -1497,7 +1786,7 @@
 
                             <div class="col-lg-12">
 
-                                <div class="application_statics mt20 g-attributes amenities attr-2">
+                                <div class="application_statics mt30 g-attributes amenities attr-2">
 
                                     <div class="row">
 
@@ -1547,15 +1836,16 @@
                                     <div class="utf-boxed-list-headline-item">
                                         <h3>Project Attachments</h3>
                                     </div>
-                                    <div class="iba_container style2">
+                                    <div class="iba_container style2 attachments-scroll-container">
                                         @php $docs_exploded = explode('|', $project->project_doc); @endphp
                                         @foreach ($docs_exploded as $index => $doc)
                                             @php
                                                 $filename = basename($doc); // Extract filename (e.g., 1756712331_Suresh_Kumar_Android_Developer.pdf)
+                                                $encodedFilename = rawurlencode($filename); // Properly encode the filename for URL
                                             @endphp
-                                            <div class="icon_box_area style2">
+                                            <div class="icon_box_area style2 attachment-item">
                                                 <div class="details">
-                                                <a href="{{ route('download.pdf', ['projectId' => $project->id, 'filename' => $filename]) }}" download="{{ $filename }}">
+                                                <a href="{{ route('download.pdf', ['projectId' => $project->id, 'filename' => $encodedFilename]) }}" download="{{ $filename }}">
                                                     <h5><span class="flaticon-download text-thm pr10"></span> Download PDF {{ $index + 1 }}</h5>
                                                 </a>
                                                 </div>
@@ -1956,7 +2246,7 @@
 
 
 
-                                            <button type="submit" class="btn btn-thm">Submit Review <span
+                                            <button type="submit" class="btn btn-thm form-btn">Submit Review <span
 
                                                     class="flaticon-right-arrow-1"></span>
 
@@ -2216,7 +2506,7 @@
 
                                                             <div class="input_fields_wrap mb-2">
 
-                                                                <a class="add_field_button btn btn-thm">Add More Value
+                                                                <a class="add_field_button">Add More Value
 
                                                                     +
 
@@ -2772,7 +3062,7 @@
 
                                                 <button type="button" id="submitZohoInquiryForm"
 
-                                                    class="btn btn-block btn-thm"><i class="fa fa-paper-plane"></i> Get
+                                                    class="btn btn-block btn-thm form-btn"><i class="fa fa-paper-plane"></i> Get
 
                                                     Expert Advise Now
 
@@ -2828,7 +3118,7 @@
 
                                             <a href="/projects/generate-voucher/{{ $project->id }}" type="btn"
 
-                                                class="btn btn-block btn-thm"><i class="fa fa-paper-plane"></i> Get Your
+                                                class="btn btn-block btn-thm form-btn"><i class="fa fa-paper-plane"></i> Get Your
 
                                                 Voucher Code
 
@@ -2930,7 +3220,7 @@
 
                                             <div class="search_option_button">
 
-                                                <button type="submit" class="btn btn-block btn-thm"><i class="fa fa-paper-plane"></i> Get Your Voucher Code</button>
+                                                <button type="submit" class="btn btn-block btn-thm form-btn"><i class="fa fa-paper-plane"></i> Get Your Voucher Code</button>
 
                                             </div>
 
@@ -2980,7 +3270,7 @@
 
                                             <div class="search_option_button">
 
-                                                <a href="/login" type="btn" class="btn btn-block btn-thm"><i class="fa fa-paper-plane"></i> Login</a>
+                                                <a href="/login" type="btn" class="btn btn-block btn-thm form-btn"><i class="fa fa-paper-plane"></i> Login</a>
 
                                             </div>
 
@@ -3330,7 +3620,7 @@
 
                                                 <a onclick="location.href = '/project/{{ $item->slug }}'"
 
-                                                    class="btn btn-thm float-right float-lg-right">
+                                                    class="btn btn-thm btn-link-project-detail float-right float-lg-right">
 
                                                     View Details
 
@@ -3342,7 +3632,7 @@
 
                                                     onclick="OpenLoginRegisterModal('/project/{{ $item->slug }}')"
 
-                                                    class="btn-link-project-detail btn btn-thm float-right float-lg-right"
+                                                    class="btn btn-thm btn-link-project-detail float-right float-lg-right"
 
                                                     data-target=".bd-example-modal-lg">
 

@@ -33,7 +33,7 @@ class ProjectRequest extends FormRequest
             'longitude' => 'required|numeric',
             'progress_status_id' => 'required|exists:progress_status,id',
             'status' => 'required|in:1,2,3',
-            'project_docs.*' => 'nullable|file|mimes:pdf|max:10240',
+            'project_docs.*' => 'nullable|file|mimes:pdf|max:51200',
             'project_video' => 'nullable|url',
             'project_cover_img' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
             'project_imgs.*' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',

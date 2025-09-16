@@ -41,8 +41,9 @@
                 <div class="form-group fv-plugins-icon-container d-none">
                   <label>Project ID {{ $project_id }}</label>
                   <div class="col-sm-9">
-                    <input type="number" min="0" step="any" class="form-control form-control-lg" name="project_id"
-                      value="{{ $project_id }}" required>
+                    <input type="hidden" name="project_id" value="{{ $project_id }}">
+                    <input type="number" min="0" step="any" class="form-control form-control-lg" name="project_id_display"
+                      value="{{ $project_id }}" readonly>
                     @error('project_id')
                       <span class="fv-plugins-message-container text-danger">Please specify the area covered by the
                         project.</span>
@@ -177,7 +178,7 @@
                       <div class="form-group fv-plugins-icon-container">
                       
                         <input type="number" min="0" step="any" class="form-control form-control-lg"
-                          value="{{ old('installment') }}" name="installment" placeholder="Installment Length*">
+                          value="{{ old('installment') }}" name="installment" placeholder="Installment Length in Months*">
                       </div>
                     </div>
                     @error('installment_type')

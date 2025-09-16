@@ -448,8 +448,11 @@ class ProjectController extends Controller
      * @param \App\Models\Project $project
      * @return \Illuminate\Http\Response
      */
-    public function show(Project $project)
+    public function show($id)
     {
+        // Bypass the global scope to allow viewing archived projects
+        $project = Project::withoutGlobalScope('HasIsNonArchiveScope')->findOrFail($id);
+        
         $amenities = Amenity::all();
         $utilities = Utility::all();
 

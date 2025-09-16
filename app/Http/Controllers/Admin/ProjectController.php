@@ -79,7 +79,10 @@ class ProjectController extends Controller
             $projects = $projects->whereBetween("created_at", [$request['from'], $request['to']]);
         }
 
-        $projects = $projects->get();
+        $projects = $projects->with([
+            'creator',
+            'users' => function($q){ $q->orderBy('project_users.created_at','desc'); }
+        ])->get();
         return view('panel.admin.project.index', compact('projects', 'status', 'searchQuery'));
     }
 
@@ -234,7 +237,7 @@ class ProjectController extends Controller
             'views' => 0,
         ];
 
-        $project = Project::create($projectInputArr);
+        $project = Project::create($projectInputArr + ['created_by' => Auth::user()->id]);
 
         if ($request->status) {
             $project->status = $request->status;
@@ -320,11 +323,14 @@ class ProjectController extends Controller
             'bullet_6' => $request->bullet_6,
         ]);
 
-        return redirect('admin/project/' . $project->id);
+        return redirect('admin/project/' . $project->slug);
     }
 
-    public function show(Project $project)
+    public function show($slug)
     {
+        // Bypass the global scope to allow viewing archived projects
+        $project = Project::withoutGlobalScope('HasIsNonArchiveScope')->where('slug', $slug)->firstOrFail();
+        
         $amenities = Amenity::all();
         $utilities = Utility::all();
         $js = json_encode($project);
@@ -347,8 +353,11 @@ class ProjectController extends Controller
         return view('panel.admin.project.show1', compact('amenities', 'utilities', 'project', 'letter', 'roomTypes', 'measurements', 'length', 'added_ago'));
     }
 
-    public function edit(Project $project)
+    public function edit($slug)
     {
+        // Bypass the global scope to allow editing archived projects
+        $project = Project::withoutGlobalScope('HasIsNonArchiveScope')->where('slug', $slug)->firstOrFail();
+        
         $types = ProjectType::all();
         $builders = Builder::all();
         $areas = Area::all();
@@ -377,8 +386,19 @@ class ProjectController extends Controller
         return view('panel.admin.project.update', compact('project', 'progressStatus', 'types', 'builders', 'areas', 'time', 'tags'));
     }
 
-    public function update(ProjectRequest $request, Project $project)
+    public function update(ProjectRequest $request, $slug)
     {
+        // Bypass the global scope to allow updating archived projects
+        $project = Project::withoutGlobalScope('HasIsNonArchiveScope')->where('slug', $slug)->firstOrFail();
+        
+        // Debug logging
+        \Log::info('Project update request received', [
+            'project_id' => $project->id,
+            'slug' => $slug,
+            'request_data' => $request->all(),
+            'files' => $request->hasFile('project_docs') ? count($request->file('project_docs')) : 0
+        ]);
+        
         $parsed_time = $request->added_time;
         if ($request->added_time) {
             $parsed_time = Carbon::parse($request->added_time);
@@ -418,41 +438,88 @@ class ProjectController extends Controller
 
             // Handle new uploads
             if ($request->hasFile('project_docs')) {
-                foreach ($request->file('project_docs') as $file) {
+                \Log::info('Processing PDF uploads', [
+                    'file_count' => count($request->file('project_docs')),
+                    'project_id' => $project->id
+                ]);
+                
+                foreach ($request->file('project_docs') as $index => $file) {
+                    \Log::info('Processing file', [
+                        'index' => $index,
+                        'original_name' => $file->getClientOriginalName(),
+                        'size' => $file->getSize(),
+                        'is_valid' => $file->isValid(),
+                        'extension' => $file->getClientOriginalExtension()
+                    ]);
+                    
                     if ($file->isValid() && $file->getClientOriginalExtension() === 'pdf') {
                         $projectDocName = time() . '_' . $file->getClientOriginalName();
                         $file->move($projectDocDirectory, $projectDocName);
                         $uploadedDocPaths[] = 'project_' . $project->id . '/' . $projectDocName;
+                        
+                        \Log::info('File uploaded successfully', [
+                            'filename' => $projectDocName,
+                            'path' => 'project_' . $project->id . '/' . $projectDocName
+                        ]);
+                    } else {
+                        \Log::warning('Invalid file skipped', [
+                            'filename' => $file->getClientOriginalName(),
+                            'is_valid' => $file->isValid(),
+                            'extension' => $file->getClientOriginalExtension()
+                        ]);
                     }
                 }
             }
 
-            // Combine existing and new documents (if no new upload, keep existing)
-            $finalDocPaths = !empty($uploadedDocPaths) ? array_unique(array_merge($existingDocs, $uploadedDocPaths)) : $existingDocs;
+            // Handle existing documents removal (if any were marked for removal)
+            if ($request->has('existing_project_docs')) {
+                $existingDocs = array_filter($request->existing_project_docs, function($doc) {
+                    return !empty($doc); // Remove empty values (marked for removal)
+                });
+            }
+
+            // Combine existing and new documents
+            $finalDocPaths = array_unique(array_merge($existingDocs, $uploadedDocPaths));
 
             if (!empty($finalDocPaths)) {
                 $project->project_doc = implode('|', $finalDocPaths);
-                $project->save();
-            } elseif (empty($request->file('project_docs')) && !$project->project_doc) {
-                $project->project_doc = null; // Only set to null if no existing and no new files
+                \Log::info('Final project_doc string length', [
+                    'length' => strlen($project->project_doc),
+                    'path_count' => count($finalDocPaths)
+                ]);
+            } else {
+                $project->project_doc = null;
             }
         }
 
         // Handle project images
-        if ($request->hasFile('project_imgs')) {
-            if ($project->project_imgs) {
-                foreach (explode('|', $project->project_imgs) as $img) {
-                    if (Storage::disk('public')->exists($img)) {
-                        Storage::disk('public')->delete($img);
-                    }
+        if ($request->hasFile('project_imgs') || $project->project_imgs) {
+            $uploadedImagePaths = [];
+            $existingImages = $project->project_imgs ? explode('|', $project->project_imgs) : [];
+
+            // Handle new uploads
+            if ($request->hasFile('project_imgs')) {
+                foreach ($request->file('project_imgs') as $image) {
+                    $imagePath = $image->store('uploads/project_images/project_' . $project->id, 'public');
+                    $uploadedImagePaths[] = $imagePath;
                 }
             }
-            $imageName = [];
-            foreach ($request->file('project_imgs') as $image) {
-                $imagePath = $image->store('uploads/project_images/project_' . $project->id, 'public');
-                $imageName[] = $imagePath;
+
+            // Handle existing images removal (if any were marked for removal)
+            if ($request->has('existing_project_imgs')) {
+                $existingImages = array_filter($request->existing_project_imgs, function($img) {
+                    return !empty($img); // Remove empty values (marked for removal)
+                });
             }
-            $project->project_imgs = implode('|', $imageName);
+
+            // Combine existing and new images
+            $finalImagePaths = array_unique(array_merge($existingImages, $uploadedImagePaths));
+
+            if (!empty($finalImagePaths)) {
+                $project->project_imgs = implode('|', $finalImagePaths);
+            } else {
+                $project->project_imgs = null;
+            }
         }
 
         // Handle project cover image
@@ -509,7 +576,7 @@ class ProjectController extends Controller
         $project->project_info->bullet_6 = $request->bullet_6;
         $project->project_info->save();
 
-        return redirect('admin/project/' . $project->id)->with('message', 'Project Updated Successfully');
+        return redirect('admin/project/' . $project->slug)->with('message', 'Project Updated Successfully');
     }
 
     public function destroy(Request $request)
@@ -582,19 +649,26 @@ class ProjectController extends Controller
             $deleteOldAmenities = DB::delete('delete from project_amenities where project_id = ?', [$project_id]);
             $arrprojectAmenities = [];
             for ($i = 0; $i < count($request->projectAmeniies); $i++) {
-                $decodeAmenity = json_decode($request->projectAmeniies[$i], true);
-                $checkDuplicate = ProjectAmenities::where("project_id", $request->project_id)->where("amenity_id", $decodeAmenity["id"])->get();
+                $amenity_id = $request->projectAmeniies[$i];
+                
+                // Get amenity details for validation
+                $amenity = Amenity::find($amenity_id);
+                if (!$amenity) {
+                    return back()->with("errorMsg", "Invalid amenity selected.");
+                }
+                
+                $checkDuplicate = ProjectAmenities::where("project_id", $request->project_id)->where("amenity_id", $amenity_id)->get();
                 if (count($checkDuplicate) > 0) {
-                    $ErrorMsg = "This Amenity [" . $decodeAmenity["amenity_name"] . "] is already exist in this project.";
+                    $ErrorMsg = "This Amenity [" . $amenity->amenity_name . "] is already exist in this project.";
                     return back()->with("errorMsg", $ErrorMsg);
                 }
-                $amenity = [
+                $amenityData = [
                     "project_id" => $request->project_id,
-                    "amenity_id" => $decodeAmenity["id"],
+                    "amenity_id" => $amenity_id,
                     "is_active" => 1,
                     "created_by" => Auth::user()->id
                 ];
-                array_push($arrprojectAmenities, $amenity);
+                array_push($arrprojectAmenities, $amenityData);
             }
             if (count($arrprojectAmenities) > 0) {
                 $insert = ProjectAmenities::insert($arrprojectAmenities);
@@ -616,19 +690,26 @@ class ProjectController extends Controller
             $deleteOldUtilities = DB::delete('delete from project_utilities where project_id = ?', [$project_id]);
             $arrprojectUtilities = [];
             for ($i = 0; $i < count($request->projectUtilities); $i++) {
-                $decodeUtility = json_decode($request->projectUtilities[$i], true);
-                $checkDuplicate = ProjectUtilities::where("project_id", $request->project_id)->where("utility_id", $decodeUtility["id"])->get();
+                $utility_id = $request->projectUtilities[$i];
+                
+                // Get utility details for validation
+                $utility = Utility::find($utility_id);
+                if (!$utility) {
+                    return back()->with("errorMsg", "Invalid utility selected.");
+                }
+                
+                $checkDuplicate = ProjectUtilities::where("project_id", $request->project_id)->where("utility_id", $utility_id)->get();
                 if (count($checkDuplicate) > 0) {
-                    $ErrorMsg = "This Utility [" . $decodeUtility["utility_name"] . "] is already exist in this project.";
+                    $ErrorMsg = "This Utility [" . $utility->utility_name . "] is already exist in this project.";
                     return back()->with("errorMsg", $ErrorMsg);
                 }
-                $utility = [
+                $utilityData = [
                     "project_id" => $request->project_id,
-                    "utility_id" => $decodeUtility["id"],
+                    "utility_id" => $utility_id,
                     "is_active" => 1,
                     "created_by" => Auth::user()->id
                 ];
-                array_push($arrprojectUtilities, $utility);
+                array_push($arrprojectUtilities, $utilityData);
             }
             if (count($arrprojectUtilities) > 0) {
                 $insert = ProjectUtilities::insert($arrprojectUtilities);
@@ -693,6 +774,7 @@ class ProjectController extends Controller
                 'meta_description' => $request->meta_description,
                 'meta_tags' => $request->meta_tags,
                 'marketed_by' => $request->marketed_by,
+                'created_by' => Auth::user()->id,
             ]);
             if ($request->status) {
                 $project->status = $request->status;

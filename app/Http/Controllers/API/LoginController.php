@@ -17,6 +17,13 @@ class LoginController extends BaseController
             if(!Auth::attempt($request->only('email', 'password'))) {
                 return redirect()->back()->with('error', 'Invalid username or password');
             }
+            
+            $user = Auth::user();
+            
+            // Set user type based on the user's actual type
+            // All users (including agents) login as buyers on the website
+            session(['user_type' => 'buyer']);
+            
             return Redirect::to($request['ref']);
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', 'Something went wrong, please contact administrator.');

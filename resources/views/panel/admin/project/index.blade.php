@@ -549,8 +549,13 @@
                   <td>{{ $status[$project->status - 1] }}</td>
 
                   <td>
-
-                    {{ (count($project->users) > 0 ) ? $project->users[0]->name: "--" }}
+                    @php
+                      $addedBy = $project->creator ? $project->creator->name : null;
+                      if(!$addedBy && $project->users && $project->users->count() > 0){
+                        $addedBy = $project->users->first()->name;
+                      }
+                    @endphp
+                    {{ $addedBy ?: "--" }}
 
                   </td>
 

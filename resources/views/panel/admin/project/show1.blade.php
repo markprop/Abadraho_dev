@@ -43,12 +43,10 @@
       <div class="alert alert-success">
         {{ Session::get('successMsg') }}
       </div>
-
       @elseif(Session::has('errorMsg'))
       <div class="alert alert-danger">
         {{ Session::get('errorMsg') }}
       </div>
-
       @endif
       <!-- begin::Card-->
       <div class="card card-custom overflow-hidden">
@@ -91,7 +89,7 @@
                 </div>
                 <div class="d-flex flex-column flex-root">
                   <span class="font-weight-bolder mb-2">Installment Length</span>
-                  <span class="opacity-70">{{ $length }}</span>
+                  <span class="opacity-70">{{ $project->units->count() ? $project->units->first()->installment : 'N/A' }} Months</span>
                 </div>
               </div>
             </div>
@@ -112,7 +110,7 @@
                     </li>
                     @endforeach
                     <li class="nav-item">
-                      <a type="button" href="/admin/unit/create?id={{ $project->id }}&cancel={{url()->current()}}" class="nav-link ml-md-10 mb-10 font-weight-bold" style="color:background-color: #800000;">+ Add Unit</a>
+                      <a type="button" href="/admin/unit/create?id={{ $project->slug }}&cancel={{url()->current()}}" class="nav-link ml-md-10 mb-10 font-weight-bold" style="color:background-color: #800000;">+ Add Unit</a>
                     </li>
                   </ul>
                 </div>
@@ -126,7 +124,7 @@
                       <div class="col-6 col-md-3">
                         <div class="mb-8 d-flex flex-column">
                           <span class="text-dark font-weight-bold mb-4">Rooms</span>
-                          <span class="text-muted font-weight-bolder font-size-lg">{{ $unit->rooms }}</span>
+                          <span class="text-muted font-weight-bolder font-size-lg">{{ $unit->rooms ?? 'N/A' }}</span>
                         </div>
                       </div>
                       <div class="col-6 col-md-3">
@@ -174,19 +172,19 @@
                         <div class="mb-8 d-flex flex-column">
                           <span class="text-dark font-weight-bold mb-4">Installment Plan</span>
                           <span class="text-muted font-weight-bold font-size-lg">
-                            Type: {{ $unit->installments->name }}
+                            Type: {{ $unit->installments->name ?? 'N/A' }}
                           </span>
                           <span class="text-muted font-weight-bold font-size-lg">
-                            Monthly Instalm: {{ number_format($unit->monthly_installment, 0, '.', ',') }}
+                            Monthly Installment: Rs. {{ number_format($unit->monthly_installment, 0, '.', ',') }}
                           </span>
                           <span class="text-muted font-weight-bold font-size-lg">
-                            Length: {{ number_format($unit->installment, 0, '.', ',') }}
+                            Length: {{ number_format($unit->installment, 0, '.', ',') }} Months
                           </span>
                           <span class="text-muted font-weight-bold font-size-lg">
-                            Total Instalm: {{ number_format($unit->monthly_installment * $project->installment_length, 0, '.', ',') }}
+                            Total Installments: Rs. {{ number_format($unit->monthly_installment * $unit->installment, 0, '.', ',') }}
                           </span>
                           <span class="text-muted font-weight-bold font-size-lg">
-                            Total Amount: {{ number_format(($unit->installment / $unit->installments->value) * $project->installment_length, 0, '.', ',') }}
+                            Total Amount: Rs. {{ number_format($unit->down_payment + ($unit->monthly_installment * $unit->installment), 0, '.', ',') }}
                           </span>
                         </div>
                       </div>
@@ -223,11 +221,11 @@
                                   'covered_area' => 0,
                                   'extras' => 0,
                                   'room_ids' => [$room->id],
-                                  'room_type_id' => $room->room_type_id, // Added for correct room type selection in edit
-                                  'width_feet' => floor($room->width_feet ?? 0), // Added for edit values
-                                  'width_inches' => floor($room->width_inches ?? 0), // Added for edit values
-                                  'length_feet' => floor($room->length_feet ?? 0), // Added for edit values
-                                  'length_inches' => floor($room->length_inches ?? 0), // Added for edit values
+                                  'room_type_id' => $room->room_type_id,
+                                  'width_feet' => floor($room->width_feet ?? 0),
+                                  'width_inches' => floor($room->width_inches ?? 0),
+                                  'length_feet' => floor($room->length_feet ?? 0),
+                                  'length_inches' => floor($room->length_inches ?? 0),
                                 ];
                               } else {
                                 $mergedRooms[$key]['room_ids'][] = $room->id;
@@ -285,7 +283,7 @@
                                       <div class="modal-body">
                                         <input type="number" class="d-none" name="unit_id" value="{{ $unit->id }}">
                                         <input type="number" class="d-none" name="table_id" value="{{ $mergedRoom['room_ids'][0] }}">
-                                        <input type="number" class="d-none" name="project_id" value="{{ $unit->project_id }}"> <!-- Changed to $unit->project_id since $room is removed -->
+                                        <input type="number" class="d-none" name="project_id" value="{{ $unit->project_id }}">
                                         <div class="row">
                                           <div class="col-xl-12 mb-10">
                                             <div class="form-check">
@@ -512,7 +510,7 @@
                         <h3>Payment Plan</h3>
                         <hr>
                         @if ($unit->payment_plan_img)
-                        <img class="img-thumbnail" src="/uploads/project_images/project_{{ $project->id }}/unit_{{ $unit->id }}/{{ $unit->payment_plan_img }}" target="_blank">
+                        <img class="img-thumbnail" src="/Uploads/project_images/project_{{ $project->id }}/unit_{{ $unit->id }}/{{ $unit->payment_plan_img }}" target="_blank">
                         @else
                         <div class="alert admin_payment_btn">No Payment Plan Image Found</div>
                         @endif
@@ -522,7 +520,7 @@
                         <h3>Floor Plan</h3>
                         <hr>
                         @if ($unit->floor_plan_img)
-                        <img class="img-thumbnail" src="/uploads/project_images/project_{{ $project->id }}/unit_{{ $unit->id }}/{{ $unit->floor_plan_img }}" target="_blank">
+                        <img class="img-thumbnail" src="/Uploads/project_images/project_{{ $project->id }}/unit_{{ $unit->id }}/{{ $unit->floor_plan_img }}" target="_blank">
                         @else
                         <div class="alert admin_payment_btn">No Floor Plan Image Found</div>
                         @endif
@@ -542,7 +540,7 @@
               <div class="col-md-9">
                 <div class="d-flex justify-content-between alert alert-custom alert-warning">
                   <div class="alert-text">No Units added to the Project</div>
-                  <a type="button" href="/admin/unit/create?id={{ $project->id }}&cancel={{url()->current()}}" class="btn btn-dark font-weight-bold">Add Unit</a>
+                  <a type="button" href="/admin/unit/create?id={{ $project->slug }}&cancel={{url()->current()}}" class="btn btn-dark font-weight-bold">Add Unit</a>
                 </div>
               </div>
             </div>
@@ -575,10 +573,10 @@
                       @foreach ($amenities as $amenity)
                       <div class="col-6 col-lg-3 col-md-3 form-check amenities_checkbox">
                         @if(in_array($amenity->id, $existingProjectAmenitiesIds))
-                        <input class="form-check-input" name="projectAmeniies[]" type="checkbox" id="amenity_{{ $amenity->id}}" value="{{ $amenity}}" checked />
+                        <input class="form-check-input" name="projectAmeniies[]" type="checkbox" id="amenity_{{ $amenity->id}}" value="{{ $amenity->id }}" checked />
                         <label class="form-check-label" for="amenity_{{ $amenity->id}}">{{ $amenity->amenity_name}}</label>
                         @else
-                        <input class="form-check-input" name="projectAmeniies[]" type="checkbox" id="amenity_{{ $amenity->id}}" value="{{ $amenity}}" />
+                        <input class="form-check-input" name="projectAmeniies[]" type="checkbox" id="amenity_{{ $amenity->id}}" value="{{ $amenity->id }}" />
                         <label class="form-check-label" for="amenity_{{ $amenity->id}}">{{ $amenity->amenity_name}}</label>
                         @endif
                       </div>
@@ -615,10 +613,10 @@
                       @foreach ($utilities as $utility)
                       <div class="col-6 col-lg-3 col-md-3 form-check">
                         @if(in_array($utility->id, $existingProjectUtilityIds))
-                        <input class="form-check-input" type="checkbox" name="projectUtilities[]" id="utility_{{ $utility->id}}" value="{{ $utility }}" checked />
+                        <input class="form-check-input" type="checkbox" name="projectUtilities[]" id="utility_{{ $utility->id}}" value="{{ $utility->id }}" checked />
                         <label class="form-check-label" for="utility_{{ $utility->id}}">{{ $utility->utility_name}}</label>
                         @else
-                        <input class="form-check-input" type="checkbox" name="projectUtilities[]" id="utility_{{ $utility->id}}" value="{{ $utility }}" />
+                        <input class="form-check-input" type="checkbox" name="projectUtilities[]" id="utility_{{ $utility->id}}" value="{{ $utility->id }}" />
                         <label class="form-check-label" for="utility_{{ $utility->id}}">{{ $utility->utility_name}}</label>
                         @endif
                       </div>
@@ -667,65 +665,6 @@
 @endsection
 
 @section('footer')
-<script>
-  $(document).ready(function() {
-
-    // alert('inside');
-
-    $('#addRecord').click(function() {
-      event.preventDefault();
-      // alert('working');
-      var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-      var unit_id = $('#unit_id').val(); // Replace with actual ID selector
-      var project_id = $('#project_id').val(); // Replace with actual ID selector
-      var room_type_id = $('#room_type_id').val(); // Replace with actual ID selector
-      var width = globalRoomWidth; // Use global variable
-      var length = globalRoomLength; // Use global variable
-      var extras = $('#extras').val() || 1; // Replace with actual ID selector
-
-      $.ajax({
-        type: "GET",
-        url: "/admin/unit/" + unit_id + "/room",
-        data: jQuery.param({
-          _token: CSRF_TOKEN,
-          project_id: project_id,
-          unit_id: unit_id,
-          room_type_id: room_type_id,
-          width: width,
-          length: length,
-          extras: extras
-        }),
-        dataType: "dataType",
-        success: function(response) {
-          alert('wok');
-          var html = '<tr class="font-weight-boldest font-size-lg">';
-          html += '<td class="pl-0 pt-7">1</td>';
-          html += '<td class="text-left pt-7">' + (response.roomType || 'N/A') + '</td>';
-          html += '<td class="text-left pt-7">' + width + 'x' + length + '</td>';
-          html += '<td class="text-left pt-7">' + extras + '</td>';
-          html += '</tr>';
-          $('#table_data').prepend(html);
-        },
-        error: function(xhr, status, error) {
-          console.log('AJAX Error: ' + error);
-        }
-      });
-    });
-  });
-  // var html = '<tr class="font-weight-boldest font-size-lg">';
-  // html += '<td class="pl-0 pt-7">1</td>';
-  // html += '<td class="text-left pt-7">name</td>';
-  // html += '<td class="text-left pt-7">4x7</td>';
-  // html += '<td class="text-left pt-7">sample data</td>';
-  // html += '</tr>';
-  // $('#table_data').prepend(html);
-  // $('#add_details')[0].reset();
-</script>
-<!--begin::Page Scripts(used by this page)-->
-{{-- <script src="assets/js/pages/crud/ktdatatable/child/data-local.js"></script> --}}
-<script src="assets/js/pages/crud/ktdatatable/base/html-table.js"></script>
-<!--end::Page Scripts-->
-
 <script>
   $(document).ready(function() {
     GetRedirectUrlAfterSuccess();
@@ -1011,126 +950,129 @@
       });
     }
   }
+
   function deleteUnitRoomGroup(roomIds, name, dimension, wFeet, wInches, lFeet, lInches, roomDetailsB64) {
-  console.log("deleteUnitRoomGroup -> unit room ids -> ", roomIds);
-  if (!roomIds) return;
-  const ids = String(roomIds).split(',').filter(Boolean);
-  if (ids.length <= 1) {
-    ShowSweetAlertConfirm({
-      title: "Are you sure ?",
-      text: "You want to delete this unit room!",
-      icon: "warning",
-      showDenyButton: true,
+    console.log("deleteUnitRoomGroup -> unit room ids -> ", roomIds);
+    if (!roomIds) return;
+    const ids = String(roomIds).split(',').filter(Boolean);
+    if (ids.length <= 1) {
+      ShowSweetAlertConfirm({
+        title: "Are you sure ?",
+        text: "You want to delete this unit room!",
+        icon: "warning",
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: `Yes`,
+        denyButtonText: `No`,
+      }, function(result) {
+        if (result.isConfirmed) {
+          let requestRoute = "/admin/unit_room/delete/trash";
+          let requestParams = { unit_room_ids: ids.join(',') };
+          ShowLoader();
+          CallLaravelAction(requestRoute, requestParams, function(response) {
+            if (response.status) {
+              ShowSweetAlert({ icon: "success", title: response.message, showConfirmButton: true, timer: 10000 });
+              location.reload();
+              HideLoader();
+            } else {
+              let ErrorMsg = response.message;
+              if (response.error && response.error.unit_room_ids) { ErrorMsg = response.error.unit_room_ids; }
+              ShowSweetAlert({ icon: "error", title: ErrorMsg, showConfirmButton: true, timer: 20000 });
+              HideLoader();
+            }
+          });
+        }
+      });
+      return;
+    }
+
+    var w = (parseFloat(wFeet || 0) + (parseFloat(wInches || 0) / 12));
+    var l = (parseFloat(lFeet || 0) + (parseFloat(lInches || 0) / 12));
+    var singleArea = (w * l).toFixed(2);
+
+    var perRow = [];
+    try {
+      if (roomDetailsB64) {
+        perRow = JSON.parse(atob(roomDetailsB64));
+      }
+    } catch (e) { perRow = []; }
+
+    var headerInfo = '' +
+      '<div class="mb-3 p-3 rounded" style="background:#f9fafb;border:1px solid #eef1f5;">' +
+      '<div style="display:flex;flex-wrap:wrap;gap:16px;">' +
+      '<div><strong>Name:</strong> ' + (name || '-') + '</div>' +
+      '<div><strong>Dimensions:</strong> ' + (dimension || (wFeet + '.' + (wInches||0) + 'x' + lFeet + '.' + (lInches||0))) + '</div>' +
+      '<div><strong>Per-room Area:</strong> ' + singleArea + ' Sq.Ft</div>' +
+      '<div><strong>Merged Count:</strong> ' + ids.length + '</div>' +
+      '</div>' +
+      '</div>';
+
+    var rowsHtml = '<div class="table-responsive">' + headerInfo + '<div class="mb-3">' +
+                   '<button type="button" class="btn btn-sm btn-primary mr-2" id="btnDelSelectAll">Select All</button>' +
+                   '<button type="button" class="btn btn-sm btn-secondary" id="btnDelDeselectAll">Deselect All</button>' +
+                   '</div><table class="table table-bordered" style="min-width:820px"><thead><tr>'+
+                   '<th style="width:40px"></th>'+
+                   '<th style="width:70px">SNo.</th>'+
+                   '<th>Name</th>'+
+                   '<th>Dimensions</th>'+
+                   '<th>Covered Area</th>'+
+                   '<th>No. of</th>'+
+                   '</tr></thead><tbody>';
+    for (var i = 0; i < ids.length; i++) {
+      var thisRow = perRow[i] || {};
+      var rowExtras = (thisRow.extras != null ? thisRow.extras : 1);
+      var rowArea = (thisRow.covered_area != null ? parseFloat(thisRow.covered_area) : parseFloat(singleArea));
+      rowsHtml += '<tr>' +
+        '<td><input type="checkbox" class="delRowChk" value="' + ids[i] + '" checked></td>' +
+        '<td>' + (i + 1) + '</td>' +
+        '<td>' + (name || '-') + '</td>' +
+        '<td>' + (dimension || (wFeet + '.' + (wInches||0) + 'x' + lFeet + '.' + (lInches||0))) + '</td>' +
+        '<td>' + rowArea.toFixed(2) + ' Sq.Ft</td>' +
+        '<td>' + rowExtras + '</td>' +
+      '</tr>';
+    }
+    rowsHtml += '</tbody></table></div>';
+
+    Swal.fire({
+      title: 'Select rows to delete',
+      html: rowsHtml,
+      width: '980px',
       showCancelButton: true,
-      confirmButtonText: `Yes`,
-      denyButtonText: `No`,
-    }, function(result) {
-      if (result.isConfirmed) {
-        let requestRoute = "/admin/unit_room/delete/trash";
-        let requestParams = { unit_room_ids: ids.join(',') };
-        ShowLoader();
-        CallLaravelAction(requestRoute, requestParams, function(response) {
-          if (response.status) {
-            ShowSweetAlert({ icon: "success", title: response.message, showConfirmButton: true, timer: 10000 });
-            location.reload();
-            HideLoader();
-          } else {
-            let ErrorMsg = response.message;
-            if (response.error && response.error.unit_room_ids) { ErrorMsg = response.error.unit_room_ids; }
-            ShowSweetAlert({ icon: "error", title: ErrorMsg, showConfirmButton: true, timer: 20000 });
-            HideLoader();
-          }
-        });
+      confirmButtonText: 'Delete',
+      didOpen: function() {
+        var el = Swal.getHtmlContainer();
+        var chks = el.querySelectorAll('.delRowChk');
+        var btnAll = el.querySelector('#btnDelSelectAll');
+        var btnNone = el.querySelector('#btnDelDeselectAll');
+        if (btnAll) btnAll.addEventListener('click', function(){ chks.forEach(function(c){ c.checked = true; }); });
+        if (btnNone) btnNone.addEventListener('click', function(){ chks.forEach(function(c){ c.checked = false; }); });
       }
-    });
-    return;
-  }
-
-  var w = (parseFloat(wFeet || 0) + (parseFloat(wInches || 0) / 12));
-  var l = (parseFloat(lFeet || 0) + (parseFloat(lInches || 0) / 12));
-  var singleArea = (w * l).toFixed(2);
-
-  var perRow = [];
-  try {
-    if (roomDetailsB64) {
-      perRow = JSON.parse(atob(roomDetailsB64));
-    }
-  } catch (e) { perRow = []; }
-
-  var headerInfo = '' +
-    '<div class="mb-3 p-3 rounded" style="background:#f9fafb;border:1px solid #eef1f5;">' +
-    '<div style="display:flex;flex-wrap:wrap;gap:16px;">' +
-    '<div><strong>Name:</strong> ' + (name || '-') + '</div>' +
-    '<div><strong>Dimensions:</strong> ' + (dimension || (wFeet + '.' + (wInches||0) + 'x' + lFeet + '.' + (lInches||0))) + '</div>' +
-    '<div><strong>Per-room Area:</strong> ' + singleArea + ' Sq.Ft</div>' +
-    '<div><strong>Merged Count:</strong> ' + ids.length + '</div>' +
-    '</div>' +
-    '</div>';
-
-  var rowsHtml = '<div class="table-responsive">' + headerInfo + '<div class="mb-3">' +
-                 '<button type="button" class="btn btn-sm btn-primary mr-2" id="btnDelSelectAll">Select All</button>' +
-                 '<button type="button" class="btn btn-sm btn-secondary" id="btnDelDeselectAll">Deselect All</button>' +
-                 '</div><table class="table table-bordered" style="min-width:820px"><thead><tr>'+
-                 '<th style="width:40px"></th>'+
-                 '<th style="width:70px">SNo.</th>'+
-                 '<th>Name</th>'+
-                 '<th>Dimensions</th>'+
-                 '<th>Covered Area</th>'+
-                 '<th>No. of</th>'+
-                 '</tr></thead><tbody>';
-  for (var i = 0; i < ids.length; i++) {
-    var thisRow = perRow[i] || {};
-    var rowExtras = (thisRow.extras != null ? thisRow.extras : 1);
-    var rowArea = (thisRow.covered_area != null ? parseFloat(thisRow.covered_area) : parseFloat(singleArea));
-    rowsHtml += '<tr>' +
-      '<td><input type="checkbox" class="delRowChk" value="' + ids[i] + '" checked></td>' +
-      '<td>' + (i + 1) + '</td>' +
-      '<td>' + (name || '-') + '</td>' +
-      '<td>' + (dimension || (wFeet + '.' + (wInches||0) + 'x' + lFeet + '.' + (lInches||0))) + '</td>' +
-      '<td>' + rowArea.toFixed(2) + ' Sq.Ft</td>' +
-      '<td>' + rowExtras + '</td>' +
-    '</tr>';
-  }
-  rowsHtml += '</tbody></table></div>';
-
-  Swal.fire({
-    title: 'Select rows to delete',
-    html: rowsHtml,
-    width: '980px',
-    showCancelButton: true,
-    confirmButtonText: 'Delete',
-    didOpen: function() {
+    }).then(function(result){
+      if (!result.isConfirmed) return;
       var el = Swal.getHtmlContainer();
-      var chks = el.querySelectorAll('.delRowChk');
-      var btnAll = el.querySelector('#btnDelSelectAll');
-      var btnNone = el.querySelector('#btnDelDeselectAll');
-      if (btnAll) btnAll.addEventListener('click', function(){ chks.forEach(function(c){ c.checked = true; }); });
-      if (btnNone) btnNone.addEventListener('click', function(){ chks.forEach(function(c){ c.checked = false; }); });
-    }
-  }).then(function(result){
-    if (!result.isConfirmed) return;
-    var el = Swal.getHtmlContainer();
-    var selected = Array.from(el.querySelectorAll('.delRowChk'))
-      .filter(function(c){ return c.checked; })
-      .map(function(c){ return c.value; });
-    if (selected.length === 0) return;
-    let requestRoute = "/admin/unit_room/delete/trash";
-    let requestParams = { unit_room_ids: selected.join(',') };
-    ShowLoader();
-    CallLaravelAction(requestRoute, requestParams, function(response) {
-      if (response.status) {
-        ShowSweetAlert({ icon: "success", title: response.message, showConfirmButton: true, timer: 10000 });
-        location.reload();
-        HideLoader();
-      } else {
-        let ErrorMsg = response.message;
-        if (response.error && response.error.unit_room_ids) { ErrorMsg = response.error.unit_room_ids; }
-        ShowSweetAlert({ icon: "error", title: ErrorMsg, showConfirmButton: true, timer: 20000 });
-        HideLoader();
-      }
+      var selected = Array.from(el.querySelectorAll('.delRowChk'))
+        .filter(function(c){ return c.checked; })
+        .map(function(c){ return c.value; });
+      if (selected.length === 0) return;
+      let requestRoute = "/admin/unit_room/delete/trash";
+      let requestParams = { unit_room_ids: selected.join(',') };
+      ShowLoader();
+      CallLaravelAction(requestRoute, requestParams, function(response) {
+        if (response.status) {
+          ShowSweetAlert({ icon: "success", title: response.message, showConfirmButton: true, timer: 10000 });
+          location.reload();
+          HideLoader();
+        } else {
+          let ErrorMsg = response.message;
+          if (response.error && response.error.unit_room_ids) { ErrorMsg = response.error.unit_room_ids; }
+          ShowSweetAlert({ icon: "error", title: ErrorMsg, showConfirmButton: true, timer: 20000 });
+          HideLoader();
+        }
+      });
     });
-  });
-}
+  }
 </script>
-
+<!--begin::Page Scripts(used by this page)-->
+<script src="assets/js/pages/crud/ktdatatable/base/html-table.js"></script>
+<!--end::Page Scripts-->
 @endsection

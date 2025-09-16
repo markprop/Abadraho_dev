@@ -7,11 +7,11 @@
     <div class="subheader py-2 py-lg-4 subheader-solid" id="kt_subheader">
         <div class="container-fluid d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
             <div class="d-flex align-items-center flex-wrap mr-2">
-                <h5 class="text-dark font-weight-bold mt-2 mb-2 mr-5">Broker Details</h5>
+                <h5 class="text-dark font-weight-bold mt-2 mb-2 mr-5">Agent Details</h5>
             </div>
             <div class="d-flex align-items-center">
-                <a href="/admin/brokers/{{ $broker->id }}/edit" class="btn admin_ad_btn">
-                    <i class="fa fa-edit mr-2"></i> Edit Broker
+                <a href="/admin/agents/{{ $broker->id }}/edit" class="btn admin_ad_btn">
+                    <i class="fa fa-edit mr-2"></i> Edit Agent
                 </a>
             </div>
         </div>
@@ -20,14 +20,14 @@
     <!-- Main content body -->
     <div class="d-flex flex-column-fluid">
         <div class="container">
-            <!-- Broker details card -->
+            <!-- Agent details card -->
             <div class="card card-custom gutter-b example example-compact">
                 <!-- Card header -->
                 <div class="card-header" style="padding: 1rem 1.25rem;">
-                    <h2 class="card-title text-uppercase">Broker Details</h2>
+                    <h2 class="card-title text-uppercase">Agent Details</h2>
                 </div>
 
-                <!-- Broker details table -->
+                <!-- Agent details table -->
                 <table class="table table-bordered">
                     <tbody>
                         <!-- Contact Person Name -->
@@ -49,16 +49,16 @@
                         <tr>
                             <th>Login Password</th>
                             <td>
-                                @if ($broker->password)
+                                @if ($broker->plain_password)
                                     <div class="input-group">
-                                        <input type="password" class="form-control" id="passwordField" value="{{ $broker->password }}" readonly>
+                                        <input type="password" class="form-control" id="passwordField" value="{{ $broker->plain_password }}" readonly>
                                         <div class="input-group-append">
                                             <span class="input-group-text" style="cursor: pointer;" onclick="togglePassword()">
                                                 <i class="fa fa-eye" id="togglePasswordIcon"></i>
                                             </span>
                                         </div>
                                     </div>
-                                    <small class="text-muted">*Displayed value is hashed for security</small>
+                                    <small class="text-success">*Plain text password for admin viewing</small>
                                 @else
                                     <span class="text-muted">Not available</span>
                                 @endif
@@ -74,10 +74,10 @@
                             <th>Company Address</th>
                             <td>{{ $broker->company_address ?? 'N/A' }}</td>
                         </tr>
-                        <!-- Broker Since (Years) -->
+                        <!-- Agent Since (Year) -->
                         <tr>
-                            <th>Broker Since (years)</th>
-                            <td>{{ $broker->broker_since_years ?? 'N/A' }}</td>
+                            <th>Agent Since (Year)</th>
+                            <td>{{ $broker->agent_since_years ?? 'N/A' }}</td>
                         </tr>
                         <!-- Deals In -->
                         <tr>
