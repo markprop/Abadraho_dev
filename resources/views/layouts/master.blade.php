@@ -1083,6 +1083,11 @@
     let videoPlayers = [];
 
     function loadVideo(index) {
+        // Check if video elements exist on this page
+        if (videoItems.length === 0) {
+            return;
+        }
+        
         videoItems.removeClass('active playing');
         const $currentItem = $(videoItems[index]);
         $currentItem.addClass('active');
@@ -1188,7 +1193,10 @@
         });
     }
 
-    loadVideo(currentVideoIndex);
+    // Only load video if video elements exist
+    if (videoItems.length > 0) {
+        loadVideo(currentVideoIndex);
+    }
 
     $('.play-pause-btn').on('click', function() {
         if (videoPlayers[currentVideoIndex].paused) {
@@ -1205,8 +1213,10 @@
     });
 
     $('.next-btn').on('click', function() {
-        currentVideoIndex = (currentVideoIndex + 1) % videoItems.length;
-        loadVideo(currentVideoIndex);
+        if (videoItems.length > 0) {
+            currentVideoIndex = (currentVideoIndex + 1) % videoItems.length;
+            loadVideo(currentVideoIndex);
+        }
     });
 
     $(window).on('scroll', function() {

@@ -26,31 +26,33 @@
         position: relative;
     }
     
-    /* Search and Filter Bar - Abad Raho Style */
+    /* Professional Search Bar */
     .search-filter-bar {
         background: #fff;
         border-bottom: 1px solid #e0e0e0;
-        padding: 20px 24px;
+        padding: 30px 24px;
         display: flex;
+        justify-content: center;
         align-items: center;
-        gap: 16px;
         box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
     
     .search-input-container {
-        flex: 1;
         position: relative;
+        max-width: 600px;
+        width: 100%;
     }
     
     .search-input {
         width: 100%;
-        padding: 15px 20px 15px 50px;
+        padding: 18px 20px 18px 55px;
         border: 2px solid #e0e0e0;
-        border-radius: 25px;
-        font-size: 14px;
+        border-radius: 30px;
+        font-size: 16px;
         background: #f8f9fa;
         transition: all 0.3s ease;
         font-family: 'Poppins', sans-serif;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
     
     .search-input:focus {
@@ -62,52 +64,13 @@
     
     .search-icon {
         position: absolute;
-        left: 20px;
+        left: 22px;
         top: 50%;
         transform: translateY(-50%);
         color: #ec1c24;
-        font-size: 16px;
+        font-size: 18px;
     }
     
-    .filter-buttons {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-    
-    .filter-btn {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 10px 16px;
-        border: 2px solid #e0e0e0;
-        border-radius: 25px;
-        background: #fff;
-        color: #484848;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: 'Poppins', sans-serif;
-    }
-    
-    .filter-btn:hover {
-        border-color: #ec1c24;
-        background: #f8f9fa;
-        color: #ec1c24;
-        transform: translateY(-2px);
-    }
-    
-    .filter-btn.active {
-        background: #ec1c24;
-        border-color: #ec1c24;
-        color: #fff;
-        box-shadow: 0 4px 8px rgba(236, 28, 36, 0.3);
-    }
-    
-    .filter-btn i {
-        font-size: 12px;
-    }
     
     /* Content Layout */
     .content-layout {
@@ -116,6 +79,7 @@
         overflow: hidden;
         height: calc(100vh - 160px);
         min-height: 600px;
+        position: relative;
     }
     
     /* Project Listings - Grid Layout with Scrolling */
@@ -127,6 +91,9 @@
         height: 100%;
         overflow-y: auto;
         overflow-x: hidden;
+        transition: width 0.3s ease;
+        min-width: 300px;
+        max-width: 80%;
     }
     
     .project-grid {
@@ -325,11 +292,19 @@
     
     /* Map Container - Right Side Layout */
     .map-container {
-        width: 35%;
+        flex: 1;
         position: relative;
         background: #f0f0f0;
         height: 100%;
         overflow: hidden;
+        min-width: 300px;
+        transition: width 0.3s ease;
+    }
+    
+    /* Ensure map canvas fills container properly */
+    .map-container #map {
+        width: 100% !important;
+        height: 100% !important;
     }
     
     #map {
@@ -404,11 +379,266 @@
         box-shadow: 0 8px 20px rgba(236, 28, 36, 0.4);
     }
     
+    /* Resize Handle */
+    .resize-handle {
+        position: absolute;
+        top: 0;
+        left: 65%; /* Start at 65% to match initial project-listings width */
+        width: 8px;
+        height: 100%;
+        background: linear-gradient(180deg, #ec1c24 0%, #d9000d 100%);
+        cursor: col-resize;
+        z-index: 10; /* Lower than header but above content */
+        transition: left 0.3s ease, width 0.3s ease, background 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateX(-50%); /* Center the handle on the border */
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+        border-right: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .resize-handle:hover {
+        width: 12px;
+        background: linear-gradient(180deg, #d9000d 0%, #b8000a 100%);
+        box-shadow: 0 0 10px rgba(236, 28, 36, 0.3);
+        transform: translateX(-50%) scaleX(1.5);
+    }
+    
+    .resize-handle:active {
+        width: 12px;
+        background: linear-gradient(180deg, #b8000a 0%, #9a0008 100%);
+        transform: translateX(-50%) scaleX(1.5);
+    }
+    
+    .resize-handle::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 2px;
+        height: 30px;
+        background: #fff;
+        border-radius: 1px;
+        opacity: 0.8;
+    }
+    
+    .resize-handle::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 2px;
+        height: 20px;
+        background: #fff;
+        border-radius: 1px;
+        opacity: 0.6;
+        margin-left: 3px;
+    }
+    
+    /* Resize Handle Arrow */
+    .resize-handle-arrow {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: #fff;
+        font-size: 12px;
+        font-weight: bold;
+        opacity: 0.9;
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+    
+    .resize-handle:hover .resize-handle-arrow {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    
+    /* Resize Handle Tooltip */
+    .resize-handle-tooltip {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        z-index: 1001;
+    }
+    
+    .resize-handle-tooltip::after {
+        content: '';
+        position: absolute;
+        left: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 5px solid transparent;
+        border-left-color: rgba(0, 0, 0, 0.8);
+    }
+    
+    .resize-handle:hover .resize-handle-tooltip {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* Resizing State */
+    .content-layout.resizing {
+        user-select: none;
+        cursor: col-resize;
+    }
+    
+    .content-layout.resizing * {
+        pointer-events: none;
+    }
+    
+    .content-layout.resizing .resize-handle {
+        pointer-events: all;
+    }
+    
+    /* Mobile Responsiveness for Resize Handle */
+    @media (max-width: 768px) {
+        .resize-handle {
+            width: 12px;
+            background: linear-gradient(180deg, #ec1c24 0%, #d9000d 100%);
+        }
+        
+        .resize-handle:hover {
+            width: 16px;
+        }
+        
+        .resize-handle-tooltip {
+            display: none; /* Hide tooltip on mobile */
+        }
+        
+        .project-listings {
+            min-width: 250px;
+            max-width: 90%;
+        }
+        
+        .map-container {
+            min-width: 250px;
+        }
+    }
+    
+    /* Tablet Responsiveness */
+    @media (max-width: 1024px) and (min-width: 769px) {
+        .resize-handle {
+            width: 10px;
+        }
+        
+        .resize-handle:hover {
+            width: 14px;
+        }
+    }
+    
+    /* Smooth transitions for all resizable elements */
+    .project-listings,
+    .map-container {
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Enhanced visual feedback during resize */
+    .content-layout.resizing .project-listings {
+        box-shadow: inset 0 0 0 2px rgba(236, 28, 36, 0.2);
+    }
+    
+    .content-layout.resizing .map-container {
+        box-shadow: inset 0 0 0 2px rgba(236, 28, 36, 0.2);
+    }
+    
+    /* Resize handle active state */
+    .resize-handle:active {
+        background: linear-gradient(180deg, #b8000a 0%, #9a0008 100%);
+        box-shadow: 0 0 15px rgba(236, 28, 36, 0.5);
+    }
+    
+    /* Prevent text selection during resize */
+    .content-layout.resizing {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    
+    /* Smooth grid adjustments */
+    .project-grid {
+        transition: grid-template-columns 0.3s ease;
+    }
+    
+    /* Resize handle focus state for accessibility */
+    .resize-handle:focus {
+        outline: 2px solid #ec1c24;
+        outline-offset: 2px;
+    }
+    
     /* Custom Mapbox Popup Styling */
     .mapboxgl-popup-content {
         padding: 0 !important;
         border-radius: 16px !important;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 8px 16px rgba(0,0,0,0.1) !important;
+        border: 1px solid rgba(236, 28, 36, 0.1) !important;
+    }
+    
+    /* Modern Popup Styling */
+    .modern-popup .mapboxgl-popup-content {
+        padding: 0 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.12), 0 5px 10px rgba(0,0,0,0.08) !important;
+        border: 1px solid rgba(236, 28, 36, 0.1) !important;
+        overflow: hidden !important;
+        z-index: 1000 !important;
+    }
+    
+    .modern-popup .mapboxgl-popup-tip {
+        border-top-color: #fff !important;
+        border-width: 6px !important;
+    }
+    
+    /* Ensure popups are above markers */
+    .mapboxgl-popup {
+        z-index: 1000 !important;
+    }
+    
+    .mapboxgl-popup-content {
+        z-index: 1000 !important;
+    }
+    
+    /* Ensure markers stay behind popups */
+    .mapboxgl-marker {
+        z-index: 100 !important;
+    }
+    
+    .custom-marker {
+        z-index: 100 !important;
+    }
+    
+    /* Custom Marker Styling - No transforms to prevent drift */
+    .custom-marker {
+        will-change: box-shadow, border, filter !important;
+        transition: box-shadow 0.3s ease, border 0.3s ease, filter 0.3s ease !important;
+    }
+    
+    /* Ensure markers don't move during hover */
+    .mapboxgl-marker {
+        transform-origin: center center !important;
+    }
+    
+    /* Alternative hover effect using CSS only */
+    .custom-marker:hover {
+        box-shadow: 0 8px 25px rgba(236, 28, 36, 0.6), 0 0 0 4px rgba(236, 28, 36, 0.3) !important;
+        border-width: 4px !important;
+        filter: brightness(1.1) !important;
     }
     
     .mapboxgl-popup-tip {
@@ -462,7 +692,6 @@
     
     /* Professional focus states */
     .search-input:focus,
-    .filter-btn:focus,
     .map-control-btn:focus,
     .support-button:focus {
         outline: 2px solid #3b82f6;
@@ -471,8 +700,7 @@
     
     /* Enhanced hover states */
     .nav-item:hover,
-    .header-action:hover,
-    .filter-btn:hover {
+    .header-action:hover {
         transform: translateY(-1px);
     }
     
@@ -507,14 +735,6 @@
             width: 40%;
         }
         
-        .filter-buttons {
-            flex-wrap: wrap;
-        }
-        
-        .filter-btn {
-            font-size: 12px;
-            padding: 6px 12px;
-        }
     }
     
     @media (max-width: 768px) {
@@ -540,13 +760,7 @@
         }
         
         .search-filter-bar {
-            flex-direction: column;
-            gap: 12px;
-            padding: 15px;
-        }
-        
-        .filter-buttons {
-            justify-content: center;
+            padding: 20px 15px;
         }
         
         .project-card {
@@ -646,43 +860,13 @@
 @section('content')
 <!-- Off-Plan Content - Between Header and Footer -->
 <div class="off-plan-content">
-    <!-- Search and Filter Bar -->
+    <!-- Professional Search Bar -->
     <div class="search-filter-bar">
         <div class="search-input-container">
             <i class="fa fa-search search-icon"></i>
-            <input type="text" class="search-input" placeholder="Search & filters" id="project-search">
+            <input type="text" class="search-input" placeholder="Search projects, developers, locations..." id="project-search">
         </div>
-        <div class="filter-buttons">
-            <button class="filter-btn active" data-filter="bonus">
-                <i class="fa fa-gift"></i>
-                With bonus
-                </button>
-            <button class="filter-btn" data-filter="sale-status">
-                Sale Status
-                <i class="fa fa-chevron-down"></i>
-                </button>
-            <button class="filter-btn" data-filter="price">
-                Price
-                <i class="fa fa-chevron-down"></i>
-            </button>
-            <button class="filter-btn" data-filter="area">
-                Area
-                <i class="fa fa-chevron-down"></i>
-            </button>
-            <button class="filter-btn" data-filter="unit-type">
-                Unit type
-                <i class="fa fa-chevron-down"></i>
-            </button>
-            <button class="filter-btn" data-filter="dev-status">
-                Dev Status
-                <i class="fa fa-chevron-down"></i>
-            </button>
-            <button class="filter-btn" data-filter="bedrooms">
-                Bedrooms
-                <i class="fa fa-chevron-down"></i>
-            </button>
-        </div>
-        </div>
+    </div>
         
     <!-- Projects Count Display -->
     <!-- <div style="background: #fff; padding: 10px 20px; border-bottom: 1px solid #e0e0e0; color: #666; font-size: 14px;">
@@ -707,7 +891,9 @@
                         
                         <div class="project-image-container">
                         <img src="{{ asset($project->project_cover_img ?? 'images/default-project.jpg') }}" 
-                             alt="{{ $project->name }}" class="project-image">
+                             alt="{{ $project->name }}" 
+                             class="project-image"
+                             onerror="this.src='{{ asset('images/default-project.jpg') }}'">
                         
                             <div class="project-badges">
                                 @if($project->progress)
@@ -818,6 +1004,12 @@
             @endif
         </div>
     
+    <!-- Resize Handle -->
+    <div class="resize-handle" id="resize-handle">
+        <div class="resize-handle-arrow">⟷</div>
+        <div class="resize-handle-tooltip">Drag to resize</div>
+    </div>
+    
     <!-- Map Container -->
     <div class="map-container">
             <div id="map"></div>
@@ -875,6 +1067,47 @@ document.addEventListener('DOMContentLoaded', function() {
     const markers = [];
     let highlightedMarker = null;
     let hoveredCard = null;
+    let currentPopup = null; // Track current open popup
+    
+    // Debug: Log projects data to console (can be removed in production)
+    // console.log('Projects data for map:', projectsData);
+    // console.log('Total projects:', projectsData.length);
+    
+    // Function to close current popup
+    function closeCurrentPopup() {
+        if (currentPopup) {
+            currentPopup.remove();
+            currentPopup = null;
+        }
+        // Also close any open marker popups
+        markers.forEach(marker => {
+            if (marker.getPopup().isOpen()) {
+                marker.getPopup().remove();
+            }
+        });
+    }
+    
+    // Map resize function with proper handling
+    function resizeMap() {
+        if (map && typeof map.resize === 'function') {
+            // Use requestAnimationFrame for smooth resizing
+            requestAnimationFrame(() => {
+                try {
+                    map.resize();
+                    // Ensure map maintains its current view and canvas size
+                    const canvas = map.getCanvas();
+                    if (canvas) {
+                        canvas.style.width = '100%';
+                        canvas.style.height = '100%';
+                    }
+                    // Force a repaint to ensure proper rendering
+                    map.triggerRepaint();
+                } catch (error) {
+                    console.log('Map resize handled gracefully');
+                }
+            });
+        }
+    }
     
     // Create professional markers for each project
     function createMarkers() {
@@ -882,71 +1115,281 @@ document.addEventListener('DOMContentLoaded', function() {
         markers.forEach(marker => marker.remove());
         markers.length = 0;
         
+        // console.log('Creating markers for', projectsData.length, 'projects');
+        
+        let markersCreated = 0;
         projectsData.forEach((project, index) => {
+            // console.log(`Processing project ${index + 1}:`, project.name, 'Lat:', project.latitude, 'Lng:', project.longitude, 'Cover:', project.cover_image);
+            
             if (project.latitude && project.longitude) {
-                // Create custom marker element with Abad Raho styling
+                markersCreated++;
+                // Create custom marker element with project cover image
                 const markerElement = document.createElement('div');
                 markerElement.className = 'custom-marker';
                 markerElement.style.cssText = `
-                    width: 36px;
-                    height: 36px;
-                    background: linear-gradient(135deg, #ec1c24 0%, #d9000d 100%);
+                    width: 50px;
+                    height: 50px;
                     border: 3px solid white;
                     border-radius: 50%;
                     cursor: pointer;
-                    box-shadow: 0 4px 15px rgba(236, 28, 36, 0.4);
+                    box-shadow: 0 4px 15px rgba(236, 28, 36, 0.4), 0 0 0 2px rgba(236, 28, 36, 0.2);
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    color: white;
-                    font-weight: bold;
-                    font-size: 14px;
-                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    transition: box-shadow 0.3s ease, border 0.3s ease, filter 0.3s ease;
                     position: relative;
                     z-index: 1;
-                    transform-origin: center center;
+                    overflow: hidden;
+                    background: #f0f0f0;
+                    will-change: box-shadow, border, filter;
                 `;
-                markerElement.innerHTML = '🏢';
                 
-                // Add hover effect with Abad Raho colors
+                // Create image element for the cover image
+                const markerImage = document.createElement('img');
+                markerImage.style.cssText = `
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    transition: opacity 0.3s ease;
+                `;
+                markerImage.src = project.cover_image || '{{ asset('images/default-project.jpg') }}';
+                markerImage.alt = project.name;
+                
+                // Add loading state
+                markerImage.onload = function() {
+                    this.style.opacity = '1';
+                };
+                markerImage.style.opacity = '0.7';
+                markerImage.onerror = function() {
+                    // If default image also fails, show a fallback with project initial
+                    this.style.display = 'none';
+                    const fallbackDiv = document.createElement('div');
+                    fallbackDiv.style.cssText = `
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, #ec1c24 0%, #d9000d 100%);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: bold;
+                        font-size: 18px;
+                        border-radius: 50%;
+                    `;
+                    fallbackDiv.textContent = project.name ? project.name.charAt(0).toUpperCase() : 'P';
+                    markerElement.appendChild(fallbackDiv);
+                };
+                
+                markerElement.appendChild(markerImage);
+                
+                // Add hover effect without transforms to prevent marker drift
                 markerElement.addEventListener('mouseenter', function() {
-                    this.style.transform = 'scale(1.3)';
-                    this.style.boxShadow = '0 8px 20px rgba(236, 28, 36, 0.5)';
+                    // Use box-shadow and border changes instead of transform
+                    this.style.boxShadow = '0 8px 25px rgba(236, 28, 36, 0.6), 0 0 0 4px rgba(236, 28, 36, 0.3)';
+                    this.style.borderWidth = '4px';
                     this.style.zIndex = '1000';
+                    this.style.filter = 'brightness(1.1)';
                 });
                 
                 markerElement.addEventListener('mouseleave', function() {
                     if (this !== highlightedMarker?.getElement()) {
-                        this.style.transform = 'scale(1)';
-                        this.style.boxShadow = '0 4px 15px rgba(236, 28, 36, 0.4)';
+                        this.style.boxShadow = '0 4px 15px rgba(236, 28, 36, 0.4), 0 0 0 2px rgba(236, 28, 36, 0.2)';
+                        this.style.borderWidth = '3px';
                         this.style.zIndex = '1';
+                        this.style.filter = 'brightness(1)';
                     }
                 });
                 
-                // Create professional popup content using Abad Raho card pattern
+                // Create professional popup content inspired by reference design
+                const defaultImage = '{{ asset('images/default-project.jpg') }}';
+                const imageSrc = project.cover_image || defaultImage;
+                
+                // Format price properly
+                const formatPrice = (price) => {
+                    if (!price || price === 0) return 'Price on Request';
+                    return `Rs. ${parseInt(price).toLocaleString()}`;
+                };
+                
+                // Get developer name
+                const developerName = project.developer || 'Developer';
+                
                 const popupContent = `
-                    <div class="popup-card" style="background: #fff; border-radius: 12px; overflow: hidden; width: 300px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 2px solid #ec1c24;">
-                        <img src="${project.cover_image || '/images/default-project.jpg'}" 
-                             class="popup-cover" 
-                             style="width: 100%; height: 150px; object-fit: cover; border-radius: 0;" 
-                             alt="${project.name}">
-                        <div class="popup-body" style="padding: 16px;">
-                            <div class="popup-badge" style="background: linear-gradient(135deg, #ec1c24 0%, #d9000d 100%); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">${project.progress || 'Presale (EOI)'}</div>
-                            <h3 class="popup-title" style="margin: 0 0 8px; font-size: 18px; color: #333; font-weight: 700; line-height: 1.3;">${project.name}</h3>
-                            <p class="popup-address" style="margin: 0 0 8px; font-size: 14px; color: #666;">${project.address || 'Karachi, Pakistan'}</p>
-                            ${project.rooms ? `<p class="popup-rooms" style="margin: 0 0 8px; font-size: 12px; color: #666;"><i class="fa fa-bed" style="color: #ec1c24; margin-right: 4px;"></i>${project.rooms} Rooms</p>` : ''}
-                            <p class="popup-price" style="margin: 0; font-size: 20px; color: #ec1c24; font-weight: 700;">Starting from Rs. ${project.price ? project.price.toLocaleString() : '0'}</p>
-                            ${project.property_id ? `<p class="popup-id" style="margin: 4px 0 0; font-size: 11px; color: #999;">ID: ${project.property_id}</p>` : ''}
+                    <div class="modern-popup-card" style="
+                        background: #fff; 
+                        border-radius: 12px; 
+                        overflow: hidden; 
+                        width: 280px; 
+                        box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 8px 16px rgba(0,0,0,0.1);
+                        border: 2px solid transparent;
+                        background-image: linear-gradient(white, white), linear-gradient(135deg, #ec1c24, #d9000d, #b8000a);
+                        background-origin: border-box;
+                        background-clip: content-box, border-box;
+                        position: relative;
+                        font-family: 'Poppins', sans-serif;
+                        display: flex;
+                        flex-direction: column;
+                    ">
+                        <!-- Close Button -->
+                        <div style="position: absolute; top: 10px; right: 10px; z-index: 10;">
+                            <button onclick="this.closest('.mapboxgl-popup').remove()" style="
+                                background: rgba(0,0,0,0.7); 
+                                border: none; 
+                                border-radius: 50%; 
+                                width: 24px; 
+                                height: 24px; 
+                                color: white; 
+                                cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 16px;
+                                font-weight: bold;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                            " onmouseover="this.style.background='rgba(0,0,0,0.9)'" onmouseout="this.style.background='rgba(0,0,0,0.7)'">
+                                ×
+                            </button>
+                        </div>
+                        
+                        <!-- Project Image Section -->
+                        <div style="
+                            width: 100%; 
+                            height: 120px; 
+                            position: relative; 
+                            overflow: hidden;
+                            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                        ">
+                            <img src="${imageSrc}" 
+                                 style="width: 100%; height: 100%; object-fit: cover; object-position: center;" 
+                                 alt="${project.name}"
+                                 onerror="this.src='${defaultImage}'">
+                            
+                            <!-- Gradient Overlay for better text readability -->
+                            <div style="
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                height: 40px;
+                                background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+                            "></div>
+                            
+                            <!-- Status Badge Overlay -->
+                            <div style="position: absolute; top: 8px; left: 8px;">
+                                <span style="
+                                    background: linear-gradient(135deg, #ec1c24 0%, #d9000d 100%); 
+                                    color: white;
+                                    padding: 4px 8px; 
+                                    border-radius: 12px; 
+                                    font-size: 9px; 
+                                    font-weight: 700;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.5px;
+                                    box-shadow: 0 2px 8px rgba(236, 28, 36, 0.4);
+                                ">${project.progress || 'Presale (EOI)'}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Content Section -->
+                        <div style="
+                            padding: 16px; 
+                            display: flex; 
+                            flex-direction: column; 
+                            gap: 12px;
+                            flex: 1;
+                        ">
+                            <!-- Project Title -->
+                            <h3 style="
+                                margin: 0; 
+                                font-size: 16px; 
+                                color: #1a1a1a; 
+                                font-weight: 700; 
+                                line-height: 1.3;
+                                display: -webkit-box;
+                                -webkit-line-clamp: 2;
+                                -webkit-box-orient: vertical;
+                                overflow: hidden;
+                            ">${project.name}</h3>
+                            
+                            <!-- Developer -->
+                            <p style="
+                                margin: 0; 
+                                font-size: 12px; 
+                                color: #666; 
+                                font-weight: 500;
+                            ">by ${developerName}</p>
+                            
+                            <!-- Address -->
+                            <p style="
+                                margin: 0; 
+                                font-size: 11px; 
+                                color: #888; 
+                                line-height: 1.4;
+                                display: -webkit-box;
+                                -webkit-line-clamp: 1;
+                                -webkit-box-orient: vertical;
+                                overflow: hidden;
+                            ">${project.address || 'Karachi, Pakistan'}</p>
+                            
+                            <!-- Project Details Row -->
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                ${project.rooms ? `
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    <i class="fa fa-bed" style="color: #ec1c24; font-size: 12px;"></i>
+                                    <span style="font-size: 10px; color: #666; font-weight: 500;">${project.rooms} Rooms</span>
+                                </div>
+                                ` : ''}
+                                
+                                ${project.type ? `
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    <i class="fa fa-building" style="color: #ec1c24; font-size: 12px;"></i>
+                                    <span style="font-size: 10px; color: #666; font-weight: 500;">${project.type}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                            
+                            <!-- Price Section -->
+                            <div style="
+                                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
+                                padding: 12px; 
+                                border-radius: 8px; 
+                                border-left: 3px solid #ec1c24;
+                                margin-top: auto;
+                            ">
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div>
+                                        <p style="margin: 0; font-size: 9px; color: #666; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Starting from</p>
+                                        <p style="margin: 2px 0 0; font-size: 16px; color: #ec1c24; font-weight: 700;">${formatPrice(project.price)}</p>
+                                    </div>
+                                    ${project.completion_date && project.completion_date !== 'TBD' ? `
+                                    <div style="
+                                        background: rgba(0,0,0,0.8); 
+                                        color: white; 
+                                        padding: 6px 10px; 
+                                        border-radius: 12px; 
+                                        font-size: 10px; 
+                                        font-weight: 600;
+                                        text-align: center;
+                                        min-width: 60px;
+                                    ">
+                                        <div style="font-size: 9px; margin-bottom: 2px;">${project.completion_date}</div>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
                 `;
                 
                 // Create popup with professional styling
                 const popup = new mapboxgl.Popup({
-                    closeButton: true,
+                    closeButton: false, // We have custom close button
                     closeOnClick: false,
                     offset: 25,
-                    maxWidth: '300px'
+                    maxWidth: '280px',
+                    className: 'modern-popup'
                 }).setHTML(popupContent);
                 
                 // Create marker
@@ -960,7 +1403,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 markers.push(marker);
                 
                 // Add click event to marker
-                markerElement.addEventListener('click', function() {
+                markerElement.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    console.log('Marker clicked for project:', project.name);
+                    
+                    // Close current popup if any
+                    closeCurrentPopup();
+                    
+                    // Set current popup and open it using marker's popup
+                    currentPopup = popup;
+                    marker.togglePopup();
+                    
+                    console.log('Popup should be open now');
+                    
                     // Find and highlight corresponding project card
                     const projectCard = document.querySelector(`[data-project-id="${project.id}"]`);
                     if (projectCard) {
@@ -971,7 +1428,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         // Highlight current card
                         projectCard.classList.add('highlighted');
-                        // Removed auto-scroll behavior for better user experience
                         
                         // Fly to location
                         map.flyTo({
@@ -985,10 +1441,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         });
+        
+        // console.log(`Successfully created ${markersCreated} markers out of ${projectsData.length} projects`);
     }
     
     // Initialize markers
     createMarkers();
+    
+    // Close popup when clicking on map
+    map.on('click', function(e) {
+        closeCurrentPopup();
+    });
     
     // Professional project card hover effects
     document.querySelectorAll('.project-card').forEach(card => {
@@ -998,48 +1461,36 @@ document.addEventListener('DOMContentLoaded', function() {
             const marker = markers.find(m => m.projectData && m.projectData.id == projectId);
             
             if (marker) {
-                // Highlight marker with smooth animation using Abad Raho colors
+                // Highlight marker without transforms to prevent drift
                 const markerEl = marker.getElement();
                 
-                // Store original position and size
-                const originalTransform = markerEl.style.transform;
-                const originalBackground = markerEl.style.background;
-                const originalBoxShadow = markerEl.style.boxShadow;
-                const originalZIndex = markerEl.style.zIndex;
-                
-                // Apply highlight with proper positioning
-                markerEl.style.transform = 'scale(1.3)';
-                markerEl.style.background = 'linear-gradient(135deg, #2ac4ea 0%, #1a9cb8 100%)';
-                markerEl.style.boxShadow = '0 8px 20px rgba(42, 196, 234, 0.6)';
+                // Apply highlight using box-shadow and border changes
+                markerEl.style.boxShadow = '0 8px 25px rgba(42, 196, 234, 0.6), 0 0 0 4px rgba(42, 196, 234, 0.3)';
+                markerEl.style.borderWidth = '4px';
+                markerEl.style.borderColor = '#2ac4ea';
                 markerEl.style.zIndex = '1000';
-                markerEl.style.transition = 'all 0.3s ease';
+                markerEl.style.filter = 'brightness(1.1)';
+                markerEl.style.transition = 'box-shadow 0.3s ease, border 0.3s ease, filter 0.3s ease';
                 
                 // Open popup with smooth animation
                 marker.getPopup().addTo(map);
                 
                 // Store highlighted marker
                 highlightedMarker = marker;
-                
-                // Ensure marker stays at its coordinate position
-                const lngLat = marker.getLngLat();
-                marker.setLngLat(lngLat);
             }
         });
         
         card.addEventListener('mouseleave', function() {
             hoveredCard = null;
             if (highlightedMarker) {
-                // Reset marker with smooth animation using Abad Raho colors
+                // Reset marker without transforms
                 const markerEl = highlightedMarker.getElement();
-                markerEl.style.transform = 'scale(1)';
-                markerEl.style.background = 'linear-gradient(135deg, #ec1c24 0%, #d9000d 100%)';
-                markerEl.style.boxShadow = '0 4px 15px rgba(236, 28, 36, 0.4)';
+                markerEl.style.boxShadow = '0 4px 15px rgba(236, 28, 36, 0.4), 0 0 0 2px rgba(236, 28, 36, 0.2)';
+                markerEl.style.borderWidth = '3px';
+                markerEl.style.borderColor = 'white';
                 markerEl.style.zIndex = '1';
-                markerEl.style.transition = 'all 0.3s ease';
-                
-                // Ensure marker stays at its coordinate position
-                const lngLat = highlightedMarker.getLngLat();
-                highlightedMarker.setLngLat(lngLat);
+                markerEl.style.filter = 'brightness(1)';
+                markerEl.style.transition = 'box-shadow 0.3s ease, border 0.3s ease, filter 0.3s ease';
                 
                 // Close popup
                 highlightedMarker.getPopup().remove();
@@ -1052,6 +1503,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const lng = parseFloat(this.dataset.lng);
             
             if (!isNaN(lat) && !isNaN(lng)) {
+                // Close current popup
+                closeCurrentPopup();
+                
                 // Smooth fly to project location
                 map.flyTo({
                     center: [lng, lat],
@@ -1061,11 +1515,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     speed: 1.2
                 });
                 
-                // Highlight the marker
+                // Highlight the marker and open popup
                 const projectId = this.dataset.projectId;
                 const marker = markers.find(m => m.projectData && m.projectData.id == projectId);
                 if (marker) {
-                    marker.getPopup().addTo(map);
+                    currentPopup = marker.getPopup();
+                    marker.togglePopup();
                 }
             }
         });
@@ -1109,23 +1564,191 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Filter button interactions
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Toggle active state
-            if (this.dataset.filter === 'bonus') {
-        this.classList.toggle('active');
-            } else {
-                // For dropdown filters, just show active state
-        this.classList.toggle('active');
-            }
-        });
-    });
     
     // Support button interaction
     document.querySelector('.support-button').addEventListener('click', function() {
         alert('Support feature coming soon!');
     });
+    
+    // Resize Handle Functionality
+    const resizeHandle = document.getElementById('resize-handle');
+    const projectListings = document.getElementById('project-listings');
+    const contentLayout = document.querySelector('.content-layout');
+    let isResizing = false;
+    let startX = 0;
+    let startWidth = 0;
+    
+    // Mouse events for resize handle
+    resizeHandle.addEventListener('mousedown', function(e) {
+        isResizing = true;
+        startX = e.clientX;
+        startWidth = projectListings.offsetWidth;
+        
+        // Add resizing class to prevent text selection
+        contentLayout.classList.add('resizing');
+        
+        // Prevent default behavior
+        e.preventDefault();
+        e.stopPropagation();
+    });
+    
+    // Mouse move event for resizing
+    document.addEventListener('mousemove', function(e) {
+        if (!isResizing) return;
+        
+        const deltaX = e.clientX - startX;
+        const newWidth = startWidth + deltaX;
+        const containerWidth = contentLayout.offsetWidth;
+        
+        // Calculate percentage based on new width
+        const newPercentage = (newWidth / containerWidth) * 100;
+        
+        // Set minimum and maximum constraints
+        const minPercentage = 25; // 25% minimum
+        const maxPercentage = 80; // 80% maximum
+        
+        if (newPercentage >= minPercentage && newPercentage <= maxPercentage) {
+            projectListings.style.width = newPercentage + '%';
+            
+            // Update resize handle position to stay between panels
+            resizeHandle.style.left = newPercentage + '%';
+            
+            // Trigger map resize after a short delay to ensure smooth rendering
+            setTimeout(() => {
+                resizeMap();
+            }, 10);
+        }
+        
+        e.preventDefault();
+    });
+    
+    // Mouse up event to stop resizing
+    document.addEventListener('mouseup', function(e) {
+        if (isResizing) {
+            isResizing = false;
+            contentLayout.classList.remove('resizing');
+            
+            // Save the current width to localStorage for persistence
+            const currentPercentage = (projectListings.offsetWidth / contentLayout.offsetWidth) * 100;
+            localStorage.setItem('projectListingsWidth', currentPercentage.toString());
+            
+            // Final map resize to ensure proper rendering
+            setTimeout(() => {
+                resizeMap();
+            }, 50);
+        }
+    });
+    
+    // Touch events for mobile devices
+    resizeHandle.addEventListener('touchstart', function(e) {
+        isResizing = true;
+        startX = e.touches[0].clientX;
+        startWidth = projectListings.offsetWidth;
+        contentLayout.classList.add('resizing');
+        e.preventDefault();
+    });
+    
+    document.addEventListener('touchmove', function(e) {
+        if (!isResizing) return;
+        
+        const deltaX = e.touches[0].clientX - startX;
+        const newWidth = startWidth + deltaX;
+        const containerWidth = contentLayout.offsetWidth;
+        const newPercentage = (newWidth / containerWidth) * 100;
+        
+        const minPercentage = 25;
+        const maxPercentage = 80;
+        
+        if (newPercentage >= minPercentage && newPercentage <= maxPercentage) {
+            projectListings.style.width = newPercentage + '%';
+            resizeHandle.style.left = newPercentage + '%';
+            
+            // Trigger map resize for touch events
+            setTimeout(() => {
+                resizeMap();
+            }, 10);
+        }
+        
+        e.preventDefault();
+    });
+    
+    document.addEventListener('touchend', function(e) {
+        if (isResizing) {
+            isResizing = false;
+            contentLayout.classList.remove('resizing');
+            
+            const currentPercentage = (projectListings.offsetWidth / contentLayout.offsetWidth) * 100;
+            localStorage.setItem('projectListingsWidth', currentPercentage.toString());
+            
+            // Final map resize for touch events
+            setTimeout(() => {
+                resizeMap();
+            }, 50);
+        }
+    });
+    
+    // Load saved width on page load
+    const savedWidth = localStorage.getItem('projectListingsWidth');
+    if (savedWidth) {
+        const widthPercentage = parseFloat(savedWidth);
+        if (widthPercentage >= 25 && widthPercentage <= 80) {
+            projectListings.style.width = widthPercentage + '%';
+            resizeHandle.style.left = widthPercentage + '%';
+            
+            // Trigger map resize after loading saved width
+            setTimeout(() => {
+                resizeMap();
+            }, 100);
+        }
+    }
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        // Recalculate resize handle position on window resize
+        const currentPercentage = (projectListings.offsetWidth / contentLayout.offsetWidth) * 100;
+        resizeHandle.style.left = currentPercentage + '%';
+        
+        // Trigger map resize on window resize
+        setTimeout(() => {
+            resizeMap();
+        }, 100);
+    });
+    
+    // Keyboard accessibility for resize handle
+    resizeHandle.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            
+            const containerWidth = contentLayout.offsetWidth;
+            const currentWidth = projectListings.offsetWidth;
+            const currentPercentage = (currentWidth / containerWidth) * 100;
+            
+            let newPercentage = currentPercentage;
+            if (e.key === 'ArrowLeft') {
+                newPercentage = Math.max(25, currentPercentage - 5); // Decrease by 5%
+            } else if (e.key === 'ArrowRight') {
+                newPercentage = Math.min(80, currentPercentage + 5); // Increase by 5%
+            }
+            
+            projectListings.style.width = newPercentage + '%';
+            resizeHandle.style.left = newPercentage + '%';
+            
+            // Trigger map resize for keyboard navigation
+            setTimeout(() => {
+                resizeMap();
+            }, 10);
+            
+            // Save the new width
+            localStorage.setItem('projectListingsWidth', newPercentage.toString());
+        }
+    });
+    
+    // Make resize handle focusable for keyboard navigation
+    resizeHandle.setAttribute('tabindex', '0');
+    resizeHandle.setAttribute('role', 'separator');
+    resizeHandle.setAttribute('aria-label', 'Resize panels');
+    resizeHandle.setAttribute('aria-valuemin', '25');
+    resizeHandle.setAttribute('aria-valuemax', '80');
 });
 </script>
 @endsection

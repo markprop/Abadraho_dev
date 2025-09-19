@@ -40,7 +40,11 @@ class OffPlanController extends Controller
         // Apply filters
         $filters = $this->applyFilters($projects, $request);
         
-        // Get paginated results
+        // Get all projects for map (without pagination)
+        $allProjectsForMap = clone $projects;
+        $allProjectsForMap = $allProjectsForMap->get();
+        
+        // Get paginated results for listings
         $projects = $projects->paginate(12);
 
         // Get filter options
@@ -56,8 +60,22 @@ class OffPlanController extends Controller
             ->orderBy('name')
             ->get();
 
-        // Prepare projects data for Mapbox
-        $projectsForMap = $projects->map(function ($project) {
+        // Prepare projects data for Mapbox (using all projects, not paginated)
+        $projectsForMap = $allProjectsForMap->map(function ($project) {
+            // Ensure proper cover image path
+            $coverImage = $project->project_cover_img;
+            
+            if ($coverImage && !str_starts_with($coverImage, 'http') && !str_starts_with($coverImage, '/')) {
+                // If it's a relative path, make it absolute
+                $coverImage = asset($coverImage);
+            } elseif ($coverImage && str_starts_with($coverImage, '/')) {
+                // If it starts with /, it's already a path, just add the domain
+                $coverImage = url($coverImage);
+            } elseif (!$coverImage) {
+                // Use default image if no cover image
+                $coverImage = asset('images/default-project.jpg');
+            }
+            
             return [
                 'id' => $project->id,
                 'name' => $project->name,
@@ -68,10 +86,12 @@ class OffPlanController extends Controller
                 'price' => $project->units->min('total_unit_amount') ?? $project->discount_price ?? 0,
                 'progress' => $project->progress->title ?? 'Unknown',
                 'type' => $project->type->title ?? 'Unknown',
-                'cover_image' => $project->project_cover_img ?? asset('images/default-project.jpg'),
+                'cover_image' => $coverImage,
                 'area' => $project->location->name ?? 'Unknown Area',
                 'bedrooms' => $project->units->pluck('bedrooms')->filter()->unique()->values()->toArray(),
-                'completion_date' => $project->added_time ?? 'TBD'
+                'completion_date' => $project->added_time ?? 'TBD',
+                'property_id' => $project->property_id ?? '',
+                'rooms' => $project->rooms ?? ''
             ];
         });
 
@@ -182,6 +202,19 @@ class OffPlanController extends Controller
         $this->applyFilters($projects, $request);
 
         $projectsForMap = $projects->get()->map(function ($project) {
+            // Ensure proper cover image path
+            $coverImage = $project->project_cover_img;
+            if ($coverImage && !str_starts_with($coverImage, 'http') && !str_starts_with($coverImage, '/')) {
+                // If it's a relative path, make it absolute
+                $coverImage = asset($coverImage);
+            } elseif ($coverImage && str_starts_with($coverImage, '/')) {
+                // If it starts with /, it's already a path, just add the domain
+                $coverImage = url($coverImage);
+            } elseif (!$coverImage) {
+                // Use default image if no cover image
+                $coverImage = asset('images/default-project.jpg');
+            }
+            
             return [
                 'id' => $project->id,
                 'name' => $project->name,
@@ -192,10 +225,12 @@ class OffPlanController extends Controller
                 'price' => $project->units->min('total_unit_amount') ?? $project->discount_price ?? 0,
                 'progress' => $project->progress->title ?? 'Unknown',
                 'type' => $project->type->title ?? 'Unknown',
-                'cover_image' => $project->project_cover_img ?? asset('images/default-project.jpg'),
+                'cover_image' => $coverImage,
                 'area' => $project->location->name ?? 'Unknown Area',
                 'bedrooms' => $project->units->pluck('bedrooms')->filter()->unique()->values()->toArray(),
-                'completion_date' => $project->added_time ?? 'TBD'
+                'completion_date' => $project->added_time ?? 'TBD',
+                'property_id' => $project->property_id ?? '',
+                'rooms' => $project->rooms ?? ''
             ];
         });
 
