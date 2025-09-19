@@ -725,60 +725,209 @@
         animation: fadeInUp 0.3s ease-out;
     }
     
-    /* Responsive Design */
-    @media (max-width: 1024px) {
+    /* Tablet Responsiveness */
+    @media (max-width: 1024px) and (min-width: 769px) {
         .project-listings {
-            width: 60%;
+            width: 50%;
+            min-width: 300px;
         }
         
         .map-container {
-            width: 40%;
+            width: 50%;
+            min-width: 300px;
         }
         
+        .search-input-container {
+            max-width: 500px;
+        }
+        
+        .search-input {
+            font-size: 15px;
+            padding: 16px 20px 16px 50px;
+        }
     }
     
+    /* Mobile Responsiveness */
     @media (max-width: 768px) {
+        .off-plan-content {
+            height: 100vh;
+            overflow: hidden;
+        }
+        
         .content-layout {
-            flex-direction: column;
-            height: auto;
-            min-height: auto;
+            flex-direction: row;
+            height: calc(100vh - 70px);
+            min-height: calc(100vh - 70px);
         }
         
         .project-listings {
-            width: 100%;
-            height: 400px;
+            width: 50%;
+            height: 100%;
+            min-height: 300px;
             padding: 15px;
+            order: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: #f8f9fa;
         }
         
         .project-grid {
             grid-template-columns: 1fr;
+            gap: 15px;
         }
         
         .map-container {
-            width: 100%;
-            height: 400px;
+            width: 50%;
+            height: 100%;
+            min-height: 300px;
+            order: 2;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .map-container #map {
+            width: 100% !important;
+            height: 100% !important;
         }
         
         .search-filter-bar {
-            padding: 20px 15px;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .search-input-container {
+            max-width: 100%;
+        }
+        
+        .search-input {
+            font-size: 16px;
+            padding: 15px 20px 15px 50px;
+            border-radius: 25px;
+        }
+        
+        .search-icon {
+            left: 20px;
+            font-size: 18px;
         }
         
         .project-card {
             margin-bottom: 15px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .project-image-container {
+            height: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .project-title {
+            font-size: 18px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        
+        .project-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ec1c24;
+            margin: 10px 0;
+        }
+        
+        .project-address {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .project-badges {
+            top: 12px;
+            left: 12px;
+        }
+        
+        .project-badges .badge {
+            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 15px;
+        }
+        
+        .project-details {
+            margin: 10px 0;
+        }
+        
+        .project-details p {
+            font-size: 13px;
+            color: #666;
+            margin: 5px 0;
+        }
+        
+        /* Hide resize handle on mobile */
+        .resize-handle {
+            display: none;
+        }
+        
+        /* Map controls positioning for mobile */
+        .map-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+        }
+        
+        .map-control-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 14px;
+            margin-bottom: 8px;
+            border-radius: 8px;
         }
     }
     
+    /* Small Mobile Responsiveness */
     @media (max-width: 480px) {
         .top-header {
-            padding: 12px 16px;
+            padding: 10px 12px;
         }
         
         .search-filter-bar {
-            padding: 16px;
+            padding: 12px;
+        }
+        
+        .search-input {
+            font-size: 14px;
+            padding: 12px 15px 12px 45px;
+        }
+        
+        .search-icon {
+            left: 15px;
+            font-size: 16px;
+        }
+        
+        .project-listings {
+            width: 50%;
+            height: 100%;
+            min-height: 280px;
+            padding: 12px;
+        }
+        
+        .map-container {
+            width: 50%;
+            height: 100%;
+            min-height: 220px;
         }
         
         .project-card {
-            padding: 16px;
+            padding: 12px;
+            margin-bottom: 12px;
         }
         
         .project-image-container {
@@ -787,10 +936,82 @@
         
         .project-title {
             font-size: 16px;
+            margin-bottom: 6px;
         }
         
         .project-price {
             font-size: 18px;
+        }
+        
+        .project-address {
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .project-badges {
+            top: 10px;
+            left: 10px;
+        }
+        
+        .project-badges .badge {
+            font-size: 10px;
+            padding: 4px 8px;
+        }
+        
+        .map-control-btn {
+            width: 35px;
+            height: 35px;
+            font-size: 12px;
+        }
+    }
+    
+    /* Extra Small Mobile - Stack vertically for very small screens */
+    @media (max-width: 360px) {
+        .content-layout {
+            flex-direction: column;
+        }
+        
+        .project-listings {
+            width: 100%;
+            height: 60vh;
+            max-height: 60vh;
+            padding: 8px;
+        }
+        
+        .map-container {
+            width: 100%;
+            height: 40vh;
+            max-height: 40vh;
+        }
+        
+        .search-filter-bar {
+            padding: 12px 8px;
+        }
+        
+        .search-input {
+            font-size: 13px;
+            padding: 12px 15px 12px 40px;
+        }
+        
+        .search-icon {
+            left: 15px;
+            font-size: 14px;
+        }
+        
+        .project-card {
+            padding: 10px;
+        }
+        
+        .project-image-container {
+            height: 140px;
+        }
+        
+        .project-title {
+            font-size: 14px;
+        }
+        
+        .project-price {
+            font-size: 15px;
         }
     }
     
@@ -1108,6 +1329,69 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
+    
+    // Mobile-specific optimizations
+        function optimizeForMobile() {
+            const isMobile = window.innerWidth <= 768;
+            const isSmallMobile = window.innerWidth <= 480;
+            const isExtraSmallMobile = window.innerWidth <= 360;
+            
+            if (isMobile) {
+                // Disable resize handle on mobile
+                const resizeHandle = document.getElementById('resize-handle');
+                if (resizeHandle) {
+                    resizeHandle.style.display = 'none';
+                }
+                
+                // Optimize map for mobile
+                if (map) {
+                    map.getCanvas().style.touchAction = 'manipulation';
+                    map.getCanvas().style.cursor = 'grab';
+                }
+                
+                // Adjust project listings for mobile
+                const projectListings = document.getElementById('project-listings');
+                if (projectListings) {
+                    if (isExtraSmallMobile) {
+                        // Stack vertically for very small screens
+                        projectListings.style.width = '100%';
+                        projectListings.style.height = '60vh';
+                        projectListings.style.maxHeight = '60vh';
+                    } else {
+                        // Side by side for regular mobile
+                        projectListings.style.width = '50%';
+                        projectListings.style.height = '100%';
+                        projectListings.style.maxHeight = '100%';
+                    }
+                }
+                
+                // Adjust map container for mobile
+                const mapContainer = document.querySelector('.map-container');
+                if (mapContainer) {
+                    if (isExtraSmallMobile) {
+                        // Stack vertically for very small screens
+                        mapContainer.style.width = '100%';
+                        mapContainer.style.height = '40vh';
+                        mapContainer.style.maxHeight = '40vh';
+                    } else {
+                        // Side by side for regular mobile
+                        mapContainer.style.width = '50%';
+                        mapContainer.style.height = '100%';
+                        mapContainer.style.maxHeight = '100%';
+                    }
+                }
+            } else {
+                // Re-enable resize handle on desktop
+                const resizeHandle = document.getElementById('resize-handle');
+                if (resizeHandle) {
+                    resizeHandle.style.display = 'block';
+                }
+            }
+        }
+    
+    // Call on load and resize
+    optimizeForMobile();
+    window.addEventListener('resize', optimizeForMobile);
     
     // Create professional markers for each project
     function createMarkers() {
