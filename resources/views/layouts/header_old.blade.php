@@ -81,7 +81,7 @@ $fileModified = date('hms');
   <!-- Meta Pixel Code -->
   <script>
   !function(f,b,e,v,n,t,s)
-  {ifi5(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
   n.callMethod.apply(n,arguments):n.queue.push(arguments)};
   if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
   n.queue=[];t=b.createElement(e);t.async=!0;
@@ -689,7 +689,7 @@ $fileModified = date('hms');
     <script type="text/javascript" src="/assets/js/simplebar.js?v=<?php echo $fileModified ?>"></script>
     <script type="text/javascript" src="/assets/js/parallax.js?v=<?php echo $fileModified ?>"></script>
     <script type="text/javascript" src="/assets/js/scrollto.js?v=<?php echo $fileModified ?>"></script>
-    <script type="text/javascript" src="/assets/js/jquery-scrolltofixed-min.js?v=<?php echo $fileModified ?>"></script>
+    {{-- <script type="text/javascript" src="/assets/js/jquery-scrolltofixed-min.js?v=<?php echo $fileModified ?>"></script> --}}
     <script type="text/javascript" src="/assets/js/jquery.counterup.js?v=<?php echo $fileModified ?>"></script>
     <script type="text/javascript" src="/assets/js/wow.min.js?v=<?php echo $fileModified ?>"></script>
     <script type="text/javascript" src="/assets/js/progressbar.js?v=<?php echo $fileModified ?>"></script>

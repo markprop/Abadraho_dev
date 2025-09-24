@@ -104,7 +104,7 @@
 <script type="text/javascript" src="/assets/js/simplebar.js"></script>
 <script type="text/javascript" src="/assets/js/parallax.js"></script>
 <script type="text/javascript" src="/assets/js/scrollto.js"></script>
-<script type="text/javascript" src="/assets/js/jquery-scrolltofixed-min.js"></script>
+{{-- <script type="text/javascript" src="/assets/js/jquery-scrolltofixed-min.js"></script> --}}
 <script type="text/javascript" src="/assets/js/jquery.counterup.js"></script>
 <script type="text/javascript" src="/assets/js/wow.min.js"></script>
 <script type="text/javascript" src="/assets/js/progressbar.js"></script>

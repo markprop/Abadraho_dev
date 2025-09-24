@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Housing Calculator Sync Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .form-group { margin: 10px 0; }
+        label { display: block; margin-bottom: 5px; }
+        input { padding: 8px; width: 200px; }
+        .sync-toggle { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Housing Calculator Sync Test</h1>
+    
+    <div class="form-group">
+        <label>Monthly Installment:</label>
+        <input type="text" id="Monthly_Installment" class="number" placeholder="Enter monthly installment">
+    </div>
+    
+    <div class="sync-toggle">
+        <input type="checkbox" id="sync-installments-flat" checked>
+        <label for="sync-installments-flat">Sync Installments</label>
+    </div>
+    
+    <div class="form-group">
+        <label>Quarterly Installment:</label>
+        <input type="text" id="Quarterly_Installment" class="number" placeholder="Enter quarterly installment">
+    </div>
+    
+    <div class="form-group">
+        <label>Half Yearly Installment:</label>
+        <input type="text" id="Half_Yearly_Installment" class="number" placeholder="Enter half yearly installment">
+    </div>
+    
+    <div class="form-group">
+        <label>Yearly Installment:</label>
+        <input type="text" id="Yearly_Installment" class="number" placeholder="Enter yearly installment">
+    </div>
+    
+    <div class="form-group">
+        <button onclick="testSync()">Test Sync Manually</button>
+    </div>
+    
+    <script src="public/js/housing-calculator.js"></script>
+</body>
+</html>

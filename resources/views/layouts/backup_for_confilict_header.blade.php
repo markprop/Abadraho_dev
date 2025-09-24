@@ -519,7 +519,7 @@ $fileModified = date('hms');
     <script type="text/javascript" src="/assets/js/simplebar.js?v=<?php echo $fileModified ?>"></script>
     <script type="text/javascript" src="/assets/js/parallax.js?v=<?php echo $fileModified ?>"></script>
     <script type="text/javascript" src="/assets/js/scrollto.js?v=<?php echo $fileModified ?>"></script>
-    <script type="text/javascript" src="/assets/js/jquery-scrolltofixed-min.js?v=<?php echo $fileModified ?>"></script>
+    {{-- <script type="text/javascript" src="/assets/js/jquery-scrolltofixed-min.js?v=<?php echo $fileModified ?>"></script> --}}
     <script type="text/javascript" src="/assets/js/jquery.counterup.js?v=<?php echo $fileModified ?>"></script>
     <script type="text/javascript" src="/assets/js/wow.min.js?v=<?php echo $fileModified ?>"></script>
     <script type="text/javascript" src="/assets/js/progressbar.js?v=<?php echo $fileModified ?>"></script>

@@ -3,7 +3,131 @@
 @section('meta_description', '')
 @section('meta_title', '')
 @section('content')
+    <div id="app"></div>
     <input type="hidden" value="" id="btn-link-project-detail">
+    
+    <!-- PHP Helper Function for Image Paths -->
+    @php
+        function fixImagePath($path) {
+            if (empty($path)) return asset('assets/images/no_image_project.png');
+            
+            // Fix common incorrect paths
+            if (strpos($path, 'projects/uploads/') === 0) {
+                $path = str_replace('projects/uploads/', 'uploads/', $path);
+            } elseif (strpos($path, 'projects/assets/') === 0) {
+                $path = str_replace('projects/assets/', 'assets/', $path);
+            } elseif (strpos($path, '/projects/uploads/') !== false) {
+                $path = str_replace('/projects/uploads/', '/uploads/', $path);
+            } elseif (strpos($path, '/projects/assets/') !== false) {
+                $path = str_replace('/projects/assets/', '/assets/', $path);
+            }
+            
+            return asset($path);
+        }
+    @endphp
+    
+    <!-- ULTRA-AGGRESSIVE IMAGE FIX - RUNS BEFORE ANYTHING ELSE -->
+    <script>
+    (function() {
+        'use strict';
+        
+        // 1. INTERCEPT NETWORK REQUESTS
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            if (typeof url === 'string' && url.includes('/projects/')) {
+                url = url.replace('/projects/uploads/', '/uploads/').replace('/projects/assets/', '/assets/');
+            }
+            return originalFetch.call(this, url, options);
+        };
+        
+        // 2. INTERCEPT XMLHttpRequest
+        const originalXHROpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+            if (typeof url === 'string' && url.includes('/projects/')) {
+                url = url.replace('/projects/uploads/', '/uploads/').replace('/projects/assets/', '/assets/');
+            }
+            return originalXHROpen.call(this, method, url, async, user, password);
+        };
+        
+        // 3. INTERCEPT ALL IMAGE CREATION
+        const originalCreateElement = document.createElement;
+        document.createElement = function(tagName) {
+            const element = originalCreateElement.call(this, tagName);
+            if (tagName.toLowerCase() === 'img') {
+                // Override ALL possible ways to set src
+                const originalSetAttribute = element.setAttribute;
+                element.setAttribute = function(name, value) {
+                    if (name === 'src' && value.includes('/projects/')) {
+                        value = value.replace('/projects/uploads/', '/uploads/').replace('/projects/assets/', '/assets/');
+                    }
+                    return originalSetAttribute.call(this, name, value);
+                };
+                
+                // Override src property
+                let _src = '';
+                Object.defineProperty(element, 'src', {
+                    get: function() { return _src; },
+                    set: function(value) {
+                        if (value.includes('/projects/')) {
+                            value = value.replace('/projects/uploads/', '/uploads/').replace('/projects/assets/', '/assets/');
+                        }
+                        _src = value;
+                        element.setAttribute('src', value);
+                    }
+                });
+            }
+            return element;
+        };
+        
+        // 4. FIX ALL EXISTING IMAGES IMMEDIATELY
+        function fixAllImages() {
+            const images = document.querySelectorAll('img');
+            images.forEach(function(img) {
+                let src = img.src || img.getAttribute('src') || img.getAttribute('data-src');
+                if (src && src.includes('/projects/')) {
+                    const fixedSrc = src.replace('/projects/uploads/', '/uploads/').replace('/projects/assets/', '/assets/');
+                    img.src = fixedSrc;
+                    img.setAttribute('src', fixedSrc);
+                }
+                
+                img.onerror = function() {
+                    this.src = '/assets/images/no_image_project.png';
+                };
+            });
+        }
+        
+        // 5. RUN IMMEDIATELY AND AGGRESSIVELY
+        fixAllImages();
+        setTimeout(fixAllImages, 0);
+        setTimeout(fixAllImages, 1);
+        setTimeout(fixAllImages, 5);
+        setTimeout(fixAllImages, 10);
+        setTimeout(fixAllImages, 25);
+        setTimeout(fixAllImages, 50);
+        setTimeout(fixAllImages, 100);
+        setTimeout(fixAllImages, 250);
+        setTimeout(fixAllImages, 500);
+        setTimeout(fixAllImages, 1000);
+        
+        // 6. WATCH FOR ALL CHANGES
+        const observer = new MutationObserver(function() {
+            fixAllImages();
+        });
+        observer.observe(document.documentElement, { 
+            childList: true, 
+            subtree: true, 
+            attributes: true,
+            attributeFilter: ['src', 'data-src']
+        });
+        
+        // 7. RUN ON ALL EVENTS
+        document.addEventListener('DOMContentLoaded', fixAllImages);
+        window.addEventListener('load', fixAllImages);
+        document.addEventListener('readystatechange', fixAllImages);
+        
+    })();
+    </script>
+    
     <!-- Listing Grid View -->
     <section class="our-listing bgc-f7 pb30-991">
         <div class="container">
@@ -92,7 +216,7 @@
                                                                                 @foreach ($areas as $area)
                                                                                     <option value="{{ $area->id }}"
                                                                                             data-tokens="{{ $area->name }}"
-                                                                                            @if ($searchData['area']) @foreach ($searchData['area'] as $searcharea) @if ($area->id == $searcharea)
+                                                                                            @if (isset($searchData['area']) && $searchData['area']) @foreach ($searchData['area'] as $searcharea) @if ($area->id == $searcharea)
                                                                                             selected @endif
                                                                                         @endforeach
                                                                                         @endif
@@ -632,7 +756,7 @@
                 @foreach ($areas as $area)
                     <option value="{{ $area->id }}"
                             data-tokens="{{ $area->name }}"
-                            @if ($searchData['area'] && $searchData['calcSearch'])
+                            @if (isset($searchData['area']) && isset($searchData['calcSearch']) && $searchData['area'] && $searchData['calcSearch'])
                                 @foreach ($searchData['area'] as $searcharea)
                                     @if ($area->id == $searcharea) selected @endif
                                 @endforeach
@@ -1019,9 +1143,9 @@
                                             onclick="OpenLoginRegisterModal('{{$afterRedirect}}')" @endif>
 
                                             @if ($project->project_cover_img)
-                                                <img class="img-whp" src="{{ asset($project->project_cover_img) }}" alt="{{ $project->name }}">
+                                                <img class="img-whp" src="{{ fixImagePath($project->project_cover_img) }}" alt="{{ $project->name }}" onerror="this.src='{{ asset('assets/images/no_image_project.png') }}'">
                                             @else
-                                                <img class="img-whp" src="{{ asset('path/to/default-image.jpg') }}" alt="Default Image">
+                                                <img class="img-whp" src="{{ asset('assets/images/no_image_project.png') }}" alt="Default Image">
                                             @endif
                                             <div class="ribbon">
                                                 <div class="txt">
@@ -1105,13 +1229,13 @@
                                                     <button style="background-color:#fff; border:0px; cursor:pointer;"
                                                             class="float-left float-lg-left float-xl-left"
                                                             onclick='addClickToCompareActivityLog(<?php echo json_encode($arrActivityLogParams); ?>)'>
-                                                        <img src="\assets\images\property\comparison_icon.png" width="35%">Compare
+                                                        <img src="/assets/images/property/comparison_icon.png" width="35%">Compare
                                                     </button>
                                                 @else
                                                     <a href="javascript:void(0)" onclick="OpenLoginRegisterModal('/compare/{{ $project->id }}')"
                                                     data-toggle="modal" data-target=".bd-example-modal-lg"
                                                     class="float-left float-lg-left float-xl-left">
-                                                        <img src="\assets\images\property\comparison_icon.png" width="35%">Compare
+                                                        <img src="/assets/images/property/comparison_icon.png" width="35%">Compare
                                                     </a>
                                                 @endif
                                                 @if (Auth::id())

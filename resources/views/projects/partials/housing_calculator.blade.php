@@ -8,7 +8,7 @@
                 {{--                <img src="http://markproperties.pk/projects/wp-content/uploads/2021/03/download.png" class="img-responsive gar1 cal_img">--}}
                 <p class="text-center fz20">
                     <strong>My Budget</strong><br>
-                    <strong>Rs. <span id="cal-result">{!! round($searchData['maxBudget'] ?? 0) !!}</span></strong>
+                    <strong>Rs. <span id="cal-result">{!! round(($searchData['maxBudget'] ?? 0)) !!}</span></strong>
                 </p>
             </div>
         </div>
@@ -52,7 +52,7 @@
                                             @foreach ($areas as $area)
                                                 <option value="{{ $area->id }}"
                                                         data-tokens="{{ $area->name }}"
-                                                        @if ($searchData['area'] && $searchData['calcSearch'])
+                                                        @if (isset($searchData['area']) && isset($searchData['calcSearch']) && $searchData['area'] && $searchData['calcSearch'])
                                                             @foreach ($searchData['area'] as $searcharea)
                                                                 @if ($area->id == $searcharea) selected @endif
                                                             @endforeach
@@ -65,6 +65,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
+						<label for="calculator_down_payment_flat">Down Payment</label>
                                     <input type="number" class="form-control" name="downPayment"
                                            id="calculator_down_payment_flat" placeholder="Down Payment">
                                 </div>
@@ -81,20 +82,24 @@
                             <div class="down_payment_options_flat hide">
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <input type="number" class="form-control number Booking" placeholder="Booking">
+									<label for="flat_booking">Booking</label>
+									<input type="number" id="flat_booking" class="form-control number Booking" placeholder="Booking">
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="number" class="form-control number allocation"
+									<label for="flat_allocation">Allocation</label>
+									<input type="number" id="flat_allocation" class="form-control number allocation"
                                                placeholder="Allocation">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <input type="number" class="form-control number confirmation"
+									<label for="flat_confirmation">Confirmation</label>
+									<input type="number" id="flat_confirmation" class="form-control number confirmation"
                                                placeholder="Confirmation">
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="number" class="form-control number start_of_work"
+									<label for="flat_start_of_work">Start of Work</label>
+									<input type="number" id="flat_start_of_work" class="form-control number start_of_work"
                                                placeholder="Start of Work">
                                     </div>
                                 </div>
@@ -104,7 +109,8 @@
 
                         <div class="search_option_two areaSelect">
                             <div class="candidate_revew_select">
-                                <select id="duration_month_flat" class="select2-month form-control" name="duration">
+								<label for="duration_month_flat">Payment Duration</label>
+								<select id="duration_month_flat" class="select2-month form-control" name="duration">
                                     <option disabled value="24" data-m="24" data-q="8" data-h="4" data-y="2"> Select
                                         Months
                                     </option>
@@ -121,19 +127,24 @@
                             </div>
                         </div>
 
-                        <input type="number" name="monthInstall" class="cal_input number1 number"
+						<label for="Monthly_Installment">Monthly Installment</label>
+						<input type="number" name="monthInstall" class="cal_input number1 number"
                                id="Monthly_Installment"
                                placeholder="Monthly Installment">
-                        <input type="number" name="quarterlyInstall" class="cal_input number1 number"
+						<label for="Quarterly_Installment">Quarterly Installment</label>
+						<input type="number" name="quarterlyInstall" class="cal_input number1 number"
                                id="Quarterly_Installment"
                                placeholder="Quarterly Installment">
-                        <input type="number" name="halfYearlyInstall" class="cal_input number1 number"
+						<label for="Half_Yearly_Installment">Half Yearly Installment</label>
+						<input type="number" name="halfYearlyInstall" class="cal_input number1 number"
                                id="Half_Yearly_Installment"
                                placeholder="Half Yearly Installment">
-                        <input type="number" name="yearlyInstall" class="cal_input number1 number"
+						<label for="Yearly_Installment">Yearly Installment</label>
+						<input type="number" name="yearlyInstall" class="cal_input number1 number"
                                id="Yearly_Installment"
                                placeholder="Yearly Installment">
-                        <input type="number" name="possession" class="cal_input number1 number" id="Possession"
+						<label for="Possession">Possession Fee</label>
+						<input type="number" name="possession" class="cal_input number1 number" id="Possession"
                                placeholder="Possession">
                         <button type="submit" name="isCalculator" class="btn btn-block btn-thm">Projects in this
                             Budget
@@ -153,20 +164,24 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-sm-12">
+									<label for="slab_casting_input">Slab Casting</label>
                                             <input type="number" name="slabCasting" class="form-control number"
-                                                   placeholder="Slab Casting">
+									       id="slab_casting_input" placeholder="Slab Casting">
                                         </div>
                                         <div class="col-sm-12">
+									<label for="plinth_input">Plinth</label>
                                             <input type="number" name="plinth" class="form-control number"
-                                                   placeholder="Plinth">
+									       id="plinth_input" placeholder="Plinth">
                                         </div>
                                         <div class="col-sm-12">
+									<label for="colour_input">Colour</label>
                                             <input type="number" name="colour" class="form-control number"
-                                                   placeholder="Colour">
+									       id="colour_input" placeholder="Colour">
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="search_option_two areaSelect">
                                                 <div class="candidate_revew_select">
+											<label for="areaSelectDiv">Please Select Area</label>
                                                     <select id="areaSelectDiv" data-all="false"
                                                             class="selectpicker w100 show-tick"
                                                             data-actions-box="true"
@@ -180,7 +195,7 @@
                                                         @foreach ($areas as $area)
                                                             <option value="{{ $area->id }}"
                                                                     data-tokens="{{ $area->name }}"
-                                                                    @if ($searchData['area'] && $searchData['calcSearch'])
+                                                                    @if (isset($searchData['area']) && isset($searchData['calcSearch']) && $searchData['area'] && $searchData['calcSearch'])
                                                                         @foreach ($searchData['area'] as $searcharea)
                                                                             @if ($area->id == $searcharea) selected @endif
                                                                         @endforeach
@@ -195,6 +210,7 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="form-group">
+										<label for="down_payment">Down Payment</label>
                                                 <input type="number" class="form-control" name="downPayment"
                                                        id="down_payment" placeholder="Down Payment">
                                             </div>
@@ -210,22 +226,26 @@
                                             <div class="down_payment_options hide">
                                                 <div class="row">
                                                     <div class="col-sm-6">
-                                                        <input type="tel" class="form-control number Booking"
+										<label for="cons_booking">Booking</label>
+										<input type="tel" id="cons_booking" class="form-control number Booking"
                                                                placeholder="Booking">
                                                     </div>
                                                     <div class="col-sm-6">
-                                                        <input type="tel" class="form-control number allocation"
+										<label for="cons_allocation">Allocation</label>
+										<input type="tel" id="cons_allocation" class="form-control number allocation"
                                                                placeholder="Allocation">
                                                     </div>
                                                 </div>
                                                 <br>
                                                 <div class="row">
                                                     <div class="col-sm-6">
-                                                        <input type="number" class="form-control number confirmation"
+										<label for="cons_confirmation">Confirmation</label>
+										<input type="number" id="cons_confirmation" class="form-control number confirmation"
                                                                placeholder="Confirmation">
                                                     </div>
                                                     <div class="col-sm-6">
-                                                        <input type="number" class="form-control number start_of_work"
+										<label for="cons_start_of_work">Start of Work</label>
+										<input type="number" id="cons_start_of_work" class="form-control number start_of_work"
                                                                placeholder="Start of Work">
                                                     </div>
                                                 </div>
@@ -235,7 +255,8 @@
                                         <div class="col-sm-12">
                                             <div class="search_option_two areaSelect">
                                                 <div class="candidate_revew_select">
-                                                    <select id="duration_month" class="select2-month form-control"
+								<label for="duration_month">Payment Duration</label>
+								<select id="duration_month" class="select2-month form-control"
                                                             name="duration">
                                                         <option disabled value="24" data-m="24" data-q="8" data-h="4"
                                                                 data-y="2"> Select Months
@@ -276,15 +297,20 @@
                             </div>
                         </div>
 
-                        <input type="number" name="monthInstall" class="cal_input number1 number"
+						<label for="Monthly_Installment">Monthly Installment</label>
+						<input type="number" name="monthInstall" class="cal_input number1 number"
                                id="Monthly_Installment" placeholder="Monthly Installment">
-                        <input type="number" name="quarterlyInstall" class="cal_input number1 number"
+						<label for="Quarterly_Installment">Quarterly Installment</label>
+						<input type="number" name="quarterlyInstall" class="cal_input number1 number"
                                id="Quarterly_Installment" placeholder="Quarterly Installment">
-                        <input type="number" name="halfYearlyInstall" class="cal_input number1 number"
+						<label for="Half_Yearly_Installment">Half Yearly Installment</label>
+						<input type="number" name="halfYearlyInstall" class="cal_input number1 number"
                                id="Half_Yearly_Installment" placeholder="Half Yearly Installment">
-                        <input type="number" name="yearlyInstall" class="cal_input1 number1 number"
+						<label for="Yearly_Installment">Yearly Installment</label>
+						<input type="number" name="yearlyInstall" class="cal_input1 number1 number"
                                id="Yearly_Installment" placeholder="Yearly Installment">
-                        <input type="number" name="possession" class="cal_input1 number1 number" id="Possession"
+						<label for="Possession">Possession Fee</label>
+						<input type="number" name="possession" class="cal_input1 number1 number" id="Possession"
                                placeholder="Possession">
                         <button type="submit" name="isCalculator" class="btn btn-block btn-thm">Projects in this
                             Budget
@@ -295,3 +321,232 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	var resultEl = document.getElementById('cal-result');
+	var flatForm = document.getElementById('searchPropertiesWithFlat');
+	var constructionForm = document.getElementById('searchPropertiesWithConstruction');
+	var activeForm = flatForm || constructionForm;
+
+	function toNumber(value) {
+		if (value === null || value === undefined) return 0;
+		var num = parseFloat(String(value).toString().replace(/,/g, ''));
+		return isNaN(num) || !isFinite(num) || num < 0 ? 0 : num;
+	}
+
+	function formatNumber(num) {
+		try {
+			return new Intl.NumberFormat('en-PK').format(num);
+		} catch (e) {
+			return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+		}
+	}
+
+	function getDurationMonths(form) {
+		var select = form && (form.querySelector('#duration_month_flat') || form.querySelector('#duration_month'));
+		if (!select) return 0;
+		var val = parseInt(select.value, 10);
+		return isNaN(val) ? 0 : val;
+	}
+
+	function setPossessionValidity(input, valid) {
+		// Possession is optional now; keep function as no-op to preserve API
+		return;
+	}
+
+	function calculateMyBudget(form) {
+		if (!form) return 0;
+		var downPaymentInput = form.querySelector('input[name="downPayment"]') || form.querySelector('#calculator_down_payment_flat') || form.querySelector('#down_payment');
+		var monthlyInput = form.querySelector('#Monthly_Installment');
+		var quarterlyInput = form.querySelector('#Quarterly_Installment');
+		var halfYearlyInput = form.querySelector('#Half_Yearly_Installment');
+		var yearlyInput = form.querySelector('#Yearly_Installment');
+		var possessionInput = form.querySelector('#Possession');
+		// Construction-specific extras
+		var slabInput = form.querySelector('input[name="slabCasting"]');
+		var plinthInput = form.querySelector('input[name="plinth"]');
+		var colourInput = form.querySelector('input[name="colour"]');
+
+		var durationMonths = getDurationMonths(form);
+		var downPayment = toNumber(downPaymentInput ? downPaymentInput.value : 0);
+		var monthly = toNumber(monthlyInput ? monthlyInput.value : 0);
+		var quarterly = toNumber(quarterlyInput ? quarterlyInput.value : 0);
+		var halfYearly = toNumber(halfYearlyInput ? halfYearlyInput.value : 0);
+		var yearly = toNumber(yearlyInput ? yearlyInput.value : 0);
+		var possession = toNumber(possessionInput ? possessionInput.value : 0);
+		var slab = toNumber(slabInput ? slabInput.value : 0);
+		var plinth = toNumber(plinthInput ? plinthInput.value : 0);
+		var colour = toNumber(colourInput ? colourInput.value : 0);
+
+		var total = 0;
+		total += downPayment;
+		if (monthly > 0 && durationMonths > 0) total += monthly * durationMonths;
+		if (quarterly > 0 && durationMonths > 0) total += (quarterly / 3) * durationMonths;
+		if (halfYearly > 0 && durationMonths > 0) total += (halfYearly / 6) * durationMonths;
+		if (yearly > 0 && durationMonths > 0) total += (yearly / 12) * durationMonths;
+		total += possession;
+		// Add construction stage sums when present (only in construction form)
+		if (form && form.id === 'searchPropertiesWithConstruction') {
+			total += slab + plinth + colour;
+		}
+
+		if (!isFinite(total)) return 0;
+		return Math.max(0, total);
+	}
+
+	var debounceTimer = null;
+	function scheduleUpdate(form) {
+		if (debounceTimer) window.clearTimeout(debounceTimer);
+		debounceTimer = window.setTimeout(function () {
+			var total = calculateMyBudget(form);
+			if (resultEl) resultEl.textContent = formatNumber(Math.round(total));
+			var hidden = form && (form.querySelector('#maxBudgetFlat') || form.querySelector('#maxBudgetConstruction'));
+			if (hidden) hidden.value = Math.round(total);
+		}, 120);
+	}
+
+	function formatInputValue(el) {
+		if (!el) return;
+		var raw = String(el.value || '').replace(/[^0-9.]/g, '');
+		// Handle at most one decimal point
+		var parts = raw.split('.');
+		if (parts.length > 2) {
+			raw = parts[0] + '.' + parts.slice(1).join('');
+		}
+		var num = toNumber(raw);
+		var hasDecimal = /\./.test(raw);
+		var decimalPart = '';
+		if (hasDecimal) {
+			var idx = raw.indexOf('.');
+			decimalPart = raw.slice(idx);
+		}
+		var formatted = formatNumber(Math.floor(num));
+		if (hasDecimal && decimalPart.length > 1) {
+			formatted = formatted + decimalPart;
+		}
+		el.value = formatted;
+	}
+
+	function sumSplitDownPayment(form) {
+		if (!form) return 0;
+		var splitContainer = form.querySelector('.down_payment_options_flat') || form.querySelector('.down_payment_options');
+		if (!splitContainer) return 0;
+		var parts = splitContainer.querySelectorAll('input.number');
+		var total = 0;
+		parts.forEach(function (p) { total += toNumber(p.value); });
+		return total;
+	}
+
+	function makeInputsFormatAsCurrency(form) {
+		if (!form) return;
+		var inputs = form.querySelectorAll('input[type="number"], input.cal_input, input.cal_input1, input.form-control.number');
+		inputs.forEach(function (el) {
+			// Switch to text to allow commas, keep numeric keyboard
+			try { if (el.type && el.type.toLowerCase() === 'number') el.type = 'text'; } catch(e) {}
+			el.setAttribute('inputmode', 'decimal');
+			// Initial format
+			formatInputValue(el);
+			el.addEventListener('input', function () { formatInputValue(el); scheduleUpdate(form); });
+			el.addEventListener('blur', function () { formatInputValue(el); });
+		});
+	}
+
+	function attachListeners(form) {
+		if (!form) return;
+		makeInputsFormatAsCurrency(form);
+		var inputs = form.querySelectorAll('input[type="text"], input[type="tel"], input.cal_input, input.cal_input1');
+		inputs.forEach(function (el) {
+			el.addEventListener('input', function () { scheduleUpdate(form); });
+			el.addEventListener('change', function () { scheduleUpdate(form); });
+		});
+		var selects = form.querySelectorAll('select');
+		selects.forEach(function (sel) {
+			sel.addEventListener('change', function () { scheduleUpdate(form); });
+		});
+		form.addEventListener('submit', function () {
+			var total = calculateMyBudget(form);
+			var hidden = form.querySelector('#maxBudgetFlat') || form.querySelector('#maxBudgetConstruction');
+			if (hidden && total !== null) hidden.value = Math.round(total);
+		});
+
+		// Split Down Payment toggles (per form)
+		var flatToggle = form.querySelector('.down_payment_checkbox_flat');
+		var flatSection = form.querySelector('.down_payment_options_flat');
+		var flatDownPayment = form.querySelector('#calculator_down_payment_flat');
+		if (flatToggle && flatSection) {
+			var syncFlatVisibility = function () {
+				if (flatToggle.checked) {
+					flatSection.classList.remove('hide');
+					if (flatDownPayment) flatDownPayment.setAttribute('readonly', 'readonly');
+					// Sum parts into down payment display
+					var sum = sumSplitDownPayment(form);
+					if (flatDownPayment) flatDownPayment.value = formatNumber(Math.floor(sum));
+				} else {
+					flatSection.classList.add('hide');
+					if (flatDownPayment) flatDownPayment.removeAttribute('readonly');
+				}
+				scheduleUpdate(form);
+			};
+			flatToggle.addEventListener('change', syncFlatVisibility);
+			// Live update when typing in split fields
+			flatSection.querySelectorAll('input.number').forEach(function (el) {
+				el.addEventListener('input', function () {
+					if (flatToggle.checked) {
+						var sum = sumSplitDownPayment(form);
+						if (flatDownPayment) flatDownPayment.value = formatNumber(Math.floor(sum));
+					}
+					scheduleUpdate(form);
+				});
+			});
+			syncFlatVisibility();
+		}
+
+		var consToggle = form.querySelector('.down_payment_checkbox');
+		var consSection = form.querySelector('.down_payment_options');
+		var consDownPayment = form.querySelector('#down_payment');
+		if (consToggle && consSection) {
+			var syncConsVisibility = function () {
+				if (consToggle.checked) {
+					consSection.classList.remove('hide');
+					if (consDownPayment) consDownPayment.setAttribute('readonly', 'readonly');
+					var sum = sumSplitDownPayment(form);
+					if (consDownPayment) consDownPayment.value = formatNumber(Math.floor(sum));
+				} else {
+					consSection.classList.add('hide');
+					if (consDownPayment) consDownPayment.removeAttribute('readonly');
+				}
+				scheduleUpdate(form);
+			};
+			consToggle.addEventListener('change', syncConsVisibility);
+			consSection.querySelectorAll('input.number').forEach(function (el) {
+				el.addEventListener('input', function () {
+					if (consToggle.checked) {
+						var sum = sumSplitDownPayment(form);
+						if (consDownPayment) consDownPayment.value = formatNumber(Math.floor(sum));
+					}
+					scheduleUpdate(form);
+				});
+			});
+			syncConsVisibility();
+		}
+	}
+
+	attachListeners(flatForm);
+	attachListeners(constructionForm);
+
+	// Handle tab switching to recalc based on active tab
+	var flatTab = document.getElementById('flat-tab');
+	var constructionTab = document.getElementById('construction-tab');
+	function recalcActive() {
+		var flatPane = document.getElementById('tab-flat');
+		var isFlatActive = flatPane && flatPane.classList.contains('show') && flatPane.classList.contains('active');
+		activeForm = isFlatActive ? flatForm : constructionForm;
+		scheduleUpdate(activeForm);
+	}
+	if (flatTab) flatTab.addEventListener('shown.bs.tab', recalcActive);
+	if (constructionTab) constructionTab.addEventListener('shown.bs.tab', recalcActive);
+
+	// Initial calculation on load
+	recalcActive();
+});
+</script>

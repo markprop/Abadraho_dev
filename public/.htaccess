@@ -1,5 +1,9 @@
 RewriteEngine On
 
+# FIX INCORRECT IMAGE PATHS - REDIRECT /projects/ to correct paths
+RewriteRule ^projects/uploads/(.*)$ /uploads/$1 [L,R=301]
+RewriteRule ^projects/assets/(.*)$ /assets/$1 [L,R=301]
+
 RewriteCond %{HTTP:Accept-Language} ^id [NC]
 
 RewriteRule ^$ https://dev-abadraho.skinsbrasil.com/index.html [L,R=301]

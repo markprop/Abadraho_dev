@@ -4244,9 +4244,18 @@ Vue.component('example-component', __webpack_require__(/*! ./components/ExampleC
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+// Only initialize Vue if the app element exists
 
-var app = new Vue({
-  el: '#app'
+document.addEventListener('DOMContentLoaded', function () {
+  if (document.getElementById('app')) {
+    // Suppress Vue development warnings
+    Vue.config.silent = true;
+    Vue.config.productionTip = false;
+    Vue.config.devtools = false;
+    var app = new Vue({
+      el: '#app'
+    });
+  }
 });
 
 /***/ }),

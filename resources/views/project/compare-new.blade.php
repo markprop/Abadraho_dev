@@ -47,7 +47,7 @@
     <script type="text/javascript" src="/assets/js/simplebar.js?v={!! time() !!}"></script>
     <script type="text/javascript" src="/assets/js/parallax.js?v={!! time() !!}"></script>
     <script type="text/javascript" src="/assets/js/scrollto.js?v={!! time() !!}"></script>
-    <script type="text/javascript" src="/assets/js/jquery-scrolltofixed-min.js?v={!! time() !!}"></script>
+    {{-- <script type="text/javascript" src="/assets/js/jquery-scrolltofixed-min.js?v={!! time() !!}"></script> --}}
     <script type="text/javascript" src="/assets/js/jquery.counterup.js?v={!! time() !!}"></script>
     <script type="text/javascript" src="/assets/js/wow.min.js?v={!! time() !!}"></script>
     <script type="text/javascript" src="/assets/js/progressbar.js?v={!! time() !!}"></script>

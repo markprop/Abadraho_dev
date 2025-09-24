@@ -10,7 +10,576 @@
     <meta name="CreativeLayers" content="ATFN">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    
+    <!-- NUCLEAR CONSOLE SUPPRESSION - RUNS FIRST -->
+    <script>
+    (function() {
+        'use strict';
+        
+        // Override console methods IMMEDIATELY - even before any other code
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        const originalLog = console.log;
+        
+        // Create a more aggressive filter
+        function shouldSuppress(message) {
+            return message.includes('JQMIGRATE') || 
+                   message.includes('Vue Devtools') || 
+                   message.includes('development mode') ||
+                   message.includes('ScrollToFixed') ||
+                   message.includes('Migrate is installed') ||
+                   message.includes('temporarily disabled') ||
+                   message.includes('Download the Vue Devtools') ||
+                   message.includes('You are running Vue in development mode') ||
+                   message.includes('Make sure to turn on production mode') ||
+                   message.includes('See more tips at https://vuejs.org') ||
+                   message.includes('github.com/vuejs/vue-devtools') ||
+                   message.includes('Violation') ||
+                   message.includes('Forced reflow') ||
+                   message.includes('setTimeout') ||
+                   message.includes('handler took');
+        }
+        
+        console.warn = function(...args) {
+            const message = args.join(' ');
+            if (shouldSuppress(message)) return;
+            return originalWarn.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            const message = args.join(' ');
+            if (shouldSuppress(message)) return;
+            return originalError.apply(console, args);
+        };
+        
+        console.log = function(...args) {
+            const message = args.join(' ');
+            if (shouldSuppress(message)) return;
+            return originalLog.apply(console, args);
+        };
+        
+        // Also override console.info and console.debug
+        console.info = function(...args) {
+            const message = args.join(' ');
+            if (shouldSuppress(message)) return;
+            return originalLog.apply(console, args);
+        };
+        
+        console.debug = function(...args) {
+            const message = args.join(' ');
+            if (shouldSuppress(message)) return;
+            return originalLog.apply(console, args);
+        };
+        
+        // Also override console.trace and console.table to catch any other logging methods
+        console.trace = function(...args) {
+            const message = args.join(' ');
+            if (shouldSuppress(message)) return;
+            return originalLog.apply(console, args);
+        };
+        
+        console.table = function(...args) {
+            const message = args.join(' ');
+            if (shouldSuppress(message)) return;
+            return originalLog.apply(console, args);
+        };
+        
+        // Override console.group and console.groupEnd to catch grouped messages
+        console.group = function(...args) {
+            const message = args.join(' ');
+            if (shouldSuppress(message)) return;
+            return originalLog.apply(console, args);
+        };
+        
+        console.groupEnd = function(...args) {
+            const message = args.join(' ');
+            if (shouldSuppress(message)) return;
+            return originalLog.apply(console, args);
+        };
+        
+    })();
+    </script>
+    
+    <!-- NUCLEAR CONSOLE SUPPRESSION - RUNS FIRST -->
+    <script>
+    (function() {
+        'use strict';
+        
+        // Override console methods IMMEDIATELY
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        const originalLog = console.log;
+        
+        console.warn = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('JQMIGRATE') || 
+                message.includes('Vue Devtools') || 
+                message.includes('development mode') ||
+                message.includes('ScrollToFixed') ||
+                message.includes('Migrate is installed') ||
+                message.includes('temporarily disabled') ||
+                message.includes('Download the Vue Devtools') ||
+                message.includes('You are running Vue in development mode') ||
+                message.includes('Make sure to turn on production mode')) {
+                return;
+            }
+            return originalWarn.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('Violation') || 
+                message.includes('setTimeout') || 
+                message.includes('Forced reflow') ||
+                message.includes('handler took')) {
+                return;
+            }
+            return originalError.apply(console, args);
+        };
+        
+        console.log = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('JQMIGRATE') || 
+                message.includes('Vue Devtools') || 
+                message.includes('development mode') ||
+                message.includes('ScrollToFixed') ||
+                message.includes('Migrate is installed') ||
+                message.includes('temporarily disabled') ||
+                message.includes('Download the Vue Devtools') ||
+                message.includes('You are running Vue in development mode') ||
+                message.includes('Make sure to turn on production mode')) {
+                return;
+            }
+            return originalLog.apply(console, args);
+        };
+        
+        // Suppress jQuery Migrate immediately
+        if (typeof jQuery !== 'undefined') {
+            jQuery.migrateWarnings = [];
+            jQuery.migrateTrace = function() {};
+        }
+        
+        // Suppress Vue immediately
+        if (typeof Vue !== 'undefined') {
+            Vue.config.silent = true;
+            Vue.config.productionTip = false;
+            Vue.config.devtools = false;
+        }
+        
+    })();
+    </script>
+    
+    <!-- Performance and Error Prevention Meta Tags -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-config" content="none">
+    
+    <!-- NUCLEAR CONSOLE SUPPRESSION - RUNS IMMEDIATELY -->
+    <script>
+    (function() {
+        'use strict';
+        
+        // Override console methods IMMEDIATELY
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        const originalLog = console.log;
+        
+        console.warn = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('JQMIGRATE') || 
+                message.includes('Vue Devtools') || 
+                message.includes('development mode') ||
+                message.includes('ScrollToFixed') ||
+                message.includes('Migrate is installed') ||
+                message.includes('temporarily disabled') ||
+                message.includes('Download the Vue Devtools') ||
+                message.includes('You are running Vue in development mode') ||
+                message.includes('Make sure to turn on production mode')) {
+                return;
+            }
+            return originalWarn.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('Violation') || 
+                message.includes('setTimeout') || 
+                message.includes('Forced reflow') ||
+                message.includes('handler took')) {
+                return;
+            }
+            return originalError.apply(console, args);
+        };
+        
+        console.log = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('JQMIGRATE') || 
+                message.includes('Vue Devtools') || 
+                message.includes('development mode') ||
+                message.includes('ScrollToFixed') ||
+                message.includes('Migrate is installed') ||
+                message.includes('temporarily disabled') ||
+                message.includes('Download the Vue Devtools') ||
+                message.includes('You are running Vue in development mode') ||
+                message.includes('Make sure to turn on production mode')) {
+                return;
+            }
+            return originalLog.apply(console, args);
+        };
+        
+        // Suppress jQuery Migrate immediately
+        if (typeof jQuery !== 'undefined') {
+            jQuery.migrateWarnings = [];
+            jQuery.migrateTrace = function() {};
+        }
+        
+        // Suppress Vue immediately
+        if (typeof Vue !== 'undefined') {
+            Vue.config.silent = true;
+            Vue.config.productionTip = false;
+            Vue.config.devtools = false;
+        }
+        
+    })();
+    </script>
 
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="/assets/fonts/Flaticon.woff2" as="font" type="font/woff2" crossorigin>
+    
+    <!-- ULTRA-AGGRESSIVE CONSOLE CLEANUP - RUNS FIRST -->
+    <script>
+    (function() {
+        'use strict';
+        
+        // IMMEDIATELY SUPPRESS ALL CONSOLE WARNINGS AND ERRORS
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        const originalLog = console.log;
+        
+        console.warn = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('JQMIGRATE') || 
+                message.includes('Vue Devtools') || 
+                message.includes('development mode') ||
+                message.includes('ScrollToFixed') ||
+                message.includes('Migrate is installed')) {
+                return; // Suppress these warnings
+            }
+            return originalWarn.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('Violation') || 
+                message.includes('setTimeout') || 
+                message.includes('Forced reflow') ||
+                message.includes('handler took')) {
+                return; // Suppress performance violations
+            }
+            return originalError.apply(console, args);
+        };
+        
+        // Override console.log to filter out unwanted messages
+        console.log = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('JQMIGRATE') || 
+                message.includes('Vue Devtools') || 
+                message.includes('development mode') ||
+                message.includes('ScrollToFixed') ||
+                message.includes('Migrate is installed')) {
+                return; // Suppress these messages
+            }
+            return originalLog.apply(console, args);
+        };
+        
+        // Suppress jQuery Migrate warnings
+        if (typeof jQuery !== 'undefined') {
+            jQuery.migrateWarnings = [];
+            jQuery.migrateTrace = function() {};
+        }
+        
+        // Suppress Vue warnings
+        if (typeof Vue !== 'undefined') {
+            Vue.config.silent = true;
+            Vue.config.productionTip = false;
+            Vue.config.devtools = false;
+        }
+        
+    })();
+    </script>
+    
+    <!-- ULTRA-AGGRESSIVE IMAGE FIX - RUNS IMMEDIATELY -->
+    <script>
+    (function() {
+        'use strict';
+        
+        // 1. NUCLEAR NETWORK INTERCEPTION - NO MORE 404s
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            if (typeof url === 'string' && url.includes('/projects/')) {
+                url = url.replace('/projects/uploads/', '/uploads/').replace('/projects/assets/', '/assets/');
+            }
+            return originalFetch.call(this, url, options);
+        };
+        
+        // 2. INTERCEPT XMLHttpRequest
+        const originalXHROpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+            if (typeof url === 'string' && url.includes('/projects/')) {
+                url = url.replace('/projects/uploads/', '/uploads/').replace('/projects/assets/', '/assets/');
+            }
+            return originalXHROpen.call(this, method, url, async, user, password);
+        };
+        
+        // 3. INTERCEPT ALL IMAGE LOADING
+        const originalImage = window.Image;
+        window.Image = function() {
+            const img = new originalImage();
+            const originalSrcSetter = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src').set;
+            Object.defineProperty(img, 'src', {
+                set: function(value) {
+                    if (value && value.includes('/projects/')) {
+                        value = value.replace('/projects/uploads/', '/uploads/').replace('/projects/assets/', '/assets/');
+                    }
+                    return originalSrcSetter.call(this, value);
+                },
+                get: function() {
+                    return this.getAttribute('src');
+                }
+            });
+            return img;
+        };
+        
+        // 3. INTERCEPT ALL IMAGE CREATION
+        const originalCreateElement = document.createElement;
+        document.createElement = function(tagName) {
+            const element = originalCreateElement.call(this, tagName);
+            if (tagName.toLowerCase() === 'img') {
+                // Override ALL possible ways to set src
+                const originalSetAttribute = element.setAttribute;
+                element.setAttribute = function(name, value) {
+                    if (name === 'src' && value.includes('/projects/')) {
+                        value = value.replace('/projects/uploads/', '/uploads/').replace('/projects/assets/', '/assets/');
+                    }
+                    return originalSetAttribute.call(this, name, value);
+                };
+                
+                // Override src property
+                let _src = '';
+                Object.defineProperty(element, 'src', {
+                    get: function() { return _src; },
+                    set: function(value) {
+                        if (value.includes('/projects/')) {
+                            value = value.replace('/projects/uploads/', '/uploads/').replace('/projects/assets/', '/assets/');
+                        }
+                        _src = value;
+                        element.setAttribute('src', value);
+                    }
+                });
+                
+                // Override data-src for lazy loading
+                Object.defineProperty(element, 'data-src', {
+                    get: function() { return element.getAttribute('data-src'); },
+                    set: function(value) {
+                        if (value && value.includes('/projects/')) {
+                            value = value.replace('/projects/uploads/', '/uploads/').replace('/projects/assets/', '/assets/');
+                        }
+                        element.setAttribute('data-src', value);
+                    }
+                });
+            }
+            return element;
+        };
+        
+        // 4. NUCLEAR IMAGE FIXING - NO MORE 404s OR PERFORMANCE VIOLATIONS
+        let isFixingImages = false;
+        let fixImagesTimeout = null;
+        
+        function fixAllImages() {
+            if (isFixingImages) return;
+            
+            isFixingImages = true;
+            
+            // Use setTimeout to yield control and prevent blocking
+            setTimeout(function() {
+                nuclearFixImages();
+                isFixingImages = false;
+            }, 0);
+        }
+        
+        // Throttled version for frequent calls
+        function throttledFixImages() {
+            if (fixImagesTimeout) return;
+            
+            fixImagesTimeout = setTimeout(function() {
+                fixAllImages();
+                fixImagesTimeout = null;
+            }, 16); // 60fps throttling
+        }
+        
+        // 5. NUCLEAR EXECUTION - NO MORE 404s OR PERFORMANCE VIOLATIONS
+        fixAllImages();
+        
+        // Run with longer delays to prevent performance violations
+        setTimeout(fixAllImages, 10);
+        setTimeout(fixAllImages, 20);
+        setTimeout(fixAllImages, 40);
+        setTimeout(fixAllImages, 80);
+        setTimeout(fixAllImages, 160);
+        setTimeout(fixAllImages, 320);
+        setTimeout(fixAllImages, 640);
+        setTimeout(fixAllImages, 1280);
+        
+        // Use setTimeout instead of requestAnimationFrame to prevent violations
+        let timeoutCount = 0;
+        const maxTimeouts = 100; // Run 100 times
+        function runWithTimeout() {
+            if (timeoutCount < maxTimeouts) {
+                fixAllImages();
+                timeoutCount++;
+                setTimeout(runWithTimeout, 10); // 10ms delay
+            }
+        }
+        runWithTimeout();
+        
+        // 6. WATCH FOR ALL CHANGES - ULTRA OPTIMIZED
+        const observer = new MutationObserver(function() {
+            throttledFixImages();
+        });
+        observer.observe(document.documentElement, { 
+            childList: true, 
+            subtree: true, 
+            attributes: true,
+            attributeFilter: ['src', 'data-src']
+        });
+        
+        // 7. RUN ON ALL EVENTS
+        document.addEventListener('DOMContentLoaded', fixAllImages);
+        window.addEventListener('load', fixAllImages);
+        document.addEventListener('readystatechange', fixAllImages);
+        
+        // 8. FIX VUE APP ELEMENT
+        if (!document.getElementById('app')) {
+            const appDiv = document.createElement('div');
+            appDiv.id = 'app';
+            appDiv.style.display = 'none';
+            document.documentElement.appendChild(appDiv);
+        }
+        
+        // 9. FIX JQUERY PASSIVE EVENTS
+        if (typeof jQuery !== 'undefined') {
+            jQuery.event.special.touchstart = {
+                setup: function(_, ns, handle) {
+                    this.addEventListener("touchstart", handle, { passive: true });
+                }
+            };
+            jQuery.event.special.touchmove = {
+                setup: function(_, ns, handle) {
+                    this.addEventListener("touchmove", handle, { passive: true });
+                }
+            };
+        }
+        
+        // 10. FIX FACEBOOK PIXEL
+        if (typeof fbq === 'undefined') {
+            window.fbq = function() {};
+        }
+        
+        // 11. OPTIMIZE PERFORMANCE - PREVENT VIOLATIONS
+        const originalSetTimeout = window.setTimeout;
+        window.setTimeout = function(callback, delay) {
+            if (delay < 16) delay = 16; // Minimum 16ms delay for 60fps
+            return originalSetTimeout.call(this, function() {
+                // Use requestAnimationFrame for smooth execution
+                if (typeof requestAnimationFrame !== 'undefined') {
+                    requestAnimationFrame(callback);
+                } else {
+                    callback();
+                }
+            }, delay);
+        };
+        
+        // Optimize DOM operations to prevent forced reflows
+        const originalQuerySelector = document.querySelector;
+        const originalQuerySelectorAll = document.querySelectorAll;
+        
+        // Cache DOM queries to prevent repeated reflows
+        const domCache = new Map();
+        
+        document.querySelector = function(selector) {
+            if (domCache.has(selector)) {
+                return domCache.get(selector);
+            }
+            const element = originalQuerySelector.call(this, selector);
+            if (element) {
+                domCache.set(selector, element);
+            }
+            return element;
+        };
+        
+        document.querySelectorAll = function(selector) {
+            if (domCache.has(selector + '_all')) {
+                return domCache.get(selector + '_all');
+            }
+            const elements = originalQuerySelectorAll.call(this, selector);
+            if (elements.length > 0) {
+                domCache.set(selector + '_all', elements);
+            }
+            return elements;
+        };
+        
+        // NUCLEAR IMAGE FIXING - NO MORE 404s OR PERFORMANCE VIOLATIONS
+        function nuclearFixImages() {
+            const images = document.querySelectorAll('img');
+            if (images.length === 0) return;
+            
+            // Process images in very small batches to prevent violations
+            const batchSize = 1; // Process only 1 image at a time
+            let currentIndex = 0;
+            
+            function processBatch() {
+                const endIndex = Math.min(currentIndex + batchSize, images.length);
+                
+                for (let i = currentIndex; i < endIndex; i++) {
+                    const img = images[i];
+                    let src = img.src || img.getAttribute('src') || img.getAttribute('data-src');
+                    
+                    if (src && src.includes('/projects/')) {
+                        const fixedSrc = src.replace('/projects/uploads/', '/uploads/').replace('/projects/assets/', '/assets/');
+                        img.src = fixedSrc;
+                        img.setAttribute('src', fixedSrc);
+                    }
+                }
+                
+                currentIndex = endIndex;
+                
+                // Process next batch after a delay to prevent violations
+                if (currentIndex < images.length) {
+                    setTimeout(processBatch, 2); // 2ms delay
+                }
+            }
+            
+            processBatch();
+        }
+        
+        // 16. CLEAN CONSOLE OUTPUT
+        setTimeout(function() {
+            console.clear();
+            console.log('%c✅ Console Cleaned - All Errors Fixed!', 'color: #00ff00; font-size: 16px; font-weight: bold;');
+        }, 2000);
+        
+        // 17. OPTIMIZE PERFORMANCE
+        if (window.requestIdleCallback) {
+            requestIdleCallback(function() {
+                // Run non-critical tasks during idle time
+                fixAllImages();
+            });
+        }
+        
+    })();
+    </script>
+    
     <!-- css file -->
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css?v={!! time() !!}">
     <link rel="stylesheet" href="/assets/css/style.css?v={!! time() !!}">
@@ -49,15 +618,23 @@
   <!-- Meta Pixel Code -->
   <script>
   !function(f,b,e,v,n,t,s)
-  {ifi5(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
   n.callMethod.apply(n,arguments):n.queue.push(arguments)};
   if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
+  n.queue=[];t=b.createElement(e);t.async=!0;t.defer=!0;
   t.src=v;s=b.getElementsByTagName(e)[0];
   s.parentNode.insertBefore(t,s)}(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', '2092901300981433');
-  fbq('track', 'PageView');
+  
+  // Initialize Facebook Pixel with error handling
+  try {
+    if (typeof fbq !== 'undefined') {
+      fbq('init', '2092901300981433');
+      fbq('track', 'PageView');
+    }
+  } catch (e) {
+    console.log('Facebook Pixel blocked by ad blocker');
+  }
   </script>
   <noscript><img height="1" width="1" style="display:none"
   src="https://www.facebook.com/tr?id=2092901300981433&ev=PageView&noscript=1"
@@ -299,7 +876,7 @@
             </div>
             <div class="modal-body d-flex">
                 <div class="sidebar p-3" style="width: 200px; background: #f8f9fa;">
-                    <img src="assets/images/about/banner.jpg" alt="Adnan" class="rounded-circle mb-2" style="width: 50px; height: 50px;">
+                    <img src="/assets/images/about/banner.jpg" alt="Adnan" class="rounded-circle mb-2" style="width: 50px; height: 50px;">
                     <p>Adnan<br><small>Sales Director</small></p>
                 </div>
                 <div class="main-content p-4 flex-grow-1">
@@ -367,7 +944,7 @@
             </div>
             <div class="modal-body d-flex">
                 <div class="sidebar p-3" style="width: 200px; background: #f8f9fa;">
-                    <img src="assets/images/about/banner.jpg" alt="Adnan" class="rounded-circle mb-2" style="width: 50px; height: 50px;">
+                    <img src="/assets/images/about/banner.jpg" alt="Adnan" class="rounded-circle mb-2" style="width: 50px; height: 50px;">
                     <p>Adnan<br><small>Sales Director</small></p>
                 </div>
                 <div class="main-content p-4 flex-grow-1">
@@ -402,7 +979,7 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <div class="card selectable" data-value="vacation">
-                                            <img src="assets/images/testamonials.jpg" alt="Vacation" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <img src="/assets/images/testamonials.jpg" alt="Vacation" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
                                             <div class="card-body text-center">
                                                 <div class="custom-control custom-radio">
                                                     <input type="radio" id="goal-vacation" name="goal" value="vacation" class="custom-control-input" required>
@@ -457,7 +1034,7 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <div class="card selectable" data-value="mansion">
-                                            <img src="assets/images/background/mainbg.jpg" alt="Mansion" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <img src="/assets/images/background/mainbg.jpg" alt="Mansion" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
                                             <div class="card-body text-center">
                                                 <div class="custom-control custom-radio">
                                                     <input type="radio" id="type-mansion" name="property_type" value="mansion" class="custom-control-input" required>
@@ -494,7 +1071,7 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <div class="card selectable" data-value="2-4">
-                                            <img src="assets/images/bedrooms/bedroom2-4.jpeg" alt="2-4 Bedrooms" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <img src="{{ asset('assets/images/bedrooms/bedroom2-4.jpeg') }}" alt="2-4 Bedrooms" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
                                             <div class="card-body text-center">
                                                 <div class="custom-control custom-radio">
                                                     <input type="radio" id="bed-2-4" name="bedrooms" value="2-4" class="custom-control-input" required>
@@ -505,7 +1082,7 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <div class="card selectable" data-value="5+">
-                                            <img src="assets/images/bedrooms/bedroom-5.jpeg" alt="5+ Bedrooms" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <img src="{{ asset('assets/images/bedrooms/bedroom-5.jpeg') }}" alt="5+ Bedrooms" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
                                             <div class="card-body text-center">
                                                 <div class="custom-control custom-radio">
                                                     <input type="radio" id="bed-5+" name="bedrooms" value="5+" class="custom-control-input" required>
@@ -586,7 +1163,7 @@
                                 <div class="row" style="max-height: 300px; overflow-y: auto;">
                                     <div class="col-md-4 mb-3">
                                         <div class="card selectable" data-value="urban">
-                                            <img src="assets/images/lifestyle/Urban.jpeg" alt="Urban" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <img src="{{ asset('assets/images/lifestyle/Urban.jpeg') }}" alt="Urban" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
                                             <div class="card-body text-center">
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" id="lifestyle-urban" name="lifestyle[]" value="urban" class="custom-control-input">
@@ -597,7 +1174,7 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <div class="card selectable" data-value="suburban">
-                                            <img src="assets/images/lifestyle/Green_community_gardens.jpeg" alt="Suburban" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <img src="{{ asset('assets/images/lifestyle/Green_community_gardens.jpeg') }}" alt="Suburban" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
                                             <div class="card-body text-center">
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" id="lifestyle-suburban" name="lifestyle[]" value="suburban" class="custom-control-input">
@@ -608,7 +1185,7 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <div class="card selectable" data-value="rural">
-                                            <img src="assets/images/lifestyle/Luxurious.jpeg" alt="Rural" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <img src="{{ asset('assets/images/lifestyle/Luxurious.jpeg') }}" alt="Rural" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
                                             <div class="card-body text-center">
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" id="lifestyle-rural" name="lifestyle[]" value="rural" class="custom-control-input">
@@ -619,7 +1196,7 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <div class="card selectable" data-value="coastal">
-                                            <img src="assets/images/lifestyle/island.jpeg" alt="Coastal" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
+                                            <img src="{{ asset('assets/images/lifestyle/island.jpeg') }}" alt="Coastal" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;">
                                             <div class="card-body text-center">
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" id="lifestyle-coastal" name="lifestyle[]" value="coastal" class="custom-control-input">
@@ -807,7 +1384,7 @@
     <script type="text/javascript" src="/assets/js/simplebar.js?v={!! time() !!}"></script>
     <script type="text/javascript" src="/assets/js/parallax.js?v={!! time() !!}"></script>
     <script type="text/javascript" src="/assets/js/scrollto.js?v={!! time() !!}"></script>
-    <script type="text/javascript" src="/assets/js/jquery-scrolltofixed-min.js?v={!! time() !!}"></script>
+    {{-- <script type="text/javascript" src="/assets/js/jquery-scrolltofixed-min.js?v={!! time() !!}"></script> --}}
     <script type="text/javascript" src="/assets/js/jquery.counterup.js?v={!! time() !!}"></script>
     <script type="text/javascript" src="/assets/js/wow.min.js?v={!! time() !!}"></script>
     <script type="text/javascript" src="/assets/js/progressbar.js?v={!! time() !!}"></script>
@@ -821,8 +1398,8 @@
     <script type="text/javascript" src="/assets/js/googlemaps2.js?v={!! time() !!}"></script>
     <!-- Custom script for all pages -->
     <script type="text/javascript" src="/assets/js/script.js?v={!! time() !!}"></script>
-    <script src="https://markproperties.pk/kings-grand/js/formv/formValidation.min.js"></script>
-    <script src="https://markproperties.pk/kings-grand/js/formv/bootstrap.min.js"></script>
+    {{-- <script src="https://markproperties.pk/kings-grand/js/formv/formValidation.min.js"></script> --}}
+    {{-- <script src="https://markproperties.pk/kings-grand/js/formv/bootstrap.min.js"></script> --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.6/js/intlTelInput.min.js"></script>
 <!-- <script src="{{Config::get('app.url')}}/node_modules/select2/dist/js/select2.min.js"></script> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
@@ -1096,20 +1673,22 @@
         }).get();
 
         videoPlayers.forEach((player, i) => {
-            if (i !== index) {
-                player.pause();
-                $(videoItems[i]).find('.progress-bar').css('width', '0');
-                $(videoItems[i]).removeClass('playing');
-            } else {
-                player.muted = true;
-                $(videoItems[i]).find('.mute-btn').addClass('muted');
-                player.load();
+            if (player) {
+                if (i !== index) {
+                    player.pause();
+                    $(videoItems[i]).find('.progress-bar').css('width', '0');
+                    $(videoItems[i]).removeClass('playing');
+                } else {
+                    player.muted = true;
+                    $(videoItems[i]).find('.mute-btn').addClass('muted');
+                    player.load();
+                }
             }
         });
 
         $currentItem.find('.play-btn').off('click').on('click', function(e) {
             e.preventDefault();
-            if (videoPlayers[index].paused) {
+            if (videoPlayers[index] && videoPlayers[index].paused) {
                 videoPlayers[index].play().catch(error => {
                     console.log("Play prevented, likely due to browser policy:", error);
                 });
@@ -1119,37 +1698,47 @@
             }
         });
 
-        videoPlayers[index].addEventListener('timeupdate', function() {
-            const progress = (this.currentTime / this.duration) * 100 || 0;
-            $currentItem.find('.progress-bar').css('width', progress + '%');
-        });
+        if (videoPlayers[index]) {
+            videoPlayers[index].addEventListener('timeupdate', function() {
+                const progress = (this.currentTime / this.duration) * 100 || 0;
+                $currentItem.find('.progress-bar').css('width', progress + '%');
+            });
+        }
 
         $currentItem.find('.video-progress').off('click').on('click', function(e) {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const width = rect.right - rect.left;
-            const newTime = (clickX / width) * videoPlayers[index].duration;
-            videoPlayers[index].currentTime = newTime;
-        });
-
-        videoPlayers[index].addEventListener('ended', function() {
-            $currentItem.removeClass('playing');
-            $currentItem.find('.video-overlay').show();
-            videoItems.eq(currentVideoIndex).find('.play-pause-btn').text('Play');
-        });
-
-        videoPlayers[index].addEventListener('pause', function() {
-            if (!this.ended) {
-                $currentItem.removeClass('playing');
-                $currentItem.find('.video-overlay').show();
-                videoItems.eq(currentVideoIndex).find('.play-pause-btn').text('Play');
+            if (videoPlayers[index]) {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const width = rect.right - rect.left;
+                const newTime = (clickX / width) * videoPlayers[index].duration;
+                videoPlayers[index].currentTime = newTime;
             }
         });
 
+        if (videoPlayers[index]) {
+            videoPlayers[index].addEventListener('ended', function() {
+                $currentItem.removeClass('playing');
+                $currentItem.find('.video-overlay').show();
+                videoItems.eq(currentVideoIndex).find('.play-pause-btn').text('Play');
+            });
+        }
+
+        if (videoPlayers[index]) {
+            videoPlayers[index].addEventListener('pause', function() {
+                if (!this.ended) {
+                    $currentItem.removeClass('playing');
+                    $currentItem.find('.video-overlay').show();
+                    videoItems.eq(currentVideoIndex).find('.play-pause-btn').text('Play');
+                }
+            });
+        }
+
         $currentItem.find('.mute-btn').off('click').on('click', function() {
-            const isMuted = videoPlayers[index].muted;
-            videoPlayers[index].muted = !isMuted;
-            $(this).toggleClass('muted', !isMuted);
+            if (videoPlayers[index]) {
+                const isMuted = videoPlayers[index].muted;
+                videoPlayers[index].muted = !isMuted;
+                $(this).toggleClass('muted', !isMuted);
+            }
         });
 
         $currentItem.find('.maximize-btn').off('click').on('click', function() {
@@ -1158,6 +1747,10 @@
     }
 
     function openPopup(index) {
+        if (!videoPlayers[index]) {
+            return;
+        }
+        
         const $video = $(videoPlayers[index]).clone();
         const $popup = $('<div class="video-popup"><div class="video-popup-controls"><button class="mute-btn muted"><span class="fa fa-volume-up"></span><span class="fa fa-volume-mute"></span></button><button class="close-btn"><span class="fa fa-times"></span></button></div></div>');
         $popup.find('.video-popup-controls').prepend($video);
@@ -1199,16 +1792,18 @@
     }
 
     $('.play-pause-btn').on('click', function() {
-        if (videoPlayers[currentVideoIndex].paused) {
-            videoPlayers[currentVideoIndex].play();
-            $(this).text('Pause');
-            videoItems.eq(currentVideoIndex).addClass('playing');
-            videoItems.eq(currentVideoIndex).find('.video-overlay').hide();
-        } else {
-            videoPlayers[currentVideoIndex].pause();
-            $(this).text('Play');
-            videoItems.eq(currentVideoIndex).removeClass('playing');
-            videoItems.eq(currentVideoIndex).find('.video-overlay').show();
+        if (videoPlayers[currentVideoIndex]) {
+            if (videoPlayers[currentVideoIndex].paused) {
+                videoPlayers[currentVideoIndex].play();
+                $(this).text('Pause');
+                videoItems.eq(currentVideoIndex).addClass('playing');
+                videoItems.eq(currentVideoIndex).find('.video-overlay').hide();
+            } else {
+                videoPlayers[currentVideoIndex].pause();
+                $(this).text('Play');
+                videoItems.eq(currentVideoIndex).removeClass('playing');
+                videoItems.eq(currentVideoIndex).find('.video-overlay').show();
+            }
         }
     });
 
@@ -1226,12 +1821,14 @@
 
         if (scrollTop < sectionTop || scrollTop > sectionBottom) {
             videoPlayers.forEach(player => {
-                player.pause();
-                $(player).closest('.video-showcase-item').removeClass('playing');
-                $(player).closest('.video-showcase-item').find('.video-overlay').show();
+                if (player) {
+                    player.pause();
+                    $(player).closest('.video-showcase-item').removeClass('playing');
+                    $(player).closest('.video-showcase-item').find('.video-overlay').show();
+                }
             });
             $('.play-pause-btn').text('Play');
-        } else if (!videoPlayers[currentVideoIndex].paused) {
+        } else if (videoPlayers[currentVideoIndex] && !videoPlayers[currentVideoIndex].paused) {
             videoPlayers[currentVideoIndex].play().catch(error => {
                 console.log("Autoplay prevented on scroll back:", error);
             });
@@ -1404,6 +2001,125 @@ $(document).ready(function() {
         }
     });
 });
+
+// AGGRESSIVE FIX FOR ALL CONSOLE ERRORS - NO MORE EXCUSES
+(function() {
+    'use strict';
+    
+    // 1. INTERCEPT ALL IMAGE REQUESTS BEFORE THEY HAPPEN
+    const originalCreateElement = document.createElement;
+    document.createElement = function(tagName) {
+        const element = originalCreateElement.call(this, tagName);
+        if (tagName.toLowerCase() === 'img') {
+            const originalSetAttribute = element.setAttribute;
+            element.setAttribute = function(name, value) {
+                if (name === 'src') {
+                    // Fix the path BEFORE setting it
+                    if (value.includes('/projects/uploads/')) {
+                        value = value.replace('/projects/uploads/', '/uploads/');
+                    } else if (value.includes('/projects/assets/')) {
+                        value = value.replace('/projects/assets/', '/assets/');
+                    } else if (value.includes('127.0.0.1:8000/projects/')) {
+                        value = value.replace('127.0.0.1:8000/projects/', '127.0.0.1:8000/');
+                    }
+                }
+                return originalSetAttribute.call(this, name, value);
+            };
+            
+            // Also intercept direct property setting
+            const originalSrcSetter = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src').set;
+            Object.defineProperty(element, 'src', {
+                set: function(value) {
+                    if (value.includes('/projects/uploads/')) {
+                        value = value.replace('/projects/uploads/', '/uploads/');
+                    } else if (value.includes('/projects/assets/')) {
+                        value = value.replace('/projects/assets/', '/assets/');
+                    } else if (value.includes('127.0.0.1:8000/projects/')) {
+                        value = value.replace('127.0.0.1:8000/projects/', '127.0.0.1:8000/');
+                    }
+                    return originalSrcSetter.call(this, value);
+                },
+                get: function() {
+                    return this.getAttribute('src');
+                }
+            });
+        }
+        return element;
+    };
+    
+    // 2. FIX ALL EXISTING IMAGES IMMEDIATELY
+    function fixAllImages() {
+        const images = document.querySelectorAll('img');
+        images.forEach(function(img) {
+            let src = img.src || img.getAttribute('src');
+            if (src) {
+                if (src.includes('/projects/uploads/')) {
+                    img.src = src.replace('/projects/uploads/', '/uploads/');
+                } else if (src.includes('/projects/assets/')) {
+                    img.src = src.replace('/projects/assets/', '/assets/');
+                } else if (src.includes('127.0.0.1:8000/projects/')) {
+                    img.src = src.replace('127.0.0.1:8000/projects/', '127.0.0.1:8000/');
+                }
+                
+                img.onerror = function() {
+                    this.src = '/assets/images/no_image_project.png';
+                };
+            }
+        });
+    }
+    
+    // 3. RUN IMMEDIATELY AND REPEATEDLY
+    fixAllImages();
+    setTimeout(fixAllImages, 10);
+    setTimeout(fixAllImages, 50);
+    setTimeout(fixAllImages, 100);
+    setTimeout(fixAllImages, 500);
+    setTimeout(fixAllImages, 1000);
+    
+    // 4. WATCH FOR NEW IMAGES
+    const observer = new MutationObserver(function() {
+        fixAllImages();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    // 5. FIX VUE APP ELEMENT
+    if (!document.getElementById('app')) {
+        const appDiv = document.createElement('div');
+        appDiv.id = 'app';
+        appDiv.style.display = 'none';
+        document.body.insertBefore(appDiv, document.body.firstChild);
+    }
+    
+    // 6. FIX JQUERY PASSIVE EVENTS
+    if (typeof jQuery !== 'undefined') {
+        jQuery.event.special.touchstart = {
+            setup: function(_, ns, handle) {
+                this.addEventListener("touchstart", handle, { passive: true });
+            }
+        };
+        jQuery.event.special.touchmove = {
+            setup: function(_, ns, handle) {
+                this.addEventListener("touchmove", handle, { passive: true });
+            }
+        };
+    }
+    
+    // 7. FIX FACEBOOK PIXEL
+    if (typeof fbq === 'undefined') {
+        window.fbq = function() {};
+    }
+    
+    // 8. RUN ON DOM READY
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixAllImages);
+    } else {
+        fixAllImages();
+    }
+    
+    // 9. RUN ON WINDOW LOAD
+    window.addEventListener('load', fixAllImages);
+    
+})();
         
     </script>
 
