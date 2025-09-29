@@ -28,9 +28,11 @@
             <div class="tab-content desktop_tab_housing_content" id="myTabContent">
                 <div class="tab-pane fade show active" id="tab-flat" role="tabpanel" aria-labelledby="flat-tab">
                     <br>
-                    <form id="searchPropertiesWithFlat">
+                    <form id="searchPropertiesWithFlat" action="/projects/listings" method="post">
 
                         <input type="hidden" name="maxBudget" id="maxBudgetFlat" value="0">
+                        <input type="hidden" name="calculatorResult" value="true">
+                        <input type="hidden" name="calcSearch" value="true">
 
                         {!! csrf_field() !!}
 
@@ -153,9 +155,11 @@
                 </div>
                 <div class="tab-pane fade" id="tab-construction" role="tabpanel" aria-labelledby="construction-tab">
                     <br>
-                    <form id="searchPropertiesWithConstruction">
+                    <form id="searchPropertiesWithConstruction" action="/projects/listings" method="post">
 
                         <input type="hidden" name="maxBudget" id="maxBudgetConstruction" value="0">
+                        <input type="hidden" name="calculatorResult" value="true">
+                        <input type="hidden" name="calcSearch" value="true">
 
                         {!! csrf_field() !!}
 
@@ -534,6 +538,39 @@ document.addEventListener('DOMContentLoaded', function () {
 	attachListeners(flatForm);
 	attachListeners(constructionForm);
 
+	function submitCalculator(form) {
+		if (!form) return;
+		try {
+			var total = calculateMyBudget(form);
+			var hidden = form.querySelector('#maxBudgetFlat') || form.querySelector('#maxBudgetConstruction');
+			if (hidden) hidden.value = Math.round(total || 0);
+
+			var formData = new FormData(form);
+			formData.set('calculatorResult', 'true');
+			formData.set('calcSearch', 'true');
+
+			var resultsContainer = document.querySelector('#search-results');
+			// Fallback to full submit if container missing
+			if (!resultsContainer) {
+				form.submit();
+				return;
+			}
+
+			fetch('/projects/listings', {
+				method: 'POST',
+				headers: { 'X-Requested-With': 'XMLHttpRequest' },
+				body: formData
+			}).then(function(res){ return res.text(); })
+			.then(function(html){
+				resultsContainer.innerHTML = html;
+				try { document.getElementById('searchCount').scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(e) {}
+			}).catch(function(err){ console.error('Calculator submit failed', err); });
+		} catch(e) {
+			console.error(e);
+			form.submit();
+		}
+	}
+
 	// Handle tab switching to recalc based on active tab
 	var flatTab = document.getElementById('flat-tab');
 	var constructionTab = document.getElementById('construction-tab');
@@ -545,6 +582,18 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 	if (flatTab) flatTab.addEventListener('shown.bs.tab', recalcActive);
 	if (constructionTab) constructionTab.addEventListener('shown.bs.tab', recalcActive);
+
+	// Intercept submits for AJAX update on same page
+	if (flatForm) {
+		flatForm.addEventListener('submit', function(ev){ ev.preventDefault(); submitCalculator(flatForm); });
+		var flatBtn = flatForm.querySelector('button[name="isCalculator"]');
+		if (flatBtn) flatBtn.addEventListener('click', function(ev){ ev.preventDefault(); submitCalculator(flatForm); });
+	}
+	if (constructionForm) {
+		constructionForm.addEventListener('submit', function(ev){ ev.preventDefault(); submitCalculator(constructionForm); });
+		var consBtn = constructionForm.querySelector('button[name="isCalculator"]');
+		if (consBtn) consBtn.addEventListener('click', function(ev){ ev.preventDefault(); submitCalculator(constructionForm); });
+	}
 
 	// Initial calculation on load
 	recalcActive();

@@ -541,20 +541,32 @@ class ProjectController extends BaseController
                     ])
                 ]);
             } else {
+                // Sanitize numeric fields (remove commas and non-digits)
+                $dpSan = self::sanitizeNumber($request->downPayment);
+                $mbSan = self::sanitizeNumber($request->maxBudget);
+                $slabSan = self::sanitizeNumber($request->slabCasting);
+                $plinthSan = self::sanitizeNumber($request->plinth);
+                $colourSan = self::sanitizeNumber($request->colour);
+                $miSan = self::sanitizeNumber($request->monthInstall);
+                $yiSan = self::sanitizeNumber($request->yearlyInstall);
+                $hyiSan = self::sanitizeNumber($request->halfYearlyInstall);
+                $qiSan = self::sanitizeNumber($request->quarterlyInstall);
+                $posSan = self::sanitizeNumber($request->possession);
+
                 UserSearchHistory::create([
                     'user_id' => $user_id,
                     'hash' => 'HDfv6',
                     'search_type' => 'calculator',
-                    'downPayment' => $request->downPayment,
-                    'maxBudget' => $request->maxBudget,
-                    'slabCasting' => $request->slabCasting,
-                    'plinth' => $request->plinth,
-                    'colour' => $request->colour,
-                    'monthInstall' => $request->monthInstall,
-                    'yearlyInstall' => $request->yearlyInstall,
-                    'halfYearlyInstall' => $request->halfYearlyInstall,
-                    'quarterlyInstall' => $request->quarterlyInstall,
-                    'possession' => $request->possession,
+                    'downPayment' => $dpSan,
+                    'maxBudget' => $mbSan,
+                    'slabCasting' => $slabSan,
+                    'plinth' => $plinthSan,
+                    'colour' => $colourSan,
+                    'monthInstall' => $miSan,
+                    'yearlyInstall' => $yiSan,
+                    'halfYearlyInstall' => $hyiSan,
+                    'quarterlyInstall' => $qiSan,
+                    'possession' => $posSan,
                     "cookie" => $request->cookie("XSRF-TOKEN"),
                     'json' => json_encode([
                         'area' => $request->area,
@@ -587,6 +599,8 @@ class ProjectController extends BaseController
         $searchData['maxMI'] = $maxMI;
         $searchData['minPrice'] = $minPrice;
         $searchData['maxPrice'] = $maxPrice;
+        // Ensure maxBudget is numeric for filtering
+        $maxBudget = preg_match("/^[0-9,]+$/", $maxBudget) ? str_replace(",", "", $maxBudget) : $maxBudget;
         $searchData['maxBudget'] = $maxBudget;
         $searchData['tag_id'] = $tag_id;
         $searchData['page'] = $page;
@@ -626,7 +640,8 @@ class ProjectController extends BaseController
         }
     
         // Filter By Areas
-        if ($area) {
+        // For calculator: don't restrict by area here; we need other-area projects for the "Other" section
+        if ($area && !$request->calculatorResult) {
             $projects = $projects->whereHas('areas', function ($query) use ($area) {
                 $query->whereIn('area_id', $area);
             });
@@ -706,7 +721,188 @@ class ProjectController extends BaseController
             $projects = $this->ProjectModel->orderBy('area', 'asc')->where("status", 1);
         }
     
-        $projects = $projects->paginate($perPageRecord);
+        // For calculator requests we need the full, unpaginated set for ranking and grouping
+        $projects = $request->calculatorResult
+            ? $projects->get()
+            : $projects->paginate($perPageRecord);
+
+        // If coming from Housing Calculator, build grouped, ranked results
+        $groupedProjects = null;
+        if ($request->calculatorResult) {
+            $userBudget = (int)($searchData['maxBudget'] ?? 0);
+            $userDuration = (int)($request->duration ?? 0);
+            $userMonthly = (int)($request->monthInstall ?? 0);
+            $userQuarterly = (int)($request->quarterlyInstall ?? 0);
+            $userHalfYearly = (int)($request->halfYearlyInstall ?? 0);
+            $userYearly = (int)($request->yearlyInstall ?? 0);
+            $userPossession = (int)($request->possession ?? 0);
+            $selectedAreas = is_array($area) ? array_map('intval', $area) : [];
+
+            // Get the items collection regardless of pagination
+            $items = $projects instanceof \Illuminate\Pagination\LengthAwarePaginator ?
+                collect($projects->items()) : collect($projects);
+            // expose budget for sorter closures
+            $GLOBALS['userBudgetTemp'] = $userBudget;
+
+            // Helper closures for attribute closeness
+            $isWithinPct = function (int $projectValue, int $userValue, float $pct) {
+                if ($userValue <= 0 || $projectValue <= 0) return true; // skip constraint if user didn't supply
+                $limit = (int)round($userValue * (1 + $pct));
+                return $projectValue <= $limit;
+            };
+            $isDurationClose = function (int $projMonths, int $userMonths, int $window) {
+                if ($userMonths <= 0 || $projMonths <= 0) return true;
+                return abs($projMonths - $userMonths) <= $window;
+            };
+
+            $scored = $items->map(function ($project) use (
+                $userBudget, $userDuration, $userMonthly, $userQuarterly, $userHalfYearly, $userYearly, $userPossession, $selectedAreas, $isWithinPct, $isDurationClose
+            ) {
+                $unit = $project->units->first();
+                $score = 0;
+                $criteriaCount = 0;
+                // Determine if project is in any of the selected areas (if any selected)
+                $projectAreaIds = collect($project->areas ?? [])->map(function($a){
+                    // support relation (area_id) and plain Area model (id)
+                    return isset($a->area_id) ? (int)$a->area_id : (isset($a->id) ? (int)$a->id : null);
+                })->filter()->values()->all();
+                $viaRelation = (count(array_intersect($projectAreaIds, $selectedAreas)) > 0);
+                $viaLegacy = in_array((int)($project->area ?? 0), $selectedAreas, true);
+                $inArea = empty($selectedAreas) ? true : ($viaRelation || $viaLegacy);
+
+                if ($unit) {
+                    // Use MIN values across units for fair comparison ("Starting from")
+                    $unitCollection = $project->units ?? collect();
+                    $price = (int) max(0, (int)($unitCollection->min('total_unit_amount') ?? $unitCollection->min('price') ?? 0));
+                    $maxPrice = (int) max(0, (int)($unitCollection->max('total_unit_amount') ?? $unitCollection->max('price') ?? 0));
+                    // Find the closest unit price above budget (for Related logic)
+                    $closestAbove = null;
+                    if ($userBudget > 0) {
+                        $above = $unitCollection->map(function($u){
+                            return (int)($u->total_unit_amount ?? $u->price ?? 0);
+                        })->filter(function($p) use ($userBudget){ return $p > $userBudget; })->sort()->values();
+                        if ($above->count() > 0) { $closestAbove = (int)$above->first(); }
+                    }
+                    $uMonthly = (int) max(0, (int)($unitCollection->min('monthly_installment') ?? 0));
+                    $uQuarterly = (int) max(0, (int)($unitCollection->min('quarterly_installment') ?? 0));
+                    $uHalfYearly = (int) max(0, (int)($unitCollection->min('half_yearly_installment') ?? 0));
+                    $uYearly = (int) max(0, (int)($unitCollection->min('yearly_installment') ?? 0));
+                    $uPossession = (int) max(0, (int)($unitCollection->min('possession') ?? 0));
+                    if ($userBudget > 0) {
+                        $criteriaCount++;
+                        if ($price <= $userBudget) {
+                            $score += 40; // within budget is strongest
+                        } elseif ($price <= (int)round($userBudget * 1.25)) {
+                            $score += 20; // related range
+                        }
+                    }
+
+                    if ($userDuration > 0 && isset($project->installment_length)) {
+                        $criteriaCount++;
+                        $projDuration = (int)$project->installment_length; // in months
+                        $diff = abs($projDuration - $userDuration);
+                        if ($diff === 0) { $score += 20; }
+                        elseif ($diff <= 12) { $score += 12; }
+                        elseif ($diff <= 24) { $score += 6; }
+                    }
+
+                    // Installments
+                    $monthly = $uMonthly;
+                    if ($userMonthly > 0) { $criteriaCount++; $score += self::partialScore($monthly, $userMonthly, 10); }
+                    $quarterly = $uQuarterly;
+                    if ($userQuarterly > 0) { $criteriaCount++; $score += self::partialScore($quarterly, $userQuarterly, 6); }
+                    $halfYearly = $uHalfYearly;
+                    if ($userHalfYearly > 0) { $criteriaCount++; $score += self::partialScore($halfYearly, $userHalfYearly, 6); }
+                    $yearly = $uYearly;
+                    if ($userYearly > 0) { $criteriaCount++; $score += self::partialScore($yearly, $userYearly, 6); }
+                    $possession = $uPossession;
+                    if ($userPossession > 0) { $criteriaCount++; $score += self::partialScore($possession, $userPossession, 4); }
+                }
+
+                $project->match_score = $score;
+                $project->criteria_count = $criteriaCount;
+                $project->in_area = $inArea;
+                $project->unit_price = isset($price) ? (int)$price : (isset($unit) ? (int)($unit->total_unit_amount ?? $unit->price ?? 0) : 0);
+                $project->max_unit_price = isset($maxPrice) ? (int)$maxPrice : (isset($unit) ? (int)($unit->total_unit_amount ?? $unit->price ?? 0) : 0);
+                $project->price_above_budget = $closestAbove ?? null;
+                $project->price_diff = $userBudget > 0 ? abs(((int)$project->unit_price) - $userBudget) : PHP_INT_MAX;
+                $project->attr_close_perfect = (
+                    $isDurationClose((int)($project->installment_length ?? 0), $userDuration, 12)
+                    && $isWithinPct((int)($monthly ?? 0), $userMonthly, 0.10)
+                    && $isWithinPct((int)($quarterly ?? 0), $userQuarterly, 0.10)
+                    && $isWithinPct((int)($halfYearly ?? 0), $userHalfYearly, 0.10)
+                    && $isWithinPct((int)($yearly ?? 0), $userYearly, 0.10)
+                    && $isWithinPct((int)($possession ?? 0), $userPossession, 0.10)
+                );
+                $project->attr_close_related = (
+                    $isDurationClose((int)($project->installment_length ?? 0), $userDuration, 12)
+                    && $isWithinPct((int)($monthly ?? 0), $userMonthly, 0.25)
+                    && $isWithinPct((int)($quarterly ?? 0), $userQuarterly, 0.25)
+                    && $isWithinPct((int)($halfYearly ?? 0), $userHalfYearly, 0.25)
+                    && $isWithinPct((int)($yearly ?? 0), $userYearly, 0.25)
+                    && $isWithinPct((int)($possession ?? 0), $userPossession, 0.25)
+                );
+                return $project;
+            });
+
+            // Categorize with AREA priority; attributes influence score, not hard filter
+            $perfect = $scored->filter(function ($p) use ($userBudget) {
+                $price = (int)($p->unit_price ?: 0);
+                $withinBudget = $userBudget > 0 ? ($price <= $userBudget) : true;
+                // Area required, at/below budget
+                return ($p->in_area === true) && $withinBudget;
+            })->sortByDesc('match_score')->values();
+
+            $related = $scored->filter(function ($p) use ($userBudget, $perfect) {
+                // Use the closest unit price above budget if available; fallback to min price
+                $price = (int)($p->price_above_budget ?: ($p->unit_price ?: 0));
+                if ($userBudget <= 0) return false;
+                $upper = (int)round($userBudget * 1.5);
+                $lower = (int)round($userBudget * 1.00); // strictly above budget
+                $inBand = ($price > $lower && $price <= $upper);
+                $isPerfect = $perfect->contains('id', $p->id);
+                // Same area, slightly to moderately above budget
+                return ($p->in_area === true) && !$isPerfect && $inBand;
+            })->sortBy(function($p){
+                // Prefer smallest over-budget amount, then score
+                $price = (int)($p->price_above_budget ?: ($p->unit_price ?: 0));
+                $over = max(0, $price - (int)($GLOBALS['userBudgetTemp'] ?? 0));
+                return $over - (($p->match_score ?? 0) * 10);
+            })->values();
+
+            // Fallback: if nothing in the (budget, 1.5x] band, show closest same-area options not already perfect
+            if ($related->count() === 0) {
+                $related = $scored->filter(function($p) use ($perfect){
+                    return ($p->in_area === true) && !$perfect->contains('id', $p->id);
+                })->sortBy(function($p){
+                    return ($p->price_diff ?? PHP_INT_MAX) - (($p->match_score ?? 0) * 10);
+                })->take(5)->values();
+            }
+
+            $other = $scored->filter(function($p) use ($perfect, $related, $userBudget){
+                $price = (int)($p->unit_price ?: 0);
+                $closeEnough = true;
+                if ($userBudget > 0) {
+                    $min = 0; // allow under budget
+                    $max = (int)round($userBudget * 1.5);
+                    $closeEnough = ($price >= $min && $price <= $max);
+                }
+                // OTHER: different areas only, price band respected
+                return ($p->in_area === false)
+                    && !$perfect->contains('id', $p->id)
+                    && !$related->contains('id', $p->id)
+                    && $closeEnough;
+            })->sortBy(function($p){
+                // Smaller rank is better: prefer closer price, then higher score
+                return ($p->price_diff ?? PHP_INT_MAX) - (($p->match_score ?? 0) * 10);
+            })->values();
+
+            $groupedProjects = [
+                'perfect' => $perfect,
+                'related' => $related,
+                'other' => $other,
+            ];
+        }
         $active_project = $this->ProjectModel->where('status', '=', 1)->count();
     
         $areas = Area::all();
@@ -756,7 +952,8 @@ class ProjectController extends BaseController
                 $projectDetails = [];
             }
     
-            return view('project.searchprojects', compact('active_project', 'builders', 'page', 'blderIDs', 'minDP', 'downPayment', 'projects', 'progress', 'searchData', 'areas', 'projectTypes', 'recent_view_data', 'tags', 'projectDetails', 'allProjects'));
+            // Return the listings partial so it renders inside the same page (#results-data)
+            return view('projects.search', compact('active_project', 'builders', 'page', 'blderIDs', 'minDP', 'downPayment', 'projects', 'progress', 'searchData', 'areas', 'projectTypes', 'recent_view_data', 'tags', 'projectDetails', 'allProjects', 'groupedProjects'));
         }
     }
 
@@ -942,6 +1139,31 @@ class ProjectController extends BaseController
 
         return $data;
 
+    }
+
+    private static function partialScore($projectValue, $userValue, $maxPoints)
+    {
+        $projectValue = (int)$projectValue;
+        $userValue = (int)$userValue;
+        if ($userValue <= 0) return 0;
+        if ($projectValue <= 0) return 0;
+        if ($projectValue <= $userValue) return $maxPoints;
+        // degrade points as it exceeds by percentage
+        $over = $projectValue - $userValue;
+        $pct = $over / max(1, $userValue);
+        if ($pct <= 0.1) return (int)round($maxPoints * 0.7);
+        if ($pct <= 0.25) return (int)round($maxPoints * 0.4);
+        if ($pct <= 0.5) return (int)round($maxPoints * 0.2);
+        return 0;
+    }
+
+    private static function sanitizeNumber($value)
+    {
+        if ($value === null) return null;
+        if (is_numeric($value)) return (int)$value;
+        $clean = preg_replace('/[^0-9]/', '', (string)$value);
+        if ($clean === '' || $clean === null) return 0;
+        return (int)$clean;
     }
 
 

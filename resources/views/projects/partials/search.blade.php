@@ -186,6 +186,35 @@
                 $('#more-less-txt').text(text === 'More' ? 'Less' : 'More');
             });
 
+            // Redirect search to Off-Plan page with existing params and a combined text query
+            $('#searchProperties').off('submit.redirectOffPlan').on('submit.redirectOffPlan', function(e) {
+                e.preventDefault();
+
+                var params = [];
+                $(this).serializeArray().forEach(function(i) {
+                    if (i.value !== '' && i.value !== null) {
+                        params.push(i);
+                    }
+                });
+
+                // Build a human-friendly query from selected option labels
+                var texts = [];
+                $('.selectpicker').each(function() {
+                    $(this).find('option:selected').each(function() {
+                        var t = $(this).text();
+                        if (t) { texts.push(t); }
+                    });
+                });
+                var q = texts.join(' ');
+
+                var query = $.param(params);
+                if (q) {
+                    query = query ? (query + '&q=' + encodeURIComponent(q)) : ('q=' + encodeURIComponent(q));
+                }
+
+                window.location.href = '/off-plan' + (query ? ('?' + query) : '');
+            });
+
             // Reset form fields for first-time users
             if (!window.location.search) {
                 $('#searchProperties')[0].reset();

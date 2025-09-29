@@ -1259,29 +1259,75 @@
 
 @section('additional_js')
 <!-- Mapbox CSS and JS -->
+<script>
+// Temporary compatibility shim: prevent third-party overrides from breaking Mapbox
+// If redefining img.src throws, swallow it for HTMLImageElement so Mapbox webp check won't crash
+(function(){
+    try {
+        var __origDefine = Object.defineProperty;
+        Object.defineProperty = function(target, prop, descriptor){
+            try {
+                return __origDefine.call(Object, target, prop, descriptor);
+            } catch (err) {
+                if (prop === 'src' && typeof HTMLImageElement !== 'undefined' && target instanceof HTMLImageElement) {
+                    return target; // ignore redefinition errors on img.src
+                }
+                throw err;
+            }
+        };
+    } catch(e) { /* noop */ }
+})();
+</script>
 <link href='https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css' rel='stylesheet' />
 <script src='https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js'></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Mapbox
-    mapboxgl.accessToken = '{{ env('MAPBOX_ACCESS_TOKEN') }}';
+    // Restore native createElement to avoid global overrides that redefine img.src
+    try {
+        if (Document && Document.prototype && Document.prototype.createElement) {
+            document.createElement = Document.prototype.createElement;
+        }
+    } catch (e) { /* noop */ }
+
+    // Initialize Mapbox (defensive: don't break page if script or token missing)
+    let map = null;
+    try {
+        if (window.mapboxgl && typeof mapboxgl.Map === 'function') {
+            const token = '{{ config('services.mapbox.token') }}' || '';
+            if (!token || token === 'null' || token === 'undefined') {
+                console.warn('Mapbox token is empty. Set MAPBOX_ACCESS_TOKEN in .env and clear config cache.');
+            }
+            mapboxgl.accessToken = token;
+            map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v12',
+                center: [67.0011, 24.8607], // Karachi coordinates
+                zoom: 11,
+                pitch: 0,
+                bearing: 0
+            });
+            // Log map errors to help diagnose token/style issues
+            map.on('error', function(e){
+                console.error('Mapbox error:', e && e.error ? e.error : e);
+            });
+        } else {
+            // Mapbox not loaded; keep map null so rest of page works
+            console.warn('Mapbox GL JS not available. Map features disabled.');
+        }
+    } catch (err) {
+        console.warn('Failed to initialize Mapbox. Continuing without map.', err);
+        map = null;
+    }
     
-    const map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v12',
-        center: [67.0011, 24.8607], // Karachi coordinates
-        zoom: 11,
-        pitch: 0,
-        bearing: 0
-    });
-    
-    // Add navigation controls
-    map.addControl(new mapboxgl.NavigationControl());
-    map.addControl(new mapboxgl.GeolocateControl({
-        positionOptions: { enableHighAccuracy: true },
-        trackUserLocation: true
-    }));
+    // Add navigation controls (only if map exists)
+    if (map && window.mapboxgl) {
+        map.addControl(new mapboxgl.NavigationControl());
+        map.addControl(new mapboxgl.GeolocateControl({
+            positionOptions: { enableHighAccuracy: true },
+            trackUserLocation: true
+        }));
+    }
     
     // Store projects data
     const projectsData = @json($projectsForMap);
@@ -1316,13 +1362,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 try {
                     map.resize();
                     // Ensure map maintains its current view and canvas size
-                    const canvas = map.getCanvas();
+                    const canvas = map && typeof map.getCanvas === 'function' ? map.getCanvas() : null;
                     if (canvas) {
                         canvas.style.width = '100%';
                         canvas.style.height = '100%';
                     }
                     // Force a repaint to ensure proper rendering
-                    map.triggerRepaint();
+                    if (map && typeof map.triggerRepaint === 'function') {
+                        map.triggerRepaint();
+                    }
                 } catch (error) {
                     console.log('Map resize handled gracefully');
                 }
@@ -1344,7 +1392,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
                 // Optimize map for mobile
-                if (map) {
+                if (map && typeof map.getCanvas === 'function' && map.getCanvas()) {
                     map.getCanvas().style.touchAction = 'manipulation';
                     map.getCanvas().style.cursor = 'grab';
                 }
@@ -1395,6 +1443,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Create professional markers for each project
     function createMarkers() {
+        if (!map) { return; }
         // Clear existing markers
         markers.forEach(marker => marker.remove());
         markers.length = 0;
@@ -1477,7 +1526,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 
                 markerElement.addEventListener('mouseleave', function() {
-                    if (this !== highlightedMarker?.getElement()) {
+                    var highlightedEl = (highlightedMarker && typeof highlightedMarker.getElement === 'function') ? highlightedMarker.getElement() : null;
+                    if (this !== highlightedEl) {
                         this.style.boxShadow = '0 4px 15px rgba(236, 28, 36, 0.4), 0 0 0 2px rgba(236, 28, 36, 0.2)';
                         this.style.borderWidth = '3px';
                         this.style.zIndex = '1';
@@ -1729,13 +1779,21 @@ document.addEventListener('DOMContentLoaded', function() {
         // console.log(`Successfully created ${markersCreated} markers out of ${projectsData.length} projects`);
     }
     
-    // Initialize markers
-    createMarkers();
+    // Initialize markers only after map is ready
+    if (map) {
+        if (map.loaded && map.loaded()) {
+            createMarkers();
+        } else {
+            map.once('load', createMarkers);
+        }
+    }
     
     // Close popup when clicking on map
-    map.on('click', function(e) {
-        closeCurrentPopup();
-    });
+    if (map) {
+        map.on('click', function(e) {
+            closeCurrentPopup();
+        });
+    }
     
     // Professional project card hover effects
     document.querySelectorAll('.project-card').forEach(card => {
@@ -1757,7 +1815,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 markerEl.style.transition = 'box-shadow 0.3s ease, border 0.3s ease, filter 0.3s ease';
                 
                 // Open popup with smooth animation
-                marker.getPopup().addTo(map);
+                if (marker.getPopup()) {
+                    marker.getPopup().addTo(map);
+                }
                 
                 // Store highlighted marker
                 highlightedMarker = marker;
@@ -1791,20 +1851,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 closeCurrentPopup();
                 
                 // Smooth fly to project location
-                map.flyTo({
-                    center: [lng, lat],
-                    zoom: 15,
-                    pitch: 0,
-                    bearing: 0,
-                    speed: 1.2
-                });
+                if (map && typeof map.flyTo === 'function') {
+                    map.flyTo({
+                        center: [lng, lat],
+                        zoom: 15,
+                        pitch: 0,
+                        bearing: 0,
+                        speed: 1.2
+                    });
+                }
                 
                 // Highlight the marker and open popup
                 const projectId = this.dataset.projectId;
                 const marker = markers.find(m => m.projectData && m.projectData.id == projectId);
                 if (marker) {
                     currentPopup = marker.getPopup();
-                    marker.togglePopup();
+                    if (marker.togglePopup) { marker.togglePopup(); }
                 }
             }
         });
@@ -1812,26 +1874,31 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Map controls with professional styling
     document.getElementById('reset-view').addEventListener('click', function() {
-        map.flyTo({
-            center: [67.0011, 24.8607],
-            zoom: 11,
-            pitch: 0,
-            bearing: 0,
-            speed: 1.2
-        });
+        if (map && typeof map.flyTo === 'function') {
+            map.flyTo({
+                center: [67.0011, 24.8607],
+                zoom: 11,
+                pitch: 0,
+                bearing: 0,
+                speed: 1.2
+            });
+        }
     });
     
     let isSatellite = false;
     document.getElementById('toggle-satellite').addEventListener('click', function() {
         isSatellite = !isSatellite;
-        map.setStyle(isSatellite ? 'mapbox://styles/mapbox/satellite-v9' : 'mapbox://styles/mapbox/streets-v12');
+        if (map && typeof map.setStyle === 'function') {
+            map.setStyle(isSatellite ? 'mapbox://styles/mapbox/satellite-v9' : 'mapbox://styles/mapbox/streets-v12');
+        }
         this.innerHTML = isSatellite ? '<i class="fa fa-map"></i> Street' : '<i class="fa fa-satellite"></i> Satellite';
         this.classList.toggle('active');
     });
     
     // Professional search functionality
-    document.getElementById('project-search').addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
+    const projectSearchInput = document.getElementById('project-search');
+    projectSearchInput.addEventListener('input', function() {
+        const searchTerm = (this.value || '').toLowerCase().trim();
         const projectCards = document.querySelectorAll('.project-card');
         
         projectCards.forEach(card => {
@@ -1847,6 +1914,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    // Prefill from q in URL and trigger once now that listener exists
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialQuery = urlParams.get('q');
+        if (initialQuery) {
+            projectSearchInput.value = initialQuery;
+            projectSearchInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    } catch (e) {}
     
     
     // Support button interaction

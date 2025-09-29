@@ -1763,6 +1763,18 @@
                 });
             });
 
+            // Intercept ANY calculator/search form submits to avoid full page reloads
+            $(document).on('submit', '#searchFilterForm, #searchPropertiesWithFlat, #searchPropertiesWithConstruction', function (e) {
+                e.preventDefault();
+                // Prefer desktop calculator if present, otherwise mobile handler
+                if ($('#cal-result').length) {
+                    searchProperties();
+                } else if (typeof budget !== 'undefined') {
+                    // Fallback to mobile button logic
+                    $("#calculate1").trigger('click');
+                }
+            });
+
             function sortBy(stack, sortByVal) {
                 let domain = window.location.origin;
                 let exits = `${domain}/projects/listings${stack}&reseller_id=${sortByVal}`;
