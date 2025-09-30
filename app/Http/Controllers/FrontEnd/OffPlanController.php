@@ -128,11 +128,29 @@ class OffPlanController extends Controller
             $filters['type_id'] = $typeIds;
         }
 
+        // Alternative: filter by project type title(s)
+        if ($request->filled('type_title')) {
+            $typeTitles = is_array($request->type_title) ? $request->type_title : [$request->type_title];
+            $projects->whereHas('type', function ($q) use ($typeTitles) {
+                $q->whereIn('title', $typeTitles);
+            });
+            $filters['type_title'] = $typeTitles;
+        }
+
         // Filter by progress status
         if ($request->filled('progress')) {
             $progressIds = is_array($request->progress) ? $request->progress : [$request->progress];
             $projects->whereIn('progress_status_id', $progressIds);
             $filters['progress'] = $progressIds;
+        }
+
+        // Alternative: filter by progress title(s) (e.g., Presale, Under construction, Completed)
+        if ($request->filled('progress_title')) {
+            $progressTitles = is_array($request->progress_title) ? $request->progress_title : [$request->progress_title];
+            $projects->whereHas('progress', function ($q) use ($progressTitles) {
+                $q->whereIn('title', $progressTitles);
+            });
+            $filters['progress_title'] = $progressTitles;
         }
 
         // Filter by builder
@@ -155,13 +173,33 @@ class OffPlanController extends Controller
             $filters['max_price'] = $maxPrice;
         }
 
+        // Filter by unit covered area
+        if ($request->filled('min_area') || $request->filled('max_area')) {
+            $minArea = $request->min_area ?: 0;
+            $maxArea = $request->max_area ?: 999999999;
+            $projects->whereHas('units', function ($query) use ($minArea, $maxArea) {
+                $query->whereBetween('covered_area', [$minArea, $maxArea]);
+            });
+            $filters['min_area'] = $minArea;
+            $filters['max_area'] = $maxArea;
+        }
+
         // Filter by bedrooms
         if ($request->filled('bedrooms')) {
-            $bedrooms = is_array($request->bedrooms) ? $request->bedrooms : [$request->bedrooms];
-            $projects->whereHas('units', function ($query) use ($bedrooms) {
-                $query->whereIn('bedrooms', $bedrooms);
+            $incoming = is_array($request->bedrooms) ? $request->bedrooms : [$request->bedrooms];
+            $hasFivePlus = in_array('5_plus', $incoming, true);
+            $bedrooms = array_values(array_filter($incoming, function ($v) {
+                return $v !== '5_plus';
+            }));
+            $projects->whereHas('units', function ($query) use ($bedrooms, $hasFivePlus) {
+                if (!empty($bedrooms)) {
+                    $query->whereIn('bedrooms', $bedrooms);
+                }
+                if ($hasFivePlus) {
+                    $query->orWhere('bedrooms', '>=', 5);
+                }
             });
-            $filters['bedrooms'] = $bedrooms;
+            $filters['bedrooms'] = $incoming;
         }
 
         // Filter by tags
@@ -186,6 +224,46 @@ class OffPlanController extends Controller
                 $query->where('is_active', 1);
             });
             $filters['with_bonus'] = true;
+        }
+
+        // Filter by project name
+        if ($request->filled('project_name')) {
+            $projectNames = is_array($request->project_name) ? $request->project_name : [$request->project_name];
+            $projects->whereIn('name', $projectNames);
+            $filters['project_name'] = $projectNames;
+        }
+
+        // Filter by down payment range
+        if ($request->filled('min_down_payment') || $request->filled('max_down_payment')) {
+            $minDownPayment = $request->min_down_payment ?: 0;
+            $maxDownPayment = $request->max_down_payment ?: 999999999;
+            $projects->whereHas('units', function ($query) use ($minDownPayment, $maxDownPayment) {
+                $query->whereBetween('down_payment', [$minDownPayment, $maxDownPayment]);
+            });
+            $filters['min_down_payment'] = $minDownPayment;
+            $filters['max_down_payment'] = $maxDownPayment;
+        }
+
+        // Filter by monthly installment range
+        if ($request->filled('min_monthly_installment') || $request->filled('max_monthly_installment')) {
+            $minMonthlyInstallment = $request->min_monthly_installment ?: 0;
+            $maxMonthlyInstallment = $request->max_monthly_installment ?: 999999999;
+            $projects->whereHas('units', function ($query) use ($minMonthlyInstallment, $maxMonthlyInstallment) {
+                $query->whereBetween('monthly_installment', [$minMonthlyInstallment, $maxMonthlyInstallment]);
+            });
+            $filters['min_monthly_installment'] = $minMonthlyInstallment;
+            $filters['max_monthly_installment'] = $maxMonthlyInstallment;
+        }
+
+        // Filter by alternative price range (to avoid conflict with existing min_price/max_price)
+        if ($request->filled('min_price_range') || $request->filled('max_price_range')) {
+            $minPriceRange = $request->min_price_range ?: 0;
+            $maxPriceRange = $request->max_price_range ?: 999999999;
+            $projects->whereHas('units', function ($query) use ($minPriceRange, $maxPriceRange) {
+                $query->whereBetween('total_unit_amount', [$minPriceRange, $maxPriceRange]);
+            });
+            $filters['min_price_range'] = $minPriceRange;
+            $filters['max_price_range'] = $maxPriceRange;
         }
 
         return $filters;
@@ -235,5 +313,91 @@ class OffPlanController extends Controller
         });
 
         return response()->json($projectsForMap);
+    }
+
+    public function getFilteredProjects(Request $request)
+    {
+        // Get all active projects with necessary relationships
+        $projects = Project::with([
+            'progress', 
+            'units', 
+            'owners', 
+            'location', 
+            'areas', 
+            'tags', 
+            'project_unit_rooms', 
+            'type',
+            'ProjectArea'
+        ])
+        ->where('projects.status', 1)
+        ->where('projects.progress', '!=', 'Completed') // Only off-plan projects
+        ->orderBy('projects.created_at', 'desc');
+
+        // Apply filters
+        $this->applyFilters($projects, $request);
+        
+        // Get paginated results for listings
+        $projects = $projects->paginate(12);
+        
+        // Get all projects for map (without pagination)
+        $allProjectsForMap = Project::with([
+            'progress', 
+            'units', 
+            'owners', 
+            'location', 
+            'areas', 
+            'tags', 
+            'project_unit_rooms', 
+            'type',
+            'ProjectArea'
+        ])
+        ->where('projects.status', 1)
+        ->where('projects.progress', '!=', 'Completed');
+        
+        $this->applyFilters($allProjectsForMap, $request);
+        $allProjectsForMap = $allProjectsForMap->get();
+
+        // Prepare projects data for Mapbox
+        $projectsForMap = $allProjectsForMap->map(function ($project) {
+            $coverImage = $project->project_cover_img;
+            
+            if ($coverImage && !str_starts_with($coverImage, 'http') && !str_starts_with($coverImage, '/')) {
+                $coverImage = asset($coverImage);
+            } elseif ($coverImage && str_starts_with($coverImage, '/')) {
+                $coverImage = url($coverImage);
+            } elseif (!$coverImage) {
+                $coverImage = asset('images/default-project.jpg');
+            }
+            
+            return [
+                'id' => $project->id,
+                'name' => $project->name,
+                'slug' => $project->slug,
+                'address' => $project->address,
+                'latitude' => $project->latitude,
+                'longitude' => $project->longitude,
+                'price' => $project->units->min('total_unit_amount') ?? $project->discount_price ?? 0,
+                'progress' => $project->progress->title ?? 'Unknown',
+                'type' => $project->type->title ?? 'Unknown',
+                'cover_image' => $coverImage,
+                'area' => $project->location->name ?? 'Unknown Area',
+                'bedrooms' => $project->units->pluck('bedrooms')->filter()->unique()->values()->toArray(),
+                'completion_date' => $project->added_time ?? 'TBD',
+                'property_id' => $project->property_id ?? '',
+                'rooms' => $project->rooms ?? ''
+            ];
+        });
+
+        // Return HTML for projects and map data
+        $projectsHtml = view('off-plan.partials.project-grid', compact('projects'))->render();
+        $paginationHtml = $projects->hasPages() ? $projects->links()->render() : '';
+
+        return response()->json([
+            'success' => true,
+            'projectsHtml' => $projectsHtml,
+            'paginationHtml' => $paginationHtml,
+            'projectsForMap' => $projectsForMap,
+            'totalCount' => $projects->total()
+        ]);
     }
 }

@@ -32,10 +32,69 @@
         border-bottom: 1px solid #e0e0e0;
         padding: 30px 24px;
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
         align-items: center;
+        gap: 16px;
         box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
+    
+    .search-filter-bar form {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+        align-items: center !important;
+        margin-left: 16px !important;
+    }
+    
+    @media (max-width: 1200px) {
+        .search-filter-bar {
+            padding: 20px 16px;
+        }
+        .search-filter-bar form {
+            margin-left: 0 !important;
+            margin-top: 16px;
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .search-filter-bar {
+            flex-direction: column;
+            padding: 16px;
+        }
+        .search-filter-bar form {
+            width: 100%;
+            margin-left: 0 !important;
+            margin-top: 12px;
+            justify-content: flex-start;
+        }
+        .fp-trigger {
+            font-size: 12px;
+            padding: 6px 10px;
+            min-height: 36px;
+        }
+    }
+    /* Dropdown filters */
+    .fp-chip { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid #e5e7eb; padding:8px 12px; border-radius:20px; cursor:pointer; user-select:none; }
+    .fp-chip input { margin:0; }
+    .fp-dropdown { position:relative; }
+    .fp-trigger { background:#fff; border:1px solid #e5e7eb; padding:8px 12px; border-radius:10px; font-weight:600; color:#111; display:flex; align-items:center; gap:6px; white-space:nowrap; font-size:14px; min-height:40px; cursor:pointer; transition:all 0.3s ease; }
+    .fp-trigger:hover { border-color:#ec1c24; color:#ec1c24; }
+    .fp-menu { position:absolute; top:110%; left:0; background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; box-shadow:0 8px 24px rgba(0,0,0,0.12); min-width:220px; z-index:20; display:none; max-height:300px; overflow-y:auto; }
+    .fp-dropdown.open .fp-menu{ display:block; }
+    .fp-option{ display:inline-block; margin:4px 6px 6px 0; padding:8px 12px; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:9999px; font-weight:600; color:#374151; cursor:pointer; transition:all 0.3s ease; font-size:13px; }
+    .fp-option:hover { background:#e5e7eb; }
+    .fp-option.active{ background:#ede9fe; border-color:#a78bfa; color:#4c1d95; }
+    .fp-actions{ margin-top:8px; display:flex; justify-content:flex-start; }
+    .fp-apply{ background:#111; color:#fff; border:none; padding:8px 12px; border-radius:8px; font-weight:600; cursor:pointer; transition:all 0.3s ease; }
+    .fp-apply:hover { background:#ec1c24; }
+    .fp-reset{ background:#f1f5f9; color:#111; padding:10px 12px; border-radius:10px; text-decoration:none; font-weight:600; transition:all 0.3s ease; cursor:pointer; }
+    .fp-reset:hover { background:#ec1c24; color:#fff; }
+    .fp-range .fp-menu{ min-width:260px; }
+    .fp-range-row{ display:flex; gap:10px; }
+    .fp-range-row input{ width:100%; border:1px solid #e5e7eb; border-radius:8px; padding:8px; font-size:14px; }
+    .fp-range-row input:focus { border-color:#ec1c24; outline:none; }
     
     .search-input-container {
         position: relative;
@@ -98,9 +157,10 @@
     
     .project-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 8px;
         align-content: start;
+        padding: 0 4px;
     }
     
     /* Custom Scrollbar for Project Listings */
@@ -124,19 +184,24 @@
     
     .project-card {
         padding: 0;
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
         cursor: pointer;
         transition: all 0.3s ease;
         position: relative;
         background: #fff;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         overflow: hidden;
+        width: 100%;
+        height: 260px;
+        display: flex;
+        flex-direction: column;
     }
     
     .project-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-color: #d1d5db;
     }
     
     .project-card.highlighted {
@@ -148,8 +213,10 @@
     .project-image-container {
         position: relative;
         width: 100%;
-        height: 180px;
+        height: 130px;
         overflow: hidden;
+        border-radius: 8px 8px 0 0;
+        flex-shrink: 0;
     }
     
     .project-image {
@@ -165,22 +232,24 @@
     
     .project-badges {
         position: absolute;
-        top: 12px;
-        left: 12px;
-        right: 12px;
+        top: 8px;
+        left: 8px;
+        right: 8px;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
+        gap: 4px;
     }
     
     .badge {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 12px;
+        padding: 3px 6px;
+        border-radius: 4px;
+        font-size: 8px;
         font-weight: 600;
         color: #fff;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.3px;
+        backdrop-filter: blur(4px);
     }
     
     .badge-presale {
@@ -195,32 +264,37 @@
     
     .developer-logo {
         position: absolute;
-        bottom: 12px;
-        left: 12px;
-        width: 45px;
-        height: 45px;
-        background: #fff;
-        border-radius: 8px;
+        bottom: 8px;
+        left: 8px;
+        width: 24px;
+        height: 24px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 4px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
+        font-size: 8px;
         font-weight: 700;
         color: #ec1c24;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border: 2px solid #ec1c24;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        border: 1px solid rgba(236, 28, 36, 0.3);
+        backdrop-filter: blur(4px);
     }
     
     .project-card-content {
-        padding: 16px;
+        padding: 10px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
     
     .project-title {
-        font-size: 16px;
+        font-size: 13px;
         font-weight: 700;
-        color: #333;
-        margin: 0 0 6px 0;
-        line-height: 1.3;
+        color: #111827;
+        margin: 0 0 4px 0;
+        line-height: 1.2;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -228,62 +302,67 @@
     }
     
     .project-location {
-        font-size: 13px;
-        color: #666;
-        margin: 0 0 8px 0;
+        font-size: 10px;
+        color: #6b7280;
+        margin: 0 0 6px 0;
         display: -webkit-box;
         -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        font-weight: 500;
     }
     
     .project-price {
-        font-size: 18px;
+        font-size: 14px;
         font-weight: 700;
         color: #ec1c24;
-        margin: 0 0 8px 0;
+        margin: 0 0 6px 0;
+        line-height: 1.2;
     }
     
     .project-rooms {
-        font-size: 12px;
-        color: #666;
-        margin: 0 0 6px 0;
+        font-size: 9px;
+        color: #6b7280;
+        margin: 0 0 2px 0;
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 3px;
+        font-weight: 500;
     }
     
     .project-rooms i {
         color: #ec1c24;
-        font-size: 11px;
+        font-size: 8px;
     }
     
     .project-id {
-        font-size: 11px;
-        color: #999;
-        margin: 0 0 6px 0;
+        font-size: 8px;
+        color: #9ca3af;
+        margin: 0 0 2px 0;
+        font-weight: 500;
     }
     
     .project-marketed {
-        font-size: 11px;
-        color: #666;
-        margin: 0 0 6px 0;
+        font-size: 8px;
+        color: #6b7280;
+        margin: 0 0 2px 0;
+        font-weight: 500;
     }
     
     .bonus-badge {
         display: inline-flex;
         align-items: center;
-        gap: 4px;
-        padding: 8px 16px;
-        background: linear-gradient(135deg, #ec1c24 0%, #d9000d 100%);
+        gap: 2px;
+        padding: 2px 6px;
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
         color: #fff;
-        border-radius: 25px;
-        font-size: 12px;
+        border-radius: 8px;
+        font-size: 7px;
         font-weight: 600;
-        margin-top: 8px;
+        margin-top: 2px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        box-shadow: 0 4px 8px rgba(236, 28, 36, 0.3);
+        letter-spacing: 0.3px;
+        box-shadow: 0 1px 2px rgba(139, 92, 246, 0.3);
     }
     
     .bonus-badge i {
@@ -725,8 +804,24 @@
         animation: fadeInUp 0.3s ease-out;
     }
     
-    /* Tablet Responsiveness */
-    @media (max-width: 1024px) and (min-width: 769px) {
+    /* Large Desktop */
+    @media (min-width: 1400px) {
+        .project-grid {
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 6px;
+        }
+    }
+    
+    /* Desktop */
+    @media (max-width: 1399px) and (min-width: 1200px) {
+        .project-grid {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 6px;
+        }
+    }
+    
+    /* Tablet */
+    @media (max-width: 1199px) and (min-width: 769px) {
         .project-listings {
             width: 50%;
             min-width: 300px;
@@ -735,6 +830,19 @@
         .map-container {
             width: 50%;
             min-width: 300px;
+        }
+        
+        .project-grid {
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 6px;
+        }
+        
+        .project-card {
+            height: 240px;
+        }
+        
+        .project-image-container {
+            height: 110px;
         }
         
         .search-input-container {
@@ -773,7 +881,8 @@
         
         .project-grid {
             grid-template-columns: 1fr;
-            gap: 15px;
+            gap: 6px;
+            padding: 0 4px;
         }
         
         .map-container {
@@ -816,16 +925,20 @@
         }
         
         .project-card {
-            margin-bottom: 15px;
-            padding: 15px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            height: 220px;
+            width: 100%;
+        }
+        
+        .project-card-content {
+            padding: 8px;
         }
         
         .project-image-container {
-            height: 200px;
-            border-radius: 8px;
+            height: 100px;
+            border-radius: 8px 8px 0 0;
             overflow: hidden;
         }
         
@@ -1087,6 +1200,139 @@
             <i class="fa fa-search search-icon"></i>
             <input type="text" class="search-input" placeholder="Search projects, developers, locations..." id="project-search">
         </div>
+        <form id="offplan-filters" action="{{ route('off-plan.index') }}" method="GET" style="margin-left:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <input type="hidden" name="q" value="{{ request('q') }}">
+
+            <label class="fp-chip">
+                <input type="checkbox" name="with_bonus" value="1" {{ request('with_bonus') ? 'checked' : '' }}>
+                <span><i class="fa fa-gift" style="color:#6f64ff"></i> With bonus</span>
+            </label>
+
+            <div class="fp-dropdown" data-name="project_name[]">
+                <button type="button" class="fp-trigger">Project Name <i class="fa fa-chevron-down"></i></button>
+                <div class="fp-menu">
+                    @php $selectedProjects = collect((array) request('project_name')); @endphp
+                    @foreach(($allProjects ?? []) as $project)
+                        <button type="button" class="fp-option {{ $selectedProjects->contains($project->name)?'active':'' }}" data-value="{{ $project->name }}">{{ $project->name }}</button>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="fp-dropdown" data-name="area[]">
+                <button type="button" class="fp-trigger">Select Area <i class="fa fa-chevron-down"></i></button>
+                <div class="fp-menu">
+                    @php $selectedAreas = collect((array) request('area')); @endphp
+                    @foreach(($areas ?? []) as $area)
+                        <button type="button" class="fp-option {{ $selectedAreas->contains($area->id)?'active':'' }}" data-value="{{ $area->id }}">{{ $area->name }}</button>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="fp-dropdown" data-name="progress_title[]">
+                <button type="button" class="fp-trigger">Sale Status <i class="fa fa-chevron-down"></i></button>
+                <div class="fp-menu">
+                    @php $selectedProgress = collect((array) request('progress_title')); @endphp
+                    @foreach(['Announced','Presale (EOI)','Start of Sales','On Sale','Out of Stock'] as $opt)
+                        <button type="button" class="fp-option {{ $selectedProgress->contains($opt)?'active':'' }}" data-value="{{ $opt }}">{{ $opt }}</button>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="fp-dropdown fp-range">
+                <button type="button" class="fp-trigger">Price <i class="fa fa-chevron-down"></i></button>
+                <div class="fp-menu">
+                    <div class="fp-range-row">
+                        <input type="number" name="min_price" placeholder="From" value="{{ request('min_price') }}">
+                        <input type="number" name="max_price" placeholder="To" value="{{ request('max_price') }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="fp-dropdown fp-range">
+                <button type="button" class="fp-trigger">Area <i class="fa fa-chevron-down"></i></button>
+                <div class="fp-menu">
+                    <div class="fp-range-row">
+                        <input type="number" name="min_area" placeholder="From" value="{{ request('min_area') }}">
+                        <input type="number" name="max_area" placeholder="To" value="{{ request('max_area') }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="fp-dropdown fp-range">
+                <button type="button" class="fp-trigger">Max Down Payment <i class="fa fa-chevron-down"></i></button>
+                <div class="fp-menu">
+                    <div class="fp-range-row">
+                        <input type="number" name="min_down_payment" placeholder="From" value="{{ request('min_down_payment') }}">
+                        <input type="number" name="max_down_payment" placeholder="To" value="{{ request('max_down_payment') }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="fp-dropdown fp-range">
+                <button type="button" class="fp-trigger">Min Monthly Installment <i class="fa fa-chevron-down"></i></button>
+                <div class="fp-menu">
+                    <div class="fp-range-row">
+                        <input type="number" name="min_monthly_installment" placeholder="From" value="{{ request('min_monthly_installment') }}">
+                        <input type="number" name="max_monthly_installment" placeholder="To" value="{{ request('max_monthly_installment') }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="fp-dropdown fp-range">
+                <button type="button" class="fp-trigger">Min Price <i class="fa fa-chevron-down"></i></button>
+                <div class="fp-menu">
+                    <div class="fp-range-row">
+                        <input type="number" name="min_price_range" placeholder="From" value="{{ request('min_price_range') }}">
+                        <input type="number" name="max_price_range" placeholder="To" value="{{ request('max_price_range') }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="fp-dropdown" data-name="type_title[]">
+                <button type="button" class="fp-trigger">Project Type <i class="fa fa-chevron-down"></i></button>
+                <div class="fp-menu">
+                    @php $selectedTypes = collect((array) request('type_title')); @endphp
+                    @foreach(($projectTypes ?? []) as $t)
+                        <button type="button" class="fp-option {{ $selectedTypes->contains($t->title)?'active':'' }}" data-value="{{ $t->title }}">{{ $t->title }}</button>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="fp-dropdown" data-name="bedrooms[]">
+                <button type="button" class="fp-trigger">Bedrooms <i class="fa fa-chevron-down"></i></button>
+                <div class="fp-menu">
+                    @php $selectedBeds = collect((array) request('bedrooms')); @endphp
+                    @foreach([['Studio','Studio'],['1','1 BR'],['2','2 BR'],['3','3 BR'],['4','4 BR'],['5_plus','5+ BR']] as $b)
+                        <button type="button" class="fp-option {{ $selectedBeds->contains($b[0])?'active':'' }}" data-value="{{ $b[0] }}">{{ $b[1] }}</button>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="fp-dropdown" data-name="builder[]">
+                <button type="button" class="fp-trigger">Select Builder <i class="fa fa-chevron-down"></i></button>
+                <div class="fp-menu">
+                    @php $selectedBuilders = collect((array) request('builder')); @endphp
+                    @foreach(($builders ?? []) as $builder)
+                        <button type="button" class="fp-option {{ $selectedBuilders->contains($builder->id)?'active':'' }}" data-value="{{ $builder->id }}">{{ $builder->full_name }}</button>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="fp-dropdown" data-name="tags[]">
+                <button type="button" class="fp-trigger">Select Tags <i class="fa fa-chevron-down"></i></button>
+                <div class="fp-menu">
+                    @php $selectedTags = collect((array) request('tags')); @endphp
+                    @foreach(($tags ?? []) as $tag)
+                        <button type="button" class="fp-option {{ $selectedTags->contains($tag->id)?'active':'' }}" data-value="{{ $tag->id }}">{{ $tag->name }}</button>
+                    @endforeach
+                </div>
+            </div>
+
+            <a href="{{ route('off-plan.index') }}" class="fp-reset">Reset</a>
+
+            {{-- Persist selected arrays as hidden inputs so labels work without opening dropdowns --}}
+            <div id="fp-hidden-inputs" style="display:none;"></div>
+        </form>
     </div>
         
     <!-- Projects Count Display -->
@@ -1098,131 +1344,22 @@
     <div class="content-layout">
         <!-- Project Listings -->
         <div class="project-listings" id="project-listings">
-            <div class="project-grid">
-            @if($projects->count() > 0)
-                @foreach($projects as $project)
-                    <div class="project-card" 
-                         data-project-id="{{ $project->id }}"
-                         data-lat="{{ $project->latitude }}"
-                         data-lng="{{ $project->longitude }}"
-                         data-price="{{ $project->units->min('total_unit_amount') ?? $project->discount_price ?? 0 }}"
-                         data-property-id="{{ $project->property_id ?? '' }}"
-                         data-rooms="{{ $project->rooms ?? '' }}"
-                         data-progress="{{ $project->progress ?? '' }}">
-                        
-                        <div class="project-image-container">
-                        <img src="{{ asset($project->project_cover_img ?? 'images/default-project.jpg') }}" 
-                             alt="{{ $project->name }}" 
-                             class="project-image"
-                             onerror="this.src='{{ asset('images/default-project.jpg') }}'">
-                        
-                            <div class="project-badges">
-                                @if($project->progress)
-                                    <span class="badge badge-presale">{{ $project->progress }}</span>
-                                @else
-                                    <span class="badge badge-presale">Presale (EOI)</span>
-                                @endif
-                                
-                                @if($project->added_time)
-                                    <span class="badge badge-completion">{{ \Carbon\Carbon::parse($project->added_time)->format('M Y') }}</span>
-                                @else
-                                    <span class="badge badge-completion">Q4 2027</span>
-                                @endif
-                            </div>
-                            
-                            <div class="developer-logo">
-                                @if($project->owners && $project->owners->first() && $project->owners->first()->builder)
-                                    {{ substr($project->owners->first()->builder->full_name, 0, 3) }}
-                                @else
-                                    DEV
-                                @endif
-                            </div>
-                            </div>
-                            
-                            <div class="project-card-content">
-                                <h3 class="project-title">{{ $project->name ?? 'Project Name' }}</h3>
-                                
-                                <p class="project-location">
-                                    @if($project->address)
-                                        {{ Str::limit($project->address, 30) }}
-                                    @elseif($project->location && $project->location->name)
-                                        {{ $project->location->name }}
-                                    @else
-                                        Karachi
-                                    @endif
-                                    
-                                    @if($project->owners && $project->owners->first() && $project->owners->first()->builder)
-                                        • by {{ Str::limit($project->owners->first()->builder->full_name, 20) }}
-                                    @else
-                                        • by Developer
-                                    @endif
-                                </p>
-                                
-                                @if($project->rooms)
-                                <p class="project-rooms">
-                                    <i class="fa fa-bed"></i> {{ $project->rooms }} Rooms
-                                </p>
-                                @endif
-                                
-                                <div class="project-price">
-                                    @php
-                                        $minPrice = 0;
-                                        if($project->units && $project->units->count() > 0) {
-                                            $minPrice = $project->units->min('total_unit_amount');
-                                        } elseif($project->discount_price) {
-                                            $minPrice = $project->discount_price;
-                                        }
-                                        
-                                        // Convert to PKR if price exists
-                                        if($minPrice > 0) {
-                                            $priceInPKR = \App\Http\Controllers\FrontEnd\ProjectController::convertCurrency((int) $minPrice);
-                                        } else {
-                                            $priceInPKR = '0';
-                                        }
-                                    @endphp
-                                    @if($minPrice > 0)
-                                        Starting from Rs. {{ $priceInPKR }}
-                                    @else
-                                        Price on Request
-                                    @endif
-                                </div>
-                                
-                                @if($project->property_id)
-                                <p class="project-id">
-                                    <small>ID: {{ $project->property_id }}</small>
-                                </p>
-                                @endif
-                                
-                                @if($project->ProjectVoucher && $project->ProjectVoucher->is_active)
-                                <div class="bonus-badge">
-                                    <i class="fa fa-gift"></i>
-                                    Bonus Available
-                                </div>
-                                @endif
-                                
-                                @if($project->marketed_by)
-                                <p class="project-marketed">
-                                    <small>Marketed by: {{ $project->marketed_by }}</small>
-                                </p>
-                                @endif
-                            </div>
-                    </div>
-                @endforeach
-            @else
-                <div style="text-align: center; padding: 60px 20px; color: #666; grid-column: 1 / -1;">
-                    <i class="fa fa-home" style="font-size: 64px; margin-bottom: 20px; color: #ec1c24;"></i>
-                    <h3 style="color: #333; margin-bottom: 10px;">No projects found</h3>
-                    <p>Try adjusting your filters to see more results.</p>
-                </div>
-            @endif
+            <!-- Loading indicator -->
+            <div id="loading-indicator" style="display: none; text-align: center; padding: 40px; color: #666;">
+                <i class="fa fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px; color: #ec1c24;"></i>
+                <p>Loading projects...</p>
+            </div>
+            
+            <div class="project-grid" id="project-grid">
+                @include('off-plan.partials.project-grid', compact('projects'))
             </div>
             
             <!-- Pagination -->
-            @if($projects->hasPages())
-                <div class="pagination-wrapper" style="margin: 20px 0; text-align: center; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+            <div id="pagination-wrapper" class="pagination-wrapper" style="margin: 20px 0; text-align: center; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                @if($projects->hasPages())
                     {{ $projects->links() }}
-                </div>
-            @endif
+                @endif
+            </div>
         </div>
     
     <!-- Resize Handle -->
@@ -1795,82 +1932,285 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Professional project card hover effects
-    document.querySelectorAll('.project-card').forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            hoveredCard = this;
-            const projectId = this.dataset.projectId;
-            const marker = markers.find(m => m.projectData && m.projectData.id == projectId);
-            
-            if (marker) {
-                // Highlight marker without transforms to prevent drift
-                const markerEl = marker.getElement();
-                
-                // Apply highlight using box-shadow and border changes
-                markerEl.style.boxShadow = '0 8px 25px rgba(42, 196, 234, 0.6), 0 0 0 4px rgba(42, 196, 234, 0.3)';
-                markerEl.style.borderWidth = '4px';
-                markerEl.style.borderColor = '#2ac4ea';
-                markerEl.style.zIndex = '1000';
-                markerEl.style.filter = 'brightness(1.1)';
-                markerEl.style.transition = 'box-shadow 0.3s ease, border 0.3s ease, filter 0.3s ease';
-                
-                // Open popup with smooth animation
-                if (marker.getPopup()) {
-                    marker.getPopup().addTo(map);
-                }
-                
-                // Store highlighted marker
-                highlightedMarker = marker;
-            }
-        });
+    // Project card event handler function
+    function attachProjectCardListeners() {
+        // Get references to global variables
+        const mapRef = window.mapInstance || map;
+        const markersRef = window.markersArray || markers;
         
-        card.addEventListener('mouseleave', function() {
-            hoveredCard = null;
-            if (highlightedMarker) {
-                // Reset marker without transforms
-                const markerEl = highlightedMarker.getElement();
-                markerEl.style.boxShadow = '0 4px 15px rgba(236, 28, 36, 0.4), 0 0 0 2px rgba(236, 28, 36, 0.2)';
-                markerEl.style.borderWidth = '3px';
-                markerEl.style.borderColor = 'white';
-                markerEl.style.zIndex = '1';
-                markerEl.style.filter = 'brightness(1)';
-                markerEl.style.transition = 'box-shadow 0.3s ease, border 0.3s ease, filter 0.3s ease';
-                
-                // Close popup
-                highlightedMarker.getPopup().remove();
-                highlightedMarker = null;
-            }
-        });
-        
-        card.addEventListener('click', function() {
-            const lat = parseFloat(this.dataset.lat);
-            const lng = parseFloat(this.dataset.lng);
-            
-            if (!isNaN(lat) && !isNaN(lng)) {
-                // Close current popup
-                closeCurrentPopup();
-                
-                // Smooth fly to project location
-                if (map && typeof map.flyTo === 'function') {
-                    map.flyTo({
-                        center: [lng, lat],
-                        zoom: 15,
-                        pitch: 0,
-                        bearing: 0,
-                        speed: 1.2
-                    });
-                }
-                
-                // Highlight the marker and open popup
+        // Directly attach events to new project cards
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                window.hoveredCardRef = this;
                 const projectId = this.dataset.projectId;
-                const marker = markers.find(m => m.projectData && m.projectData.id == projectId);
+                const marker = markersRef.find(m => m.projectData && m.projectData.id == projectId);
+                
                 if (marker) {
-                    currentPopup = marker.getPopup();
-                    if (marker.togglePopup) { marker.togglePopup(); }
+                    // Highlight marker without transforms to prevent drift
+                    const markerEl = marker.getElement();
+                    
+                    // Apply highlight using box-shadow and border changes
+                    markerEl.style.boxShadow = '0 8px 25px rgba(42, 196, 234, 0.6), 0 0 0 4px rgba(42, 196, 234, 0.3)';
+                    markerEl.style.borderWidth = '4px';
+                    markerEl.style.borderColor = '#2ac4ea';
+                    markerEl.style.zIndex = '1000';
+                    markerEl.style.filter = 'brightness(1.1)';
+                    markerEl.style.transition = 'box-shadow 0.3s ease, border 0.3s ease, filter 0.3s ease';
+                    
+                    // Open popup with smooth animation
+                    if (marker.getPopup() && mapRef) {
+                        marker.getPopup().addTo(mapRef);
+                    }
+                    
+                    // Store highlighted marker
+                    window.highlightedMarkerRef = marker;
                 }
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                window.hoveredCardRef = null;
+                const highlightedMarker = window.highlightedMarkerRef;
+                if (highlightedMarker) {
+                    // Reset marker without transforms
+                    const markerEl = highlightedMarker.getElement();
+                    markerEl.style.boxShadow = '0 4px 15px rgba(236, 28, 36, 0.4), 0 0 0 2px rgba(236, 28, 36, 0.2)';
+                    markerEl.style.borderWidth = '3px';
+                    markerEl.style.borderColor = 'white';
+                    markerEl.style.zIndex = '1';
+                    markerEl.style.filter = 'brightness(1)';
+                    markerEl.style.transition = 'box-shadow 0.3s ease, border 0.3s ease, filter 0.3s ease';
+                    
+                    // Close popup
+                    highlightedMarker.getPopup().remove();
+                    window.highlightedMarkerRef = null;
+                }
+            });
+            
+            card.addEventListener('click', function() {
+                const lat = parseFloat(this.dataset.lat);
+                const lng = parseFloat(this.dataset.lng);
+                
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    // Close current popup
+                    if (window.closeCurrentPopup) {
+                        window.closeCurrentPopup();
+                    }
+                    
+                    // Smooth fly to project location
+                    if (mapRef && typeof mapRef.flyTo === 'function') {
+                        mapRef.flyTo({
+                            center: [lng, lat],
+                            zoom: 15,
+                            pitch: 0,
+                            bearing: 0,
+                            speed: 1.2
+                        });
+                    }
+                    
+                    // Highlight the marker and open popup
+                    const projectId = this.dataset.projectId;
+                    const marker = markersRef.find(m => m.projectData && m.projectData.id == projectId);
+                    if (marker) {
+                        window.currentPopupRef = marker.getPopup();
+                        if (marker.togglePopup) { marker.togglePopup(); }
+                    }
+                }
+            });
+        });
+    }
+
+    // Initial attachment of project card events
+    attachProjectCardListeners();
+    
+    // Make function globally available for AJAX reattachment  
+    window.attachProjectCardEvents = attachProjectCardListeners;
+    
+    // Make key variables and functions globally accessible for AJAX
+    window.mapInstance = map;
+    window.markersArray = markers;
+    window.highlightedMarkerRef = highlightedMarker;
+    window.hoveredCardRef = hoveredCard;
+    window.currentPopupRef = currentPopup;
+    window.closeCurrentPopup = closeCurrentPopup;
+    
+    // Function to update map markers with new data
+    function updateMapMarkers(newProjectsData) {
+        const mapRef = window.mapInstance || map;
+        const markersRef = window.markersArray || markers;
+        
+        if (!mapRef) return;
+        
+        // Clear existing markers
+        markersRef.forEach(marker => marker.remove());
+        markersRef.length = 0;
+        
+        // Create new markers with updated data
+        newProjectsData.forEach((project, index) => {
+            if (project.latitude && project.longitude) {
+                // Create custom marker element with project cover image
+                const markerElement = document.createElement('div');
+                markerElement.className = 'custom-marker';
+                markerElement.style.cssText = `
+                    width: 50px;
+                    height: 50px;
+                    border: 3px solid white;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    box-shadow: 0 4px 15px rgba(236, 28, 36, 0.4), 0 0 0 2px rgba(236, 28, 36, 0.2);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: box-shadow 0.3s ease, border 0.3s ease, filter 0.3s ease;
+                    position: relative;
+                    z-index: 1;
+                    overflow: hidden;
+                    background: #f0f0f0;
+                    will-change: box-shadow, border, filter;
+                `;
+                
+                // Create image element for the cover image
+                const markerImage = document.createElement('img');
+                markerImage.style.cssText = `
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    transition: opacity 0.3s ease;
+                `;
+                markerImage.src = project.cover_image || '{{ asset('images/default-project.jpg') }}';
+                markerImage.alt = project.name;
+                
+                markerImage.onload = function() {
+                    this.style.opacity = '1';
+                };
+                markerImage.style.opacity = '0.7';
+                markerImage.onerror = function() {
+                    this.style.display = 'none';
+                    const fallbackDiv = document.createElement('div');
+                    fallbackDiv.style.cssText = `
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, #ec1c24 0%, #d9000d 100%);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: bold;
+                        font-size: 18px;
+                        border-radius: 50%;
+                    `;
+                    fallbackDiv.textContent = project.name ? project.name.charAt(0).toUpperCase() : 'P';
+                    markerElement.appendChild(fallbackDiv);
+                };
+                
+                markerElement.appendChild(markerImage);
+                
+                // Add hover effects
+                markerElement.addEventListener('mouseenter', function() {
+                    this.style.boxShadow = '0 8px 25px rgba(236, 28, 36, 0.6), 0 0 0 4px rgba(236, 28, 36, 0.3)';
+                    this.style.borderWidth = '4px';
+                    this.style.zIndex = '1000';
+                    this.style.filter = 'brightness(1.1)';
+                });
+                
+                markerElement.addEventListener('mouseleave', function() {
+                    var highlightedEl = (highlightedMarker && typeof highlightedMarker.getElement === 'function') ? highlightedMarker.getElement() : null;
+                    if (this !== highlightedEl) {
+                        this.style.boxShadow = '0 4px 15px rgba(236, 28, 36, 0.4), 0 0 0 2px rgba(236, 28, 36, 0.2)';
+                        this.style.borderWidth = '3px';
+                        this.style.zIndex = '1';
+                        this.style.filter = 'brightness(1)';
+                    }
+                });
+                
+                // Create popup for marker (reusing existing popup creation logic)
+                const defaultImage = '{{ asset('images/default-project.jpg') }}';
+                const imageSrc = project.cover_image || defaultImage;
+                
+                const formatPrice = (price) => {
+                    if (!price || price === 0) return 'Price on Request';
+                    return `Rs. ${parseInt(price).toLocaleString()}`;
+                };
+                
+                const developerName = project.developer || 'Developer';
+                
+                const popupContent = `
+                    <div class="modern-popup-card" style="background: #fff; border-radius: 12px; overflow: hidden; width: 280px; box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 8px 16px rgba(0,0,0,0.1); border: 2px solid transparent; background-image: linear-gradient(white, white), linear-gradient(135deg, #ec1c24, #d9000d, #b8000a); background-origin: border-box; background-clip: content-box, border-box; position: relative; font-family: 'Poppins', sans-serif; display: flex; flex-direction: column;">
+                        <div style="position: absolute; top: 10px; right: 10px; z-index: 10;">
+                            <button onclick="this.closest('.mapboxgl-popup').remove()" style="background: rgba(0,0,0,0.7); border: none; border-radius: 50%; width: 24px; height: 24px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" onmouseover="this.style.background='rgba(0,0,0,0.9)'" onmouseout="this.style.background='rgba(0,0,0,0.7)'">×</button>
+                        </div>
+                        <div style="width: 100%; height: 120px; position: relative; overflow: hidden; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                            <img src="${imageSrc}" style="width: 100%; height: 100%; object-fit: cover; object-position: center;" alt="${project.name}" onerror="this.src='${defaultImage}'">
+                            <div style="position: absolute; top: 0; left: 0; right: 0; height: 40px; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);"></div>
+                            <div style="position: absolute; top: 8px; left: 8px;">
+                                <span style="background: linear-gradient(135deg, #ec1c24 0%, #d9000d 100%); color: white; padding: 4px 8px; border-radius: 12px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(236, 28, 36, 0.4);">${project.progress || 'Presale (EOI)'}</span>
+                            </div>
+                        </div>
+                        <div style="padding: 16px; display: flex; flex-direction: column; gap: 12px; flex: 1;">
+                            <h3 style="margin: 0; font-size: 16px; color: #1a1a1a; font-weight: 700; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${project.name}</h3>
+                            <p style="margin: 0; font-size: 12px; color: #666; font-weight: 500;">by ${developerName}</p>
+                            <p style="margin: 0; font-size: 11px; color: #888; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">${project.address || 'Karachi, Pakistan'}</p>
+                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 12px; border-radius: 8px; border-left: 3px solid #ec1c24; margin-top: auto;">
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div>
+                                        <p style="margin: 0; font-size: 9px; color: #666; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Starting from</p>
+                                        <p style="margin: 2px 0 0; font-size: 16px; color: #ec1c24; font-weight: 700;">${formatPrice(project.price)}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                const popup = new mapboxgl.Popup({
+                    closeButton: false,
+                    closeOnClick: false,
+                    offset: 25,
+                    maxWidth: '280px',
+                    className: 'modern-popup'
+                }).setHTML(popupContent);
+                
+                const marker = new mapboxgl.Marker(markerElement)
+                    .setLngLat([project.longitude, project.latitude])
+                    .setPopup(popup)
+                    .addTo(mapRef);
+                
+                marker.projectData = project;
+                markersRef.push(marker);
+                
+                // Add click event to marker
+                markerElement.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    if (window.closeCurrentPopup) {
+                        window.closeCurrentPopup();
+                    }
+                    window.currentPopupRef = popup;
+                    marker.togglePopup();
+                    
+                    const projectCard = document.querySelector(`[data-project-id="${project.id}"]`);
+                    if (projectCard) {
+                        document.querySelectorAll('.project-card.highlighted').forEach(card => {
+                            card.classList.remove('highlighted');
+                        });
+                        projectCard.classList.add('highlighted');
+                        
+                        mapRef.flyTo({
+                            center: [project.longitude, project.latitude],
+                            zoom: 15,
+                            pitch: 0,
+                            bearing: 0,
+                            speed: 1.2
+                        });
+                    }
+                });
             }
         });
-    });
+    }
+    
+    // Make function globally available
+    window.updateMapMarkers = updateMapMarkers;
     
     // Map controls with professional styling
     document.getElementById('reset-view').addEventListener('click', function() {
@@ -1895,32 +2235,39 @@ document.addEventListener('DOMContentLoaded', function() {
         this.classList.toggle('active');
     });
     
-    // Professional search functionality
+    // Professional search functionality with AJAX
     const projectSearchInput = document.getElementById('project-search');
+    let searchTimeout = null;
+    
     projectSearchInput.addEventListener('input', function() {
-        const searchTerm = (this.value || '').toLowerCase().trim();
-        const projectCards = document.querySelectorAll('.project-card');
+        const searchTerm = (this.value || '').trim();
         
-        projectCards.forEach(card => {
-            const title = card.querySelector('.project-title').textContent.toLowerCase();
-            const location = card.querySelector('.project-location').textContent.toLowerCase();
-            
-            if (title.includes(searchTerm) || location.includes(searchTerm)) {
-                card.style.display = 'block';
-                card.style.opacity = '1';
-            } else {
-                card.style.display = 'none';
-                card.style.opacity = '0';
+        // Clear existing timeout
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        
+        // Debounce the search
+        searchTimeout = setTimeout(() => {
+            // Update the form's hidden input for search
+            const qInput = filtersForm.querySelector('input[name="q"]');
+            if (qInput) {
+                qInput.value = searchTerm;
             }
-        });
+            
+            // Apply filters which will include the search term
+            if (window.applyFiltersFromSearch) {
+                window.applyFiltersFromSearch();
+            }
+        }, 500); // 500ms debounce for search
     });
-    // Prefill from q in URL and trigger once now that listener exists
+    
+    // Prefill from q in URL
     try {
         const urlParams = new URLSearchParams(window.location.search);
         const initialQuery = urlParams.get('q');
         if (initialQuery) {
             projectSearchInput.value = initialQuery;
-            projectSearchInput.dispatchEvent(new Event('input', { bubbles: true }));
         }
     } catch (e) {}
     
@@ -2109,6 +2456,248 @@ document.addEventListener('DOMContentLoaded', function() {
     resizeHandle.setAttribute('aria-label', 'Resize panels');
     resizeHandle.setAttribute('aria-valuemin', '25');
     resizeHandle.setAttribute('aria-valuemax', '80');
+});
+</script>
+<script>
+// AJAX Filter functionality
+document.addEventListener('DOMContentLoaded', function(){
+    const filtersForm = document.getElementById('offplan-filters');
+    if(!filtersForm) return;
+    const hiddenWrap = document.getElementById('fp-hidden-inputs');
+    const dropdownSelector = '.fp-dropdown';
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const projectGrid = document.getElementById('project-grid');
+    const paginationWrapper = document.getElementById('pagination-wrapper');
+
+    let filterTimeout = null;
+    let currentRequest = null;
+
+    function syncHidden(){
+        if(!hiddenWrap) return;
+        hiddenWrap.innerHTML = '';
+        document.querySelectorAll(dropdownSelector).forEach(dd => {
+            const name = dd.getAttribute('data-name');
+            if(!name) return;
+            dd.querySelectorAll('.fp-option.active').forEach(btn => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = btn.dataset.value;
+                hiddenWrap.appendChild(input);
+            });
+        });
+    }
+
+    function closeAll(){
+        document.querySelectorAll(dropdownSelector).forEach(o => o.classList.remove('open'));
+    }
+
+    function showLoading() {
+        if(loadingIndicator) loadingIndicator.style.display = 'block';
+        if(projectGrid) projectGrid.style.opacity = '0.5';
+    }
+
+    function hideLoading() {
+        if(loadingIndicator) loadingIndicator.style.display = 'none';
+        if(projectGrid) projectGrid.style.opacity = '1';
+    }
+
+    function getFormData() {
+        const formData = new FormData(filtersForm);
+        const params = new URLSearchParams();
+        
+        // Add all form data to params
+        for (let [key, value] of formData.entries()) {
+            params.append(key, value);
+        }
+        
+        return params;
+    }
+
+    function updateURL(params) {
+        const url = new URL(window.location.href);
+        url.search = params.toString();
+        window.history.pushState({}, '', url);
+    }
+
+    function applyFilters() {
+        // Cancel previous request
+        if (currentRequest) {
+            currentRequest.abort();
+        }
+
+        // Clear any existing timeout
+        if (filterTimeout) {
+            clearTimeout(filterTimeout);
+        }
+
+        // Debounce the filter request
+        filterTimeout = setTimeout(() => {
+            showLoading();
+            
+            const params = getFormData();
+            updateURL(params);
+
+            // Create AJAX request
+            currentRequest = fetch('{{ route("off-plan.filter") }}?' + params.toString(), {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Update project grid
+                    if (projectGrid) {
+                        projectGrid.innerHTML = data.projectsHtml;
+                    }
+                    
+                    // Update pagination
+                    if (paginationWrapper) {
+                        paginationWrapper.innerHTML = data.paginationHtml;
+                    }
+                    
+                    // Update map markers
+                    if (window.updateMapMarkers && typeof window.updateMapMarkers === 'function') {
+                        window.updateMapMarkers(data.projectsForMap);
+                    }
+                    
+                    // Re-attach event listeners to new project cards
+                    attachProjectCardListeners();
+                    
+                    console.log(`Found ${data.totalCount} projects`);
+                }
+                hideLoading();
+                currentRequest = null;
+            })
+            .catch(error => {
+                if (error.name !== 'AbortError') {
+                    console.error('Filter error:', error);
+                    hideLoading();
+                }
+                currentRequest = null;
+            });
+        }, 300); // 300ms debounce
+    }
+
+    // Use the global function for attaching project card listeners
+
+    // Open/close - only one open at a time
+    filtersForm.querySelectorAll('.fp-trigger').forEach(tr => {
+        const toggle = function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+            const dd = this.closest('.fp-dropdown');
+            const isOpen = dd.classList.contains('open');
+            if (isOpen) {
+                dd.classList.remove('open');
+                return;
+            }
+            closeAll();
+            dd.classList.add('open');
+        };
+        tr.addEventListener('click', toggle, { passive:false });
+    });
+
+    // Keyboard toggle on Enter/Space
+    filtersForm.querySelectorAll('.fp-trigger').forEach(tr => {
+        tr.setAttribute('tabindex','0');
+        tr.addEventListener('keydown', function(e){
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
+
+    // Select chip - AUTO APPLY
+    filtersForm.querySelectorAll('.fp-option').forEach(opt => {
+        opt.addEventListener('click', function(e){
+            e.preventDefault();
+            this.classList.toggle('active');
+            syncHidden();
+            closeAll(); // Close dropdown after selection
+            applyFilters(); // Auto-apply
+        });
+    });
+
+    // Checkbox auto-apply
+    filtersForm.querySelector('input[name="with_bonus"]')?.addEventListener('change', function() {
+        applyFilters();
+    });
+
+    // Range inputs auto-apply (with debounce)
+    ['min_price','max_price','min_area','max_area','min_down_payment','max_down_payment','min_monthly_installment','max_monthly_installment','min_price_range','max_price_range'].forEach(name => {
+        const input = filtersForm.querySelector(`[name="${name}"]`);
+        if (input) {
+            input.addEventListener('input', function() {
+                applyFilters();
+            });
+        }
+    });
+
+    // Prevent clicks inside menus from closing immediately
+    filtersForm.querySelectorAll('.fp-menu').forEach(menu => {
+        menu.addEventListener('click', function(e){
+            e.stopPropagation();
+        });
+        menu.addEventListener('mousedown', function(e){
+            e.stopPropagation();
+        });
+    });
+
+    // Click outside closes any open dropdown
+    document.addEventListener('click', function(){
+        closeAll();
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', function(e){
+        if(e.key === 'Escape') closeAll();
+    });
+
+    // Close on scroll/resize to avoid overlapping open menus
+    window.addEventListener('scroll', closeAll, { passive:true });
+    window.addEventListener('resize', closeAll, { passive:true });
+
+    // Reset button: clear all filters and reload
+    const resetBtn = document.querySelector('.fp-reset');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            
+            // Clear all form inputs
+            const bonus = filtersForm.querySelector('input[name="with_bonus"]');
+            if (bonus) bonus.checked = false;
+            
+            ['min_price','max_price','min_area','max_area','min_down_payment','max_down_payment','min_monthly_installment','max_monthly_installment','min_price_range','max_price_range'].forEach(n => {
+                const el = filtersForm.querySelector(`[name="${n}"]`);
+                if (el) el.value = '';
+            });
+            
+            filtersForm.querySelectorAll('.fp-option.active').forEach(btn => btn.classList.remove('active'));
+            syncHidden();
+            closeAll();
+            
+            // Apply filters (which will be empty, showing all results)
+            applyFilters();
+        });
+    }
+
+    // Initial setup
+    syncHidden();
+    closeAll();
+    
+    // Make functions globally available for map integration
+    window.applyFiltersFromSearch = applyFilters;
 });
 </script>
 @endsection

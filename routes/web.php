@@ -284,6 +284,7 @@ Route::get('/projects/{slug}', 'FrontEnd\ProjectListingController@index')->name(
 // Off-Plan Routes
 Route::get('/off-plan', 'FrontEnd\OffPlanController@index')->name("off-plan.index");
 Route::get('/off-plan/map-data', 'FrontEnd\OffPlanController@getProjectsForMap')->name("off-plan.map-data");
+Route::get('/off-plan/filter', 'FrontEnd\OffPlanController@getFilteredProjects')->name("off-plan.filter");
 
 // /{areas}&{location}
 
